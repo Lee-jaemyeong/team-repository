@@ -52,4 +52,13 @@ public class UserController {
 		}
 		return "user/login"; 
 	}
+	
+	@GetMapping("/user/find")
+	public String find() { return "user/find"; }
+	
+	@GetMapping("/user/passchange")
+	public String passchange() { return "user/passchange"; }
+	
+	@GetMapping("/user/userchange")
+	public String userchange() { return "user/userchange"; }
 }

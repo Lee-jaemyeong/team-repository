@@ -16,6 +16,11 @@
 			<div class="alert alert-info" sec:authorize="hasRole('USER')" > USER ROLE </div>
 			<hr/>
 			<div class="alert alert-info" sec:authentication="principal.username" ></div> 
+			<div class="my-3">
+				<a th:href="@{/user/find}" class="btn btn-primary" >비밀번호 찾기</a>
+				<a th:href="@{/user/userchange}" class="btn btn-primary" >닉네임 변경</a>
+				<a th:href="@{/user/passchange}" class="btn btn-primary" >비밀번호 변경</a>
+			</div>
 		</div>
 	</div>
 </body>
