@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="sideBar">
+
+	<nav id="sidebar">
+		<div class="p-4 pt-5">
+			<a href="#" class="img logo rounded-circle mb-5"
+				style="background-image: url(#); background-color: white;"></a>
+			<ul class="list-unstyled components mb-5">
+				<li><a href="#">HOME</a></li>
+				<li><a href="#pageSubmenu" data-toggle="collapse"
+					aria-expanded="false" class="dropdown-toggle">GROUP</a>
+					<ul class="collapse list-unstyled" id="pageSubmenu">
+						<li><a href="#">GroupName</a></li>
+						<li><a href="#">GroupName</a></li>
+						<li><a href="#">GroupName</a></li>
+					</ul></li>
+			</ul>
+
+			<div class="footer" style="margin-top: 100%;">
+				<p>
+					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+					Copyright &copy;
+					<script>document.write(new Date().getFullYear());</script>
+					All rights reserved | This template is made with <i
+						class="icon-heart" aria-hidden="true"></i> by <a
+						href="https://colorlib.com" target="_blank">Colorlib.com</a>
+					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+				</p>
+			</div>
+
+		</div>
+	</nav>
+
+</th:block>
+</html>
