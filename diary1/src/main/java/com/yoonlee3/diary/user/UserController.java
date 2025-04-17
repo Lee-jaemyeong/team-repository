@@ -1,18 +1,28 @@
 package com.yoonlee3.diary.user;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class UserController {
 
 	@Autowired UserService service;
+	@Autowired UserRepository userRepository;
+	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@GetMapping("/")
 	public String main() { return "user/login"; }
@@ -56,9 +66,60 @@ public class UserController {
 	@GetMapping("/user/find")
 	public String find() { return "user/find"; }
 	
+	@PostMapping("/user/find")
+	public String find_form(@RequestParam("email") String email, Model model) {
+	    Optional<User> user = userRepository.findByEmail(email);
+	    
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    String currentEmail;
+	    
+	    if (authentication.getPrincipal() instanceof UserDetails) {
+	    	currentEmail = ((UserDetails) authentication.getPrincipal()).getUsername();
+	    } else {
+	    	currentEmail = authentication.getPrincipal().toString();
+	    }
+
+	    if (user.isPresent() && user.get().getEmail().equals(currentEmail)) {
+	        model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
+	        return "user/passchange";
+	    } else {
+	        model.addAttribute("msg", "이메일을 확인해주세요.");
+	        return "user/find";
+	    }
+	}
+	
 	@GetMapping("/user/passchange")
 	public String passchange() { return "user/passchange"; }
 	
+	@PostMapping("/user/passchange")
+	public String passchange_form(
+		@RequestParam("email") String email,
+	    @RequestParam("password") String password, Model model){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    String loggedEmail = authentication.getName();
+		Optional<User> opuser = userRepository.findByEmail(email);
+		
+		if (opuser.isPresent()) {
+	        User user = opuser.get();
+
+	        if (loggedEmail.equals(user.getEmail())) {
+	            String encodedPassword = passwordEncoder.encode(password);
+	            user.setPassword(encodedPassword);
+	            userRepository.save(user);
+
+	            model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
+	            return "user/mypage";
+	        } else {
+	            model.addAttribute("msg", "다시 입력해주세요.");
+	            return "user/passchange"; }
+	    } else {
+	        model.addAttribute("msg", "다시 입력해주세요.");
+	        return "user/passchange"; }
+	}
+	
 	@GetMapping("/user/userchange")
 	public String userchange() { return "user/userchange"; }
+	
+	@GetMapping("/user/userdelete")
+	public String userdelete() { return "user/userdelete"; }
 }

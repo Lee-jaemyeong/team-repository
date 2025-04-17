@@ -24,8 +24,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 	   
 	   @Modifying
 	   @Transactional
-	   @Query ("update User u set u.password= :password where u.email= :email and u.password= :old ")
-	   int updateByIdAndPassword( String password , String old , String email);
+	   @Query ("update User u set u.password= :password where u.email= :email ")
+	   int updateByIdAndPassword( String password , String email);
 	   
 	   
 	   // 4. delete

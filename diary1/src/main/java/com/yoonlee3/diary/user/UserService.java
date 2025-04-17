@@ -29,11 +29,11 @@ public class UserService {
 	}
 	
 	//update
-	public int updateByPass( User user , String old ) {
-		return userRepository.updateByIdAndPassword(user.getPassword(), old, user.getEmail());
+	public int updateByPass( User user ) {
+		return userRepository.updateByIdAndPassword(user.getPassword(), user.getEmail());
 	}
-	public int updateByUsername( User user , String old ) {
-		return userRepository.updateById(old, user.getUsername());
+	public int updateByUsername( User user , String oldname ) {
+		return userRepository.updateById(oldname, user.getUsername());
 	}	
 	
 	//delete
