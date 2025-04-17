@@ -1,17 +1,21 @@
-package com.yoonlee3.diary.group;
+package com.yoonlee3.diary.Group_badge_history;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.yoonlee3.diary.badge.Badge;
+import com.yoonlee3.diary.group.YL3Group;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,10 +28,14 @@ public class Group_badge_history {
 	private Long group_badge_history_id;
 	
 	@ManyToOne
-	private Group group_id;
+	@JoinColumn(name="group_id")
+	@Column(nullable=false)
+	private YL3Group group_id;
 	
-	@OneToOne
-	private Badge badge_id;
+	@ManyToOne
+	@Column(nullable=false)
+	@JoinColumn(name = "badge_id")
+	private List<Badge> badge_id;
 	
 	@Column(updatable = false , nullable=false)
 	private LocalDateTime create_date = LocalDateTime.now();

@@ -5,8 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
+
+import com.yoonlee3.diary.Group_badge_history.Group_badge_history;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,4 +27,6 @@ public class Badge {
 	@ColumnDefault("1")
 	private String badge_title;
 	
+	@OneToMany
+	private Group_badge_history group_badge_history;
 }
