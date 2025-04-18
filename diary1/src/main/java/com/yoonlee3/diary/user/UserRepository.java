@@ -12,15 +12,13 @@ public interface UserRepository extends JpaRepository<User,Long> {
 	   // 2. read
 	   Optional<User> findByEmail(String email);
 	   
-	   @Modifying
-	   @Transactional
 	   @Query("select u from User u where u.username= :username") User findByUsername(String username);
 	   
 	   // 3. update
 	   @Modifying
 	   @Transactional
-	   @Query ("update User u set u.username= :username where u.username= :old ")
-	   int updateById( String old , String username);
+	   @Query ("update User u set u.username= :username where u.user_id= :user_id ")
+	   int updateById( Long user_id , String username);
 	   
 	   @Modifying
 	   @Transactional
