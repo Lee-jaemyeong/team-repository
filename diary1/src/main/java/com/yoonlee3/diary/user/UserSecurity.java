@@ -27,7 +27,7 @@ public class UserSecurity {
 			                               .requestMatchers( new AntPathRequestMatcher("/**") )
 			                               .permitAll() // 모든사용자 접근가능
 		).formLogin(  // login
-			(formLogin) -> 	formLogin.loginPage("/user/login").defaultSuccessUrl("/user/mypage")
+			(formLogin) -> 	formLogin.loginPage("/user/login").usernameParameter("email").defaultSuccessUrl("/user/mypage")
 		).logout(  // logout
 			(logout) ->	logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessUrl("/user/login").invalidateHttpSession(true)
 		);
