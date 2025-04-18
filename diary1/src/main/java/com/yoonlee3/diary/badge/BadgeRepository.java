@@ -12,5 +12,6 @@ public interface BadgeRepository extends JpaRepository<Badge, Long> {
 	Optional<Badge> findById(Long badge_id);
 	
 	//U
+	
 	//D
 }

@@ -1,9 +1,12 @@
 package com.yoonlee3.diary.group;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,8 +19,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.yoonlee3.diary.Group_badge_history.Group_badge_history;
 import com.yoonlee3.diary.badge.Badge;
+import com.yoonlee3.diary.groupAchiv.GroupAchiv;
+import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistory;
 import com.yoonlee3.diary.user.User;
 
 import lombok.Getter;
@@ -41,12 +45,10 @@ public class YL3Group {
 	
 	@ManyToOne
 	@JoinColumn(name = "group_leader")
-	@Column(nullable=false)
 	private User group_leader;
 	
 	@OneToOne
 	@JoinColumn(name = "badge_id")
-	@Column(nullable=false)
 	private Badge badge_id;
 	
 	
@@ -58,7 +60,12 @@ public class YL3Group {
 		)
 	private Set<User> users = new HashSet<>();
 	
-	@OneToMany
-	private Group_badge_history group_badge_history;
+	
+	@OneToMany(mappedBy = "group_id", cascade = CascadeType.REMOVE )
+    private List<GroupBadgeHistory> badgeHistories = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "group_id", cascade = CascadeType.REMOVE )
+	private List<GroupAchiv> groupAchiv = new ArrayList<>();
+	
 	
 }

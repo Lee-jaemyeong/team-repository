@@ -1,4 +1,4 @@
-package com.yoonlee3.diary.badge;
+package com.yoonlee3.diary.openScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,26 +9,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
-import org.hibernate.annotations.ColumnDefault;
-
-import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistory;
+import com.yoonlee3.diary.goal.Goal;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity @Getter @Setter
-public class Badge {
-
+public class OpenScope {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long badge_id;
+	private Long open_scope_id;
 	
 	@Column(nullable=false)
-	@ColumnDefault("1")
-	private String badge_title;
-	
+	private String openScope_title;	
+
+
 }

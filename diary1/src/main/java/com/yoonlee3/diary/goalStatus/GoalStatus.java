@@ -1,6 +1,6 @@
-package com.yoonlee3.diary.group_achiv;
+package com.yoonlee3.diary.goalStatus;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,27 +10,26 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.goal.Goal;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity @Getter @Setter
-public class Group_achiv {
+public class GoalStatus {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long group_achiv_id;
+	private Long status_id;
+	
+	@Column(updatable = false)
+	private LocalDateTime createDate = LocalDateTime.now();
+	
+	@Column(nullable=false)
+	private Boolean is_success;
 	
 	@ManyToOne
-	@Column(nullable=false)
-	@JoinColumn(name = "group_id")
-	private YL3Group group_id;
+	@JoinColumn(name = "goal_id")
+	private Goal goal_id;
 	
-	@Column(nullable=false)
-	private Date month;
-	
-	@Column(nullable=false)
-	private Double goal_achievement;
-
 }

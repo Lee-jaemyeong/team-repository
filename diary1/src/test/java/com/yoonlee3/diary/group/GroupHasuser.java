@@ -9,14 +9,14 @@ import com.yoonlee3.diary.Diary1Application;
 import com.yoonlee3.diary.badge.Badge;
 import com.yoonlee3.diary.badge.BadgeRepository;
 import com.yoonlee3.diary.group.YL3Group;
-import com.yoonlee3.diary.group_has_user.JoinToGroupService;
+import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.group.GroupRepository;
 import com.yoonlee3.diary.group.GroupService;
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserRepository;
 
 @SpringBootTest(classes = Diary1Application.class)
-public class GroupInsert {
+public class GroupHasuser {
 	
 	@Autowired GroupRepository groupRepository;
 	@Autowired GroupService groupService;
@@ -25,7 +25,20 @@ public class GroupInsert {
 	@Autowired JoinToGroupService joinToGroupService;
 	
 	@Disabled
-	void Test() {
+	void insert() {
+		
+		YL3Group group1 = new YL3Group();
+		group1.setGroup_title("윤이삼");
+		group1.setGroup_content("윤씨 한 명과 이씨 세 명");
+		Badge badge1 =  badgeRepository.findById(5l)
+				.orElseThrow( ()-> new RuntimeException("해당 배지를 찾을 수 없습니다."));
+		group1.setBadge_id(badge1);
+		
+		User user1 = userRepository.findById(1l)
+				.orElseThrow();
+		group1.setGroup_leader(user1);
+		
+		groupRepository.save(group1);
 		
 		YL3Group group2 = new YL3Group();
 		group2.setGroup_title("노라조");
@@ -91,6 +104,62 @@ public class GroupInsert {
 		group.setGroup_id(1l);
 		
 		joinToGroupService.joinToGroup(group.getGroup_id(), user.getUser_id());
+		//////
+		
+		User user2 = new User();
+		user2.setUser_id(3L);
+		
+		YL3Group group2 = new YL3Group();
+		group2.setGroup_id(1l);
+		
+		joinToGroupService.joinToGroup(group2.getGroup_id(), user2.getUser_id());
+		//////
+		
+		User user3 = new User();
+		user3.setUser_id(4L);
+		
+		YL3Group group3 = new YL3Group();
+		group3.setGroup_id(1l);
+		
+		joinToGroupService.joinToGroup(group3.getGroup_id(), user3.getUser_id());
+		/////
+		
+		User user4 = new User();
+		user4.setUser_id(5L);
+		
+		YL3Group group4 = new YL3Group();
+		group4.setGroup_id(1l);
+		
+		joinToGroupService.joinToGroup(group4.getGroup_id(), user4.getUser_id());
+		/////
+		
+		User user5 = new User();
+		user5.setUser_id(2L);
+		
+		YL3Group group5 = new YL3Group();
+		group5.setGroup_id(2l);
+		
+		joinToGroupService.joinToGroup(group5.getGroup_id(), user5.getUser_id());
 		
 	}
+	
+	@Disabled
+	void leaveGroup() {
+		// 그룹리더가 떠나기
+		/*
+		User user = userRepository.findById(1l).orElseThrow();
+		YL3Group group = groupRepository.findById(1l).orElseThrow();
+		
+		joinToGroupService.leaveGroup(group.getGroup_id(), user.getUser_id());
+		*/
+		
+		// 그룹원이 떠나기
+		User user2 = userRepository.findById(2l).orElseThrow();
+		YL3Group group2 = groupRepository.findById(1l).orElseThrow();
+		
+		joinToGroupService.leaveGroup(group2.getGroup_id(), user2.getUser_id());
+		
+	}
+	
+	
 }

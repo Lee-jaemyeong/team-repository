@@ -1,4 +1,4 @@
-package com.yoonlee3.diary.group_has_user;
+package com.yoonlee3.diary.groupHasUser;
 
 import java.util.List;
 
@@ -48,14 +48,23 @@ public class JoinToGroupService {
 		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("그룹 없음"));
 		User user = userRepository.findById(user_id).orElseThrow(()-> new RuntimeException("유저 없음"));
 		
-		group.getUsers().remove(user);
-		user.getGroups().remove(group);
-		
-		 if (!group.getUsers().contains(user)) {
-		        throw new IllegalStateException("해당 유저는 그룹에 속해있지 않습니다.");
-		    }
+		if (!group.getUsers().contains(user)) {
+			
+			throw new IllegalStateException("해당 유저는 그룹에 속해있지 않습니다.");
+			
+		} else if ( group.getGroup_leader().equals(user) ) {
+			
+			throw new IllegalStateException("그룹 리더는 그룹을 탈퇴할 수 없습니다. ");
+			
+		} else {
+			
+			group.getUsers().remove(user);
+			user.getGroups().remove(group);
+			
+		}
 		
 		groupRepository.save(group);
+		
 	}
 	
 	// 그룹 수 확인하기

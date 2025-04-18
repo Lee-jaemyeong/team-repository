@@ -5,16 +5,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user.User;
 
 @Service
 public class GroupService {
 	
 	@Autowired GroupRepository groupRepository;
+	@Autowired JoinToGroupService joinToGroupService;
 	
 	//insert
-	public YL3Group insertGroup(YL3Group group, User user_id) {
-		group.setGroup_leader(user_id);
+	public YL3Group insertGroup(YL3Group group, User user) {
+		group.setGroup_leader(user);
+		joinToGroupService.joinToGroup(group.getGroup_id(), user.getUser_id());
 		return groupRepository.save(group);
 	}
 

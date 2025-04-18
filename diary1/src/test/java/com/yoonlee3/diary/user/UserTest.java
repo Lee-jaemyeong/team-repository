@@ -16,9 +16,9 @@ import com.yoonlee3.diary.user.UserRepository;
 public class UserTest {
 	
 	@Autowired UserRepository userRepository;
-	
+
 	@Disabled
-	public void insertUser() {
+	public void insertUser2() {
 		User user = new User();
 		user.setUsername("admin");
 		user.setEmail("admin@admin.com");
@@ -26,31 +26,28 @@ public class UserTest {
 		user.setUsername("admin");
 		
 		userRepository.save(user);
+		/////////
+		User user2 = new User();
+		user2.setUsername("test");
+		user2.setEmail("test@test.com");
+		user2.setPassword("test");
 		
-	}
-	@Disabled
-	public void insertUser2() {
-		User user = new User();
-		user.setUsername("test");
-		user.setEmail("test@test.com");
-		user.setPassword("test");
-		
-		userRepository.save(user);
-		
+		userRepository.save(user2);
+		//////////////////
 		User user3 = new User();
 		user3.setUsername("apple");
 		user3.setEmail("apple@test.com");
 		user3.setPassword("1111");
 		
 		userRepository.save(user3);
-		
+		//////////////
 		User user4 = new User();
 		user4.setUsername("banana");
 		user4.setEmail("banana@test.com");
 		user4.setPassword("2222");
 		
 		userRepository.save(user4);
-		
+		////////////////
 		User user5 = new User();
 		user5.setUsername("mango");
 		user5.setEmail("mango@test.com");

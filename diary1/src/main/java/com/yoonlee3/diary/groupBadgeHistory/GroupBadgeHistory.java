@@ -1,4 +1,4 @@
-package com.yoonlee3.diary.Group_badge_history;
+package com.yoonlee3.diary.groupBadgeHistory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,21 +21,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity @Getter @Setter
-public class Group_badge_history {
+public class GroupBadgeHistory {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long group_badge_history_id;
 	
 	@ManyToOne
-	@JoinColumn(name="group_id")
-	@Column(nullable=false)
+	@JoinColumn(name = "group_id")
 	private YL3Group group_id;
 	
 	@ManyToOne
-	@Column(nullable=false)
 	@JoinColumn(name = "badge_id")
-	private List<Badge> badge_id;
+	private Badge badge_id;
 	
 	@Column(updatable = false , nullable=false)
 	private LocalDateTime create_date = LocalDateTime.now();
