@@ -38,8 +38,4 @@ public class UserService {
 		return userRepository.updateById(user.getUser_id(), user.getUsername());
 	}	
 	
-	//delete
-    public int deleteUser(User user, String password) {
-    	return userRepository.deleteByIdAndPassword(user.getUser_id(), user.getPassword());
-    }
 }

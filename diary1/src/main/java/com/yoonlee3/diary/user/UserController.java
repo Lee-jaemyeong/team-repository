@@ -168,4 +168,28 @@ public class UserController {
 	@GetMapping("/user/userdelete")
 	public String userdelete() { return "user/userdelete"; }
 	
+	@PostMapping("/user/userdelete")
+	public String userdelete_form(@RequestParam("password") String password,
+	                              Principal principal,
+	                              RedirectAttributes redirectAttributes) {
+		
+		String email = principal.getName();
+	    Optional<User> opUser = userRepository.findByEmail(email);
+
+	    if (opUser.isPresent()) {
+	        User user = opUser.get();
+	        
+	        if (passwordEncoder.matches(password, user.getPassword())) {
+	            userRepository.delete(user);
+	            SecurityContextHolder.clearContext();
+
+	            redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
+	            return "redirect:/user/login";
+	        } else {
+	            redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
+	            return "redirect:/user/userdelete"; }
+	    } else {
+	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
+	        return "redirect:/user/userdelete"; }
+	}
 }
