@@ -1,5 +1,6 @@
 package com.yoonlee3.diary.user;
 
+import java.security.Principal;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -14,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class UserController {
@@ -26,13 +29,33 @@ public class UserController {
 	
 	@GetMapping("/")
 	public String main() { return "user/login"; }
-
+	
+	@ModelAttribute
+	public void NicknameToModel(Model model, Principal principal) {
+		if (principal != null) {
+			String email = principal.getName();
+		    User user = userRepository.findByEmail(email).orElseThrow();
+		    model.addAttribute("nickname", user.getUsername());
+		} else {
+		        model.addAttribute("nickname", "Guest");
+		    }
+	}
+	
 	@GetMapping("/user/mypage")
-	public String mypage() { return "user/mypage"; }	
+	public String myPage(Model model, Principal principal) { 
+		String email = principal.getName(); 
+
+		User user = userRepository.findByEmail(email).orElseThrow();
+		model.addAttribute("nickname", user.getUsername()); 
+		return "user/mypage";
+		}
 	
 	@GetMapping("/user/login")
 	public String login() { return "user/login"; }
 	
+	@PostMapping("/user/login")
+	public String login_form() { return "user/login"; }
+
 	@GetMapping("/user/join")
 	public String join(UserForm userForm) { return "user/join"; }
 	
@@ -108,7 +131,7 @@ public class UserController {
 	            userRepository.save(user);
 
 	            model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
-	            return "user/mypage";
+	            return "redirect:/user/mypage";
 	        } else {
 	            model.addAttribute("msg", "다시 입력해주세요.");
 	            return "user/passchange"; }
@@ -118,8 +141,31 @@ public class UserController {
 	}
 	
 	@GetMapping("/user/userchange")
-	public String userchange() { return "user/userchange"; }
+	public String userChange() { return "user/userchange"; }
+	
+	@PostMapping("/user/userchange")
+	public String userChange_form(@RequestParam String username,
+	                              Principal principal,
+	                              RedirectAttributes redirectAttributes) {
+
+	    String email = principal.getName();
+	    Optional<User> opUser = userRepository.findByEmail(email);
+
+	    if (opUser.isPresent()) {
+	        User user = opUser.get();
+
+	        user.setUsername(username);
+	        userRepository.save(user);
+
+	        redirectAttributes.addFlashAttribute("msg", "닉네임이 변경되었습니다.");
+	        return "redirect:/user/mypage";
+	    } else {
+	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
+	        return "redirect:/user/userchange";
+	    }
+	}
 	
 	@GetMapping("/user/userdelete")
 	public String userdelete() { return "user/userdelete"; }
+	
 }

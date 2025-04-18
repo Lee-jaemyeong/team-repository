@@ -2,6 +2,8 @@ package com.yoonlee3.diary.user;
 
 import java.util.List;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +34,12 @@ public class UserService {
 	public int updateByPass( User user ) {
 		return userRepository.updateByIdAndPassword(user.getPassword(), user.getEmail());
 	}
-	public int updateByUsername( User user , String oldname ) {
-		return userRepository.updateById(oldname, user.getUsername());
+	public int updateByUsername(Long user_id, User user ) {
+		return userRepository.updateById(user.getUser_id(), user.getUsername());
 	}	
 	
 	//delete
-	public int deleteUser(User user) { 
-		return userRepository.deleteByIdAndPassword(user.getUser_id(), user.getPassword());
-	}
+    public int deleteUser(User user, String password) {
+    	return userRepository.deleteByIdAndPassword(user.getUser_id(), user.getPassword());
+    }
 }

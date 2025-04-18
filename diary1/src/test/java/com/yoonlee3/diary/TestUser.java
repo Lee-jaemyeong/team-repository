@@ -14,9 +14,9 @@ public class TestUser {
 	@Test
 	public void insert() {
 		User user = new User();
-		user.setUsername("first");
-		user.setPassword("1111");
-		user.setEmail("first@gmail.com");
+		user.setUsername("admin");
+		user.setPassword("1234");
+		user.setEmail("admin@admin.com");
 		userRepository.save(user);
 	}
 	
