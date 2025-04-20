@@ -32,11 +32,11 @@ public class DiaryService {
 	
 	public int update(Diary diary) {
 		return diaryRepository.updateById(
-			diary.getDiary_id(),diary.getDiary_title(),diary.getDiary_content()
+			diary.getId(),diary.getDiary_title(),diary.getDiary_content()
 		);
 	}
 	
 	public int delete(Diary diary) { 
-		return diaryRepository.deleteByDId(diary.getDiary_id());
+		return diaryRepository.deleteByDId(diary.getId());
 	}
 }

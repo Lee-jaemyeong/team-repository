@@ -35,7 +35,7 @@ public class UserService {
 		return userRepository.updateByIdAndPassword(user.getPassword(), user.getEmail());
 	}
 	public int updateByUsername(Long user_id, User user ) {
-		return userRepository.updateById(user.getUser_id(), user.getUsername());
+		return userRepository.updateById(user.getId(), user.getUsername());
 	}	
 	
 }

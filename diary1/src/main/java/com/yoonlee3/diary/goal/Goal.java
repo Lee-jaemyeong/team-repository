@@ -28,7 +28,8 @@ public class Goal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long goal_id;
+	@Column(name="goal_id")
+	private Long id;
 	
 	@Column(nullable=false)
 	private String goal_content;
@@ -41,18 +42,14 @@ public class Goal {
 	
 	@OneToOne
 	@JoinColumn(name = "open_scope_id")
-	private OpenScope open_scope_id;
+	private OpenScope openScope;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private User user_id;
+	private User user;
 	
-	/*
-	@OneToMany
-	List<User_achiv> userAchiv = new ArrayList<>();
-	*/
 	
-	@OneToMany(mappedBy = "goal_id", cascade = CascadeType.REMOVE )
+	@OneToMany(mappedBy = "goal", cascade = CascadeType.REMOVE )
 	List<GoalStatus> goalStatuses = new ArrayList<>();
 	
 }

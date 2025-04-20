@@ -9,7 +9,7 @@ public interface GroupAchivRepository extends JpaRepository<GroupAchiv, Long>{
 
 	//C
 	//R
-	@Query("select ga from GroupAchiv ga where ga.group_id = :group_id")
+	@Query("select ga from GroupAchiv ga where ga.group.id = :group_id")
 	List<GroupAchiv> findByGroupAchiv(Long group_id);
 	//U
 	//D

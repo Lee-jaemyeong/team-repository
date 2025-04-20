@@ -23,19 +23,19 @@ public interface GroupRepository extends JpaRepository< YL3Group, Long>{
 	// 3. update
 	@Modifying
 	@Transactional
-	@Query("update YL3Group g set g.badge_id = g.badge_id +1 where g.group_id = :group_id")
+	@Query("update YL3Group g set g.badge.id = g.badge.id +1 where g.id = :group_id")
 	int updateGroupBadge (@Param("group_id") Long group_id);
 	
 	@Modifying
 	@Transactional
 	@Query("update YL3Group g set g.group_title = :group_title, group_content = :group_content"+
-			" where g.group_id = :group_id and g.group_leader = :user_id")
+			" where g.id = :group_id and g.group_leader = :user_id")
 	int updateGroup (String group_title, String group_content, Long group_id, Long user_id);
 	
 	// delete
 	@Modifying
 	@Transactional
-	@Query("delete from YL3Group g where g.group_id = :group_id and g.group_leader = :user_id")
+	@Query("delete from YL3Group g where g.id = :group_id and g.group_leader = :user_id")
 	int deleteGroup(Long group_id, Long user_id);
 	
 	

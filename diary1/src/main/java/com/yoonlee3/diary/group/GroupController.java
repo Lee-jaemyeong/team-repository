@@ -38,8 +38,8 @@ public class GroupController {
 	public String groupJoin_post(Principal principal, YL3Group group, User user) {
 		String username = principal.getName();
 		user = userRepository.findByUsername(username);
-		Long user_id = user.getUser_id();
-		Long group_id = group.getGroup_id();
+		Long user_id = user.getId();
+		Long group_id = group.getId();
 		joinToGroupService.joinToGroup(group_id, user_id);
 		return "group/group";
 	}
@@ -56,8 +56,8 @@ public class GroupController {
 	public String groupLeave_Post(Principal principal, YL3Group group, User user) {
 		String username = principal.getName();
 		user = userRepository.findByUsername(username);
-		Long user_id = user.getUser_id();
-		Long group_id = group.getGroup_id();
+		Long user_id = user.getId();
+		Long group_id = group.getId();
 		
 		joinToGroupService.leaveGroup(group_id, user_id);
 		return "group/group";
@@ -74,8 +74,8 @@ public class GroupController {
 	public String groupDelete_post(Principal principal, YL3Group group, User user) {
 		String username = principal.getName();
 		user = userRepository.findByUsername(username);
-		Long user_id = user.getUser_id();
-		Long group_id = group.getGroup_id();
+		Long user_id = user.getId();
+		Long group_id = group.getId();
 		
 		groupService.deleteGroup(group_id, user_id);
 		return "group/main";
