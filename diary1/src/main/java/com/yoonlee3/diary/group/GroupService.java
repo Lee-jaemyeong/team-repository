@@ -17,7 +17,7 @@ public class GroupService {
 	//insert
 	public YL3Group insertGroup(YL3Group group, User user) {
 		group.setGroup_leader(user);
-		joinToGroupService.joinToGroup(group.getGroup_id(), user.getUser_id());
+		joinToGroupService.joinToGroup(group.getId(), user.getId());
 		return groupRepository.save(group);
 	}
 
@@ -37,7 +37,7 @@ public class GroupService {
 	
 	public int updateGroup (YL3Group group, User user) {
 		return groupRepository.updateGroup(group.getGroup_title(),
-					group.getGroup_content(), group.getGroup_id(), user.getUser_id());
+					group.getGroup_content(), group.getId(), user.getId());
 	}
 	
 	//delete

@@ -10,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import com.yoonlee3.diary.group.YL3Group;
 
@@ -24,11 +22,11 @@ import lombok.Setter;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long user_id;
+	@Column(name="user_id")
+	private Long id;
 		
 	@Column(unique=true , nullable=false)  
 	private String username;
-	
 	@Column(nullable=false)
 	private String password;
 		
@@ -38,11 +36,7 @@ public class User {
 	@Column(updatable = false , nullable=false)
 	private LocalDateTime create_date = LocalDateTime.now();
 	
-	@OneToMany(mappedBy = "group_leader")
-	private Set<YL3Group> ledGroups = new HashSet<>();
-	
 	@ManyToMany(mappedBy = "users")
 	private Set<YL3Group> groups = new HashSet<>();
-	
 }
 

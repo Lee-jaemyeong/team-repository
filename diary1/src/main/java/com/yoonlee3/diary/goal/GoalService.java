@@ -16,28 +16,29 @@ public class GoalService {
 	GoalRepository goalRepository;
 	
 	//C
-	public Goal insertGoal(Goal goal) {
+	public Goal insertGoal(Goal goal, User user) {
+		goal.setUser(user);
 		return goalRepository.save(goal);
 	}
 	
 	//R
 	public Goal selectByGaolId(Goal goal) {
-		return goalRepository.selectByGoalId(goal.getGoal_id());
+		return goalRepository.selectByGoalId(goal.getId());
 	}
 	
 	public List<Goal> selectByUserId(User user){
-		return goalRepository.selectByUserId(user.getUser_id());
+		return goalRepository.selectByUserId(user.getId());
 	}
 	
 	//U
 	public int updateGoal(Goal goal, OpenScope openscope ) {
-		return goalRepository.updateByGoalId(goal.getDue_date(), goal.getGoal_content(), openscope.getOpen_scope_id(), goal.getGoal_id());
+		return goalRepository.updateByGoalId(goal.getDue_date(), goal.getGoal_content(), openscope.getId(), goal.getId());
 		//int updateByGoalId(Date due_date, String goal_content, Long open_scope_id, Long goal_id);
 	}
 	
 	//D
 	public int deleteGoal(Goal goal, User user) {
-		return goalRepository.deleteGoal(goal.getGoal_id(), user.getUser_id());
+		return goalRepository.deleteGoal(goal.getId(), user.getId());
 	}
 	
 }

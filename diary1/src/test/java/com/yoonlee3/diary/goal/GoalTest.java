@@ -30,7 +30,7 @@ public class GoalTest {
 		Goal goal = new Goal();
 		User user = userRepository.findById(1l).orElseThrow();
 		
-		goal.setUser_id(user);
+		goal.setUser(user);
 		goal.setGoal_content("매일 30분 독서하기");
 		
 
@@ -38,7 +38,7 @@ public class GoalTest {
 		goal.setDue_date(dueDate);
 		
 		OpenScope openscope = openScopeRepository.selectById(4l);
-		goal.setOpen_scope_id(openscope);
+		goal.setOpenScope(openscope);
 		
 		goalRepository.save(goal);
 	}

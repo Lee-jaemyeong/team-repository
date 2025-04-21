@@ -9,5 +9,7 @@ public class BadgeService {
 	@Autowired
 	BadgeRepository badgeRepository;
 	
-	
+	public Badge selectById(Long badge_id) {
+		return badgeRepository.selectById(badge_id);
+	}
 }

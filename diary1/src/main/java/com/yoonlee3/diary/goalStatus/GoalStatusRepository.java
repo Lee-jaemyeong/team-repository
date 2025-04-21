@@ -13,14 +13,14 @@ public interface GoalStatusRepository extends JpaRepository<GoalStatus, Long>{
 	
 	//C
 	//R
-	@Query("select gs from GoalStatus gs where gs.goal_id=:goal_id")
+	@Query("select gs from GoalStatus gs where gs.goal.id=:goal_id")
 	List<GoalStatus> selectByGoalId(Long goal_id);
 	
 	//U
 	
 	@Modifying
 	@Transactional
-	@Query("update GoalStatus gs set gs.is_success= :is_success where gs.goal_id= :goal_id")
+	@Query("update GoalStatus gs set gs.is_success= :is_success where gs.goal.id= :goal_id")
 	int updateGoalStatus(Boolean is_success, Long goal_id);
 
 	

@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface BadgeRepository extends JpaRepository<Badge, Long> {
 	//C
 	//R
-	@Query("select b from Badge b where b.badge_id = :badge_id")
-	Optional<Badge> findById(Long badge_id);
+	@Query("select b from Badge b where b.id = :badge_id")
+	Badge selectById(Long badge_id);
 	
 	//U
 	

@@ -18,18 +18,18 @@ public class GoalSatusService {
 	
 	//C
 	public GoalStatus insertGoalStatus(Goal goal, GoalStatus goalStatus) {
-		goalStatus.setGoal_id(goal);
+		goalStatus.setGoal(goal);
 		return goalStatusRepository.save(goalStatus);
 	}
 	
 	//R
 	public List<GoalStatus> selectGoal(Goal goal) {
-		return goalStatusRepository.selectByGoalId(goal.getGoal_id());
+		return goalStatusRepository.selectByGoalId(goal.getId());
 	}
 	
 	//U
 	public int updateGoal(GoalStatus goalStatus, Goal goal) {
-		return goalStatusRepository.updateGoalStatus(goalStatus.getIs_success(), goal.getGoal_id());
+		return goalStatusRepository.updateGoalStatus(goalStatus.getIs_success(), goal.getId());
 	}
 	
 	//D

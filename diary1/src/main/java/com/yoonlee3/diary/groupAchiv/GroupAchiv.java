@@ -20,11 +20,12 @@ public class GroupAchiv {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long group_achiv_id;
+	@Column(name="group_achiv_id")
+	private Long id;
 	
 	@ManyToOne
 	@JoinColumn(name = "group_id")
-	private YL3Group group_id;
+	private YL3Group group;
 	
 	@Column(nullable=false)
 	private Date month;

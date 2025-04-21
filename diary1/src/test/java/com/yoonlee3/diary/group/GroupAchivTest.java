@@ -22,7 +22,7 @@ public class GroupAchivTest {
 		
 		GroupAchiv groupAchiv = new GroupAchiv();
 		YL3Group group = groupRepository.findById(1l).orElseThrow();
-		groupAchiv.setGroup_id(group);
+		groupAchiv.setGroup(group);
 		
 		Date date = Date.valueOf("2025-04-01");
 		groupAchiv.setMonth(date);
