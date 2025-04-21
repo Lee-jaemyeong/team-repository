@@ -25,15 +25,16 @@ public class GroupBadgeHistory {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long group_badge_history_id;
+	@Column(name = "group_badge_history_id")
+	private Long id;
 	
 	@ManyToOne
 	@JoinColumn(name = "group_id")
-	private YL3Group group_id;
+	private YL3Group group;
 	
 	@ManyToOne
 	@JoinColumn(name = "badge_id")
-	private Badge badge_id;
+	private Badge badge;
 	
 	@Column(updatable = false , nullable=false)
 	private LocalDateTime create_date = LocalDateTime.now();

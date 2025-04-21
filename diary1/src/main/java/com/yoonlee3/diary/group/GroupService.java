@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistoryService;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user.User;
 
@@ -13,11 +14,12 @@ public class GroupService {
 	
 	@Autowired GroupRepository groupRepository;
 	@Autowired JoinToGroupService joinToGroupService;
+	@Autowired GroupBadgeHistoryService historyService;
 	
 	//insert
 	public YL3Group insertGroup(YL3Group group, User user) {
 		group.setGroup_leader(user);
-		joinToGroupService.joinToGroup(group.getGroup_id(), user.getUser_id());
+		joinToGroupService.joinToGroup(group.getId(), user.getId());
 		return groupRepository.save(group);
 	}
 
@@ -26,8 +28,8 @@ public class GroupService {
 		return groupRepository.findAll();
 	}
 	
-	public List<YL3Group> selectByGroupTitle(String group_title) {
-		return groupRepository.selectByGroupTitle(group_title);
+	public List<YL3Group> findByGroupTitle(String group_title) {
+		return groupRepository.findByGroupTitle(group_title);
 	}
 	
 	//update
@@ -37,7 +39,7 @@ public class GroupService {
 	
 	public int updateGroup (YL3Group group, User user) {
 		return groupRepository.updateGroup(group.getGroup_title(),
-					group.getGroup_content(), group.getGroup_id(), user.getUser_id());
+					group.getGroup_content(), group.getId(), user.getId());
 	}
 	
 	//delete

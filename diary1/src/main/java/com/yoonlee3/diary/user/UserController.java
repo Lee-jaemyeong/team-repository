@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +35,7 @@ public class UserController {
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {
 			String email = principal.getName();
-		    User user = userRepository.findByEmail(email).orElseThrow();
+		    User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일에 해당하는 사용자를 찾을 수 없습니다: " + email));
 		    model.addAttribute("nickname", user.getUsername());
 		} else {
 		        model.addAttribute("nickname", "Guest");
@@ -45,7 +46,7 @@ public class UserController {
 	public String myPage(Model model, Principal principal) { 
 		String email = principal.getName(); 
 
-		User user = userRepository.findByEmail(email).orElseThrow();
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다."));
 		model.addAttribute("nickname", user.getUsername()); 
 		return "user/mypage";
 		}

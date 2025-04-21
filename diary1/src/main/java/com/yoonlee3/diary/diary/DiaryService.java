@@ -12,13 +12,12 @@ public class DiaryService {
 	@Autowired DiaryRepository diaryRepository;
 	
 	public List<Diary> findAll() { 
-		return diaryRepository.findAll();
+		return diaryRepository.findAllByOrderByDesc();
 	}
 	
 	@Transactional
 	public Diary find(Long diary_id) {
 		Diary diary = diaryRepository.findById(diary_id).get();
-		diaryRepository.save(diary);
 		return diary;
 	}
 	
@@ -26,17 +25,17 @@ public class DiaryService {
 		diaryRepository.save(diary);
 	}
 	
-	public Diary update_view(Long diary_id) {
-		return diaryRepository.findById(diary_id).get(); 
+	public Diary update_view(Long id) {
+		return diaryRepository.findById(id).get(); 
 	}
 	
 	public int update(Diary diary) {
 		return diaryRepository.updateById(
-			diary.getDiary_id(),diary.getDiary_title(),diary.getDiary_content()
+			diary.getId(),diary.getDiary_title(),diary.getDiary_content()
 		);
 	}
 	
 	public int delete(Diary diary) { 
-		return diaryRepository.deleteByDId(diary.getDiary_id());
+		return diaryRepository.deleteByDId(diary.getId());
 	}
 }
