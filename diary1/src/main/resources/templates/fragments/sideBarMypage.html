@@ -1,12 +1,27 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<th:block th:fragment="sideBar">
+<th:block th:fragment="sideBarMypage">
 
 	<nav id="sidebar">
 		<div class="p-4 pt-5">
-			<a href="#" class="img logo rounded-circle mb-5"
+			<!-- 프로필 -->
+			<a href="#" class="img logo rounded-circle mb-3"
 				style="background-image: url(#); background-color: white;"></a>
-			<ul class="list-unstyled components mb-5" style="height: 45%;">
+			<div class="d-flex justify-content-center mb-3">
+				<div style="padding: 0 10px;">
+					<a href="#">{n}팔로잉</a>
+				</div>
+				<div style="padding: 0 10px;">
+					<a href="#">{n}팔로워</a>
+				</div>
+			</div>
+			<div class="container">
+				<a href="#" class="btn p-2 mb-2"
+					style="width: 100%; font-weight: bold; color: #fff; font-size: 0.8em;">프로필
+					수정</a>
+			</div>
+			<!-- 프로필 -->
+			<ul class="list-unstyled components mb-5">
 				<li><a href="#">HOME</a></li>
 				<li><a href="#pageSubmenu" data-toggle="collapse"
 					aria-expanded="false" class="dropdown-toggle">GROUP</a>
@@ -22,8 +37,12 @@
 			</ul>
 
 			<div class="container-fluide">
-				<a href="#" class="btn p-3 mb-5" 
-				style="width: 100%; background-color: #f8b739; font-weight: bold; color: #fff;">일기쓰기</a>
+				<a href="#" class="btn mb-3" 
+				style="width: 100%; font-weight: bold; color: #f8b739; border: 3px solid #f8b739; ">로그아웃</a>
+			</div>
+			<div class="container-fluide">
+				<a href="#" class="btn mb-3" 
+				style="width: 100%; font-weight: bold; color: #d10e00; border: 3px solid #d10e00;">탈퇴하기</a>
 			</div>
 			<div class="footer">
 				<p>
