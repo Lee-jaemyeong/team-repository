@@ -32,7 +32,8 @@ public class YL3Group {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long group_id;
+	@Column(name = "group_id")
+	private Long id;
 	
 	@Column(unique=true , nullable=false)  
 	private String group_title;
@@ -49,7 +50,7 @@ public class YL3Group {
 	
 	@OneToOne
 	@JoinColumn(name = "badge_id")
-	private Badge badge_id;
+	private Badge badge;
 	
 	
 	@ManyToMany
@@ -61,10 +62,10 @@ public class YL3Group {
 	private Set<User> users = new HashSet<>();
 	
 	
-	@OneToMany(mappedBy = "group_id", cascade = CascadeType.REMOVE )
+	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE )
     private List<GroupBadgeHistory> badgeHistories = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "group_id", cascade = CascadeType.REMOVE )
+	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE )
 	private List<GroupAchiv> groupAchiv = new ArrayList<>();
 	
 	

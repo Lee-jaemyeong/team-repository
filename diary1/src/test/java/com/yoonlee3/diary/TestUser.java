@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserRepository;
 
-@SpringBootTest
+@SpringBootTest(classes = Diary1Application.class)
 public class TestUser {
 	@Autowired UserRepository userRepository;
 	

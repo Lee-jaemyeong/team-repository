@@ -20,7 +20,8 @@ public class GoalStatus {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long status_id;
+	@Column(name="status_id")
+	private Long id;
 	
 	@Column(updatable = false)
 	private LocalDateTime createDate = LocalDateTime.now();
@@ -30,6 +31,6 @@ public class GoalStatus {
 	
 	@ManyToOne
 	@JoinColumn(name = "goal_id")
-	private Goal goal_id;
+	private Goal goal;
 	
 }

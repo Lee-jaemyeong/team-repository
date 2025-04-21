@@ -22,7 +22,8 @@ public class OpenScope {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long open_scope_id;
+	@Column(name="open_scope_id")
+	private Long id;
 	
 	@Column(nullable=false)
 	private String openScope_title;	

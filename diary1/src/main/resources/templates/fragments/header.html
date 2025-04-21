@@ -10,7 +10,7 @@
 	<th:block th:fragment="header">
 		<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
 			<div class="container-fluid">
-				<a class="navbar-brand" th:href="@{/board/list}">Diary</a>
+				<a class="navbar-brand" th:href="@{/diary/list}">Diary</a>
 				<button class="navbar-toggler" type="button"
 					data-bs-toggle="collapse" data-bs-target="#mynavbar">
 					<span class="navbar-toggler-icon"></span>
@@ -18,7 +18,7 @@
 				<div class="collapse navbar-collapse" id="mynavbar">
 					<ul class="navbar-nav me-auto">
 						<li class="nav-item"><a class="nav-link"
-							th:href="@{/board/list}" sec:authorize="isAuthenticated()" >BOARD</a></li>
+							th:href="@{/diary/list}" sec:authorize="isAuthenticated()" >Diary</a></li>
 					</ul>
 					<!--    권한    sec:authorize="isAuthenticated()" 로그인해야지 사용가능
 						           sec:authorize="isAnonymous()"     권한없어도 사용가능
