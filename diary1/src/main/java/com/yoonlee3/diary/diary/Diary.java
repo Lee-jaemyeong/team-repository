@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import com.yoonlee3.diary.openScope.OpenScope;
+import com.yoonlee3.diary.template.Template;
 import com.yoonlee3.diary.user.User;
 
 import lombok.Getter;
@@ -37,4 +38,9 @@ public class Diary {
 	@OneToOne
 	@JoinColumn(name = "open_scope_id")
 	private OpenScope openScope;
+	
+	@OneToOne
+	@Column(name="template_id")
+	private Template template;
+	
 }
