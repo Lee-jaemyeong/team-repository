@@ -14,8 +14,8 @@ public interface GroupAchivRepository extends JpaRepository<GroupAchiv, Long>{
 	List<GroupAchiv> findByGroupAchiv(Long group_id);
 	
 	@Query("select count(*) from Goal g where g.user.id= :user_id and g.startDate <= :currentDate"
-			+ " and g.dueDate <= :currentDate")
-	int selectNowGoalSize(Long user_id, LocalDate currentDate);
+			+ " and g.dueDate >= :currentDate")
+	int findNowGoalSize(Long user_id, LocalDate currentDate);
 	
 	//U
 	//D

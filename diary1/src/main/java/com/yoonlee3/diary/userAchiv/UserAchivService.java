@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,8 @@ public class UserAchivService {
 	@Autowired
 	GoalSatusService goalSatusService;
 
-	public UserAchiv selectById(Goal goal) {
-		return userAchivRepository.selectById(goal.getId());
+	public Optional<UserAchiv> selectById(Goal goal) {
+		return userAchivRepository.findById(goal.getId());
 	}
 
 
