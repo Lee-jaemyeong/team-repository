@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
+
 	@Modifying
 	@Transactional
 	@Query("update Diary d set d.diary_title= :diary_title, d.diary_content= :diary_content where d.id= :diary_id")

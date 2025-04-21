@@ -4,10 +4,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface OpenScopeRepository extends JpaRepository<OpenScope, Long> {
-	//C
-	//R
+
+	// C
+
+	// R
 	@Query("select os from OpenScope os where os.id = :open_scope_id")
 	OpenScope selectById(Long open_scope_id);
-	//U
-	//D
+
+	// U
+
+	// D
 }

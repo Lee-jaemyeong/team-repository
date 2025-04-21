@@ -10,20 +10,19 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+public interface UserAchivRepository extends JpaRepository<UserAchiv, Long> {
 
-public interface UserAchivRepository extends JpaRepository< UserAchiv, Long > {
-	
-	//C
-	
-	//R
+	// C
+
+	// R
 	@Query("select ua from UserAchiv ua where ua.goal.id = :goal_id")
 	UserAchiv selectById(Long goal_id);
-	
-	@Query("select count(true) from GoalStatus gs where gs.goal.id= :goal_id and "+
-			"gs.createDate >= :startOfMonth and gs.createDate < startOfNextMonth")
-	int selectMonthStatus(Long goal_id, LocalDateTime startOfMonth, LocalDateTime startOfNextMonth );
 
+	@Query("select count(true) from GoalStatus gs where gs.goal.id= :goal_id and "
+			+ "gs.createDate >= :startOfMonth and gs.createDate < :startOfNextMonth")
+	int selectMonthStatus(Long goal_id, LocalDateTime startOfMonth, LocalDateTime startOfNextMonth);
+
+	// U
 	
-	//U
-	//D
+	// D
 }

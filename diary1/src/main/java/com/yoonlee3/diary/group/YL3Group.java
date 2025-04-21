@@ -27,23 +27,25 @@ import com.yoonlee3.diary.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity @Getter @Setter
+@Entity
+@Getter
+@Setter
 public class YL3Group {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="group_id")
+	@Column(name = "group_id")
 	private Long id;
-	
-	@Column(unique=true , nullable=false)  
+
+	@Column(unique = true, nullable = false)
 	private String group_title;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String group_content;
-	
+
 	@Column(updatable = false)
 	private LocalDateTime create_date = LocalDateTime.now();
-	
+
 	@ManyToOne
 	@JoinColumn(name = "group_leader")
 	private User group_leader;
@@ -51,22 +53,18 @@ public class YL3Group {
 	@OneToOne
 	@JoinColumn(name = "badge_id")
 	private Badge badge;
-	
-	
+
 	@ManyToMany
-	@JoinTable(
-		    name = "Group_has_User", // 조인 테이블 이름
-		    joinColumns = @JoinColumn(name = "group_id"), // 현재 엔티티(PK)
-		    inverseJoinColumns = @JoinColumn(name = "user_id") // 상대 엔티티(PK)
-		)
+	@JoinTable(name = "Group_has_User", // 조인 테이블 이름
+			joinColumns = @JoinColumn(name = "group_id"), // 현재 엔티티(PK)
+			inverseJoinColumns = @JoinColumn(name = "user_id") // 상대 엔티티(PK)
+	)
 	private Set<User> users = new HashSet<>();
-	
-	
-	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE )
-    private List<GroupBadgeHistory> badgeHistories = new ArrayList<>();
-	
-	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE )
+
+	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+	private List<GroupBadgeHistory> badgeHistories = new ArrayList<>();
+
+	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
 	private List<GroupAchiv> groupAchiv = new ArrayList<>();
-	
-	
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistoryService;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user.User;
 
@@ -13,6 +14,7 @@ public class GroupService {
 	
 	@Autowired GroupRepository groupRepository;
 	@Autowired JoinToGroupService joinToGroupService;
+	@Autowired GroupBadgeHistoryService historyService;
 	
 	//insert
 	public YL3Group insertGroup(YL3Group group, User user) {

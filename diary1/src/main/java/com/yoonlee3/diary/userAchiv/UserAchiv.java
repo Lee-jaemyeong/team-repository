@@ -1,6 +1,5 @@
 package com.yoonlee3.diary.userAchiv;
 
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,19 +13,20 @@ import com.yoonlee3.diary.goal.Goal;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity @Getter @Setter
+@Entity
+@Getter
+@Setter
 public class UserAchiv {
-	
+
 	@Id
 	private Long id;
-	
+
 	@OneToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "goal_id")
 	@MapsId
 	private Goal goal;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private Double completionRate;
-	
-	
+
 }

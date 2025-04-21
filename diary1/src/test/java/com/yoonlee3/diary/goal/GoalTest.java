@@ -35,7 +35,7 @@ public class GoalTest {
 		
 
 		Date dueDate = Date.valueOf("2025-04-01");
-		goal.setDue_date(dueDate);
+		goal.setDueDate(dueDate);
 		
 		OpenScope openscope = openScopeRepository.selectById(4l);
 		goal.setOpenScope(openscope);

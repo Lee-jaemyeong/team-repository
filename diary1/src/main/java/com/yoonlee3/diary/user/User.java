@@ -22,21 +22,21 @@ import lombok.Setter;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="user_id")
+	@Column(name = "user_id")
 	private Long id;
-		
-	@Column(unique=true , nullable=false)  
+
+	@Column(unique = true, nullable = false)
 	private String username;
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String password;
-		
-	@Column(unique=true , nullable=false)
+
+	@Column(unique = true, nullable = false)
 	private String email;
-		
-	@Column(updatable = false , nullable=false)
+
+	@Column(updatable = false, nullable = false)
 	private LocalDateTime create_date = LocalDateTime.now();
-	
+
 	@ManyToMany(mappedBy = "users")
 	private Set<YL3Group> groups = new HashSet<>();
 }
-

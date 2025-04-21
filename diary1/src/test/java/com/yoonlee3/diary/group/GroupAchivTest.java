@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.group;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class GroupAchivTest {
 		YL3Group group = groupRepository.findById(1l).orElseThrow();
 		groupAchiv.setGroup(group);
 		
-		Date date = Date.valueOf("2025-04-01");
+		LocalDate date = LocalDate.now();
 		groupAchiv.setMonth(date);
 		
 		groupAchiv.setGoal_achievement(95.55);

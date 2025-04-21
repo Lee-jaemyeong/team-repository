@@ -22,7 +22,7 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 	//U
 	@Modifying
 	@Transactional
-	@Query("update Goal g set g.due_date= :due_date, g.goal_content= :goal_content, "
+	@Query("update Goal g set g.dueDate= :due_date, g.goal_content= :goal_content, "
 			+ "g.openScope.id = :open_scope_id where g.id = :goal_id")
 	int updateByGoalId(Date due_date, String goal_content, Long open_scope_id, Long goal_id);
 	

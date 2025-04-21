@@ -1,6 +1,6 @@
 package com.yoonlee3.diary.groupAchiv;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +28,7 @@ public class GroupAchiv {
 	private YL3Group group;
 	
 	@Column(nullable=false)
-	private Date month;
+	private LocalDate month;
 	
 	@Column(nullable=false)
 	private Double goal_achievement;

@@ -20,6 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Diary {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "diary_id")
@@ -38,9 +39,9 @@ public class Diary {
 	@OneToOne
 	@JoinColumn(name = "open_scope_id")
 	private OpenScope openScope;
-	
+
 	@OneToOne
-	@Column(name="template_id")
+	@JoinColumn(name = "template_id")
 	private Template template;
-	
+
 }
