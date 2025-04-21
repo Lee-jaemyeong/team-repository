@@ -29,10 +29,10 @@ public class UserAchivService {
 		int lastDay = YearMonth.now().lengthOfMonth();
 
 		// True가 몇개 인지
-		int countTrue = goalSatusService.countStatus(goal);
+		int countSuccess = goalSatusService.countStatus(goal);
 
 		// 달성률 계산
-		double userAchivCalc = countTrue / (double) lastDay;
+		double userAchivCalc = countSuccess / (double) lastDay;
 
 		UserAchiv userAchiv = new UserAchiv();
 		userAchiv.setGoal(goal);

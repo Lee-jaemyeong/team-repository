@@ -34,7 +34,8 @@ public class UserController {
 	public String main() {
 		return "user/login";
 	}
-
+	// localhost:8080/user/login
+	
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {

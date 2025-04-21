@@ -1,14 +1,20 @@
 package com.yoonlee3.diary.diary;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.yoonlee3.diary.group.YL3Group;
 import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.template.Template;
 import com.yoonlee3.diary.user.User;
@@ -31,6 +37,12 @@ public class Diary {
 
 	@Column(nullable = false)
 	private String diary_content;
+	
+	@Column(nullable = false)
+	private String diary_emoji;
+	
+	@Column(updatable = false , nullable=false)
+	private LocalDateTime create_date = LocalDateTime.now();
 
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
@@ -43,5 +55,6 @@ public class Diary {
 	@OneToOne
 	@JoinColumn(name = "template_id")
 	private Template template;
+	
 
 }

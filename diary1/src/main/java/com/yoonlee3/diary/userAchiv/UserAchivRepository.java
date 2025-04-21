@@ -18,10 +18,6 @@ public interface UserAchivRepository extends JpaRepository<UserAchiv, Long> {
 	@Query("select ua from UserAchiv ua where ua.goal.id = :goal_id")
 	UserAchiv selectById(Long goal_id);
 
-	@Query("select count(true) from GoalStatus gs where gs.goal.id= :goal_id and "
-			+ "gs.createDate >= :startOfMonth and gs.createDate < :startOfNextMonth")
-	int selectMonthStatus(Long goal_id, LocalDateTime startOfMonth, LocalDateTime startOfNextMonth);
-
 	// U
 	
 	// D

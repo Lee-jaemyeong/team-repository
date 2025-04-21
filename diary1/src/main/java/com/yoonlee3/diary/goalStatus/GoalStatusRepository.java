@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.goalStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,9 +18,15 @@ public interface GoalStatusRepository extends JpaRepository<GoalStatus, Long> {
 	// R
 	@Query("select gs from GoalStatus gs where gs.goal.id=:goal_id")
 	List<GoalStatus> selectByGoalId(Long goal_id);
-
+	
+	// 오늘 성공한 목표의 수 구하기
 	@Query("select count(true) from GoalStatus gs where gs.goal.id= :goal_id and gs.createDate = :currentDate")
-	int selectNowGoalSuccess(Long goal_id, LocalDate currentDate);
+	int findTodaySuccess(Long goal_id, LocalDate currentDate);
+	
+	// 이번 달 성공한 목표의 수 구하기
+	@Query("select count(true) from GoalStatus gs where gs.goal.id= :goal_id and "
+			+ "gs.createDate >= :startOfMonth and gs.createDate < :startOfNextMonth")
+	int selectMonthStatus(Long goal_id, LocalDateTime startOfMonth, LocalDateTime startOfNextMonth);
 
 	// U
 	@Modifying
