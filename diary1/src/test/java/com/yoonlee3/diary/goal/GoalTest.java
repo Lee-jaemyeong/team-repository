@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.goal;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +31,15 @@ public class GoalTest {
 		Goal goal = new Goal();
 		User user = userRepository.findById(1l).orElseThrow();
 		
-		goal.setUser_id(user);
+		goal.setId(user);
 		goal.setGoal_content("매일 30분 독서하기");
 		
 
 		Date dueDate = Date.valueOf("2025-04-01");
-		goal.setDue_date(dueDate);
+		goal.setDueDate(dueDate);
 		
-		OpenScope openscope = openScopeRepository.selectById(4l);
-		goal.setOpen_scope_id(openscope);
+		Optional<OpenScope> openscope = openScopeRepository.findById(4l);
+		goal.setOpenScope(openscope);
 		
 		goalRepository.save(goal);
 	}

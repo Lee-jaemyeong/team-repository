@@ -32,7 +32,7 @@ public class GroupHasuser {
 		group1.setGroup_content("윤씨 한 명과 이씨 세 명");
 		Badge badge1 =  badgeRepository.findById(5l)
 				.orElseThrow( ()-> new RuntimeException("해당 배지를 찾을 수 없습니다."));
-		group1.setBadge_id(badge1);
+		group1.setId(badge1);
 		
 		User user1 = userRepository.findById(1l)
 				.orElseThrow();
@@ -45,7 +45,7 @@ public class GroupHasuser {
 		group2.setGroup_content("놀고 싶은 사람들의 모임");
 		Badge badge2 =  badgeRepository.findById(1l)
 				.orElseThrow( ()-> new RuntimeException("해당 배지를 찾을 수 없습니다."));
-		group2.setBadge_id(badge2);
+		group2.setId(badge2);
 		
 		User user2 = userRepository.findById(2l)
 				.orElseThrow();
@@ -58,7 +58,7 @@ public class GroupHasuser {
 		group3.setGroup_content("견주들의 모임");
 		Badge badge3 =  badgeRepository.findById(2l)
 				.orElseThrow( ()-> new RuntimeException("해당 배지를 찾을 수 없습니다."));
-		group3.setBadge_id(badge3);
+		group3.setId(badge3);
 		
 		User user3 = userRepository.findById(2l)
 				.orElseThrow();
@@ -71,7 +71,7 @@ public class GroupHasuser {
 		group4.setGroup_content("이게 개발인지 새발인지");
 		Badge badge4 =  badgeRepository.findById(4l)
 				.orElseThrow( ()-> new RuntimeException("해당 배지를 찾을 수 없습니다."));
-		group4.setBadge_id(badge4);
+		group4.setId(badge4);
 		
 		User user4 = userRepository.findById(3l)
 				.orElseThrow();
@@ -85,7 +85,7 @@ public class GroupHasuser {
 		group5.setGroup_content("점순아 너 인물났다");
 		Badge badge5 =  badgeRepository.findById(1l)
 				.orElseThrow( ()-> new RuntimeException("해당 배지를 찾을 수 없습니다."));
-		group5.setBadge_id(badge5);
+		group5.setId(badge5);
 		
 		User user5 = userRepository.findById(4l)
 				.orElseThrow();
@@ -98,48 +98,48 @@ public class GroupHasuser {
 	@Disabled
 	public void joinGroup() {
 		User user = new User();
-		user.setUser_id(2L);
+		user.setId(2L);
 		
 		YL3Group group = new YL3Group();
-		group.setGroup_id(1l);
+		group.setId(1l);
 		
-		joinToGroupService.joinToGroup(group.getGroup_id(), user.getUser_id());
+		joinToGroupService.joinToGroup(group.getId(), user.getId());
 		//////
 		
 		User user2 = new User();
-		user2.setUser_id(3L);
+		user2.setId(3L);
 		
 		YL3Group group2 = new YL3Group();
-		group2.setGroup_id(1l);
+		group2.setId(1l);
 		
-		joinToGroupService.joinToGroup(group2.getGroup_id(), user2.getUser_id());
+		joinToGroupService.joinToGroup(group2.getId(), user2.getId());
 		//////
 		
 		User user3 = new User();
-		user3.setUser_id(4L);
+		user3.setId(4L);
 		
 		YL3Group group3 = new YL3Group();
-		group3.setGroup_id(1l);
+		group3.setId(1l);
 		
-		joinToGroupService.joinToGroup(group3.getGroup_id(), user3.getUser_id());
+		joinToGroupService.joinToGroup(group3.getId(), user3.getId());
 		/////
 		
 		User user4 = new User();
-		user4.setUser_id(5L);
+		user4.setId(5L);
 		
 		YL3Group group4 = new YL3Group();
-		group4.setGroup_id(1l);
+		group4.setId(1l);
 		
-		joinToGroupService.joinToGroup(group4.getGroup_id(), user4.getUser_id());
+		joinToGroupService.joinToGroup(group4.getId(), user4.getId());
 		/////
 		
 		User user5 = new User();
-		user5.setUser_id(2L);
+		user5.setId(2L);
 		
 		YL3Group group5 = new YL3Group();
-		group5.setGroup_id(2l);
+		group5.setId(2l);
 		
-		joinToGroupService.joinToGroup(group5.getGroup_id(), user5.getUser_id());
+		joinToGroupService.joinToGroup(group5.getId(), user5.getId());
 		
 	}
 	
@@ -157,7 +157,7 @@ public class GroupHasuser {
 		User user2 = userRepository.findById(2l).orElseThrow();
 		YL3Group group2 = groupRepository.findById(1l).orElseThrow();
 		
-		joinToGroupService.leaveGroup(group2.getGroup_id(), user2.getUser_id());
+		joinToGroupService.leaveGroup(group2.getId(), user2.getId());
 		
 	}
 	
