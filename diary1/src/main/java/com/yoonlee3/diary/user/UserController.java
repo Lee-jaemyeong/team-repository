@@ -57,7 +57,10 @@ public class UserController {
 		}
 	
 	@GetMapping("/user/login")
-	public String login() {  return "user/login"; }
+	public String login(Model model) {  
+		model.addAttribute("url" , api.step1());
+		return "user/login"; 
+		}
 	
 	@PostMapping("/user/login")
 	public String login_form() { return "user/login"; }
