@@ -28,6 +28,14 @@
 				<textarea class="form-control" th:text="${dto.diary_content}"></textarea>
 			</div>
 		</div>
+		<div>
+	        <form th:action="@{/diary/like}" method="post">
+	            <input type="hidden" name="diaryId" th:value="${dto.id}" />
+	            <span th:text="${likeCount}"></span>
+	            <button type="submit" th:text="${isLiked ? '좋아요 취소' : '좋아요'}" class="btn btn-warning">
+	            </button>
+	        </form>
+    	</div>
 		<div class="mt-3 text-right">
 			<a th:href="@{|/diary/update/${dto.id}|}" class="btn btn-danger">수정</a>
 			<a th:href="@{|/diary/delete/${dto.id}|}" class="btn btn-danger">삭제</a>

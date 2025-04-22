@@ -33,6 +33,9 @@ public class Diary {
 	@Column(nullable=false)
 	private String diary_content;
 	
+	@Column(nullable = false )
+	private String diary_emoji;
+	
 	@Column(updatable = false)
 	private LocalDateTime create_date = LocalDateTime.now();
 	

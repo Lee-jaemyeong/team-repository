@@ -21,12 +21,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.yoonlee3.diary.user_kakao.KakaoLogin;
+
 @Controller
 public class UserController {
 
 	@Autowired UserService service;
 	@Autowired UserRepository userRepository;
 	@Autowired private PasswordEncoder passwordEncoder;
+	@Autowired KakaoLogin api;
 	
 	@GetMapping("/")
 	public String main() { return "user/login"; }
@@ -52,7 +55,9 @@ public class UserController {
 		}
 	
 	@GetMapping("/user/login")
-	public String login() { return "user/login"; }
+	public String login(Model model) { 
+		model.addAttribute("url" , api.step1());
+		return "user/login"; }
 	
 	@PostMapping("/user/login")
 	public String login_form() { return "user/login"; }
