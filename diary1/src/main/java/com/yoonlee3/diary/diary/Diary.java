@@ -1,11 +1,6 @@
 package com.yoonlee3.diary.diary;
 
 import java.time.LocalDateTime;
-<<<<<<< HEAD
-=======
-import java.util.ArrayList;
-import java.util.List;
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,17 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-<<<<<<< HEAD
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
-=======
-import com.yoonlee3.diary.group.YL3Group;
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.template.Template;
 import com.yoonlee3.diary.user.User;
@@ -40,33 +27,19 @@ public class Diary {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "diary_id")
 	private Long id;
-<<<<<<< HEAD
-	
-	@Column(nullable=false)
-=======
 
 	@Column(nullable = false)
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	private String diary_title;
-
+	
 	@Column(nullable = false)
 	private String diary_content;
-	
-<<<<<<< HEAD
-	@Column(nullable = false )
-	private String diary_emoji;
-	
-	@Column(updatable = false)
-	private LocalDateTime create_date = LocalDateTime.now();
-	
-=======
+
 	@Column(nullable = false)
 	private String diary_emoji;
-	
-	@Column(updatable = false , nullable=false)
+
+	@Column(updatable = false)
 	private LocalDateTime create_date = LocalDateTime.now();
 
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	private User user;
@@ -78,9 +51,4 @@ public class Diary {
 	@OneToOne
 	@JoinColumn(name = "template_id")
 	private Template template;
-<<<<<<< HEAD
-=======
-	
-
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 }

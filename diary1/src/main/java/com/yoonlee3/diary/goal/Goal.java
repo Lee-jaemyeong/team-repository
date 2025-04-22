@@ -24,27 +24,19 @@ import com.yoonlee3.diary.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Getter
-@Setter
+@Entity @Getter @Setter
 public class Goal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "goal_id")
 	private Long id;
-<<<<<<< HEAD
 	
 	@Column(nullable=false)
-=======
-
-	@Column(nullable = false)
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	private String goal_content;
-
+	
 	@Column(updatable = false)
 	private LocalDateTime startDate = LocalDateTime.now();
-<<<<<<< HEAD
 	
 	@Column(nullable=false)
 	private Date dueDate;
@@ -64,25 +56,4 @@ public class Goal {
 	@JoinColumn(name = "template_id")
 	private Template template;
 	
-=======
-
-	@Column(nullable = false)
-	private Date dueDate;
-
-	@OneToOne
-	@JoinColumn(name = "open_scope_id")
-	private OpenScope openScope;
-
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-
-	@OneToMany(mappedBy = "goal", cascade = CascadeType.REMOVE)
-	List<GoalStatus> goalStatuses = new ArrayList<>();
-
-	@OneToOne
-	@JoinColumn(name = "template_id")
-	private Template template;
-
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 }

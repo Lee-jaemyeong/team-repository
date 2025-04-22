@@ -1,9 +1,5 @@
 package com.yoonlee3.diary.groupAchiv;
 
-<<<<<<< HEAD
-import java.sql.Date;
-=======
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 import java.time.LocalDate;
 
 import javax.persistence.Column;
@@ -19,22 +15,24 @@ import com.yoonlee3.diary.group.YL3Group;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity @Getter @Setter
+@Entity
+@Getter
+@Setter
 public class GroupAchiv {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="group_achiv_id")
+	@Column(name = "group_achiv_id")
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "group_id")
 	private YL3Group group;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private LocalDate month;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private Double goal_achievement;
 
 }

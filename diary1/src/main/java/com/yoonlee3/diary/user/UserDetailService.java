@@ -17,23 +17,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserDetailService implements UserDetailsService {
 	private final UserRepository userRepository;
-
+	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Optional<User> find = userRepository.findByEmail(email);
-		if (find.isEmpty()) {
-			throw new UsernameNotFoundException("사용자를 확인해주세요.");
-		}
-
+		if(find.isEmpty()) { throw new UsernameNotFoundException("사용자를 확인해주세요."); }
+		
 		User user = find.get();
 		/// 권한
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		if ("admin@admin.com".equals(email)) {
-			authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
-		} else {
-			authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-		}
-
-		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
+		if( "admin@admin.com".equals(email) ) {
+			authorities.add( new SimpleGrantedAuthority( UserRole.ADMIN.getValue() ) );
+		}else {
+			authorities.add( new SimpleGrantedAuthority( UserRole.USER.getValue() ) );
+		}	
+		
+		return new org.springframework.security.core.userdetails.User( user.getEmail() , user.getPassword() , authorities );
 	}
 }

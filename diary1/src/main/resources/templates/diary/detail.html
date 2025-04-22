@@ -28,7 +28,6 @@
 				<textarea class="form-control" th:text="${dto.diary_content}"></textarea>
 			</div>
 		</div>
-<<<<<<< HEAD
 		<div>
 	        <form th:action="@{/diary/like}" method="post">
 	            <input type="hidden" name="diaryId" th:value="${dto.id}" />
@@ -37,8 +36,6 @@
 	            </button>
 	        </form>
     	</div>
-=======
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 		<div class="mt-3 text-right">
 			<a th:href="@{|/diary/update/${dto.id}|}" class="btn btn-danger">수정</a>
 			<a th:href="@{|/diary/delete/${dto.id}|}" class="btn btn-danger">삭제</a>

@@ -12,12 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-=======
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 @Service
 public class Diary_gptService {
 	private static final String API_URL = "https://api.openai.com/v1/chat/completions";
@@ -39,18 +36,13 @@ public class Diary_gptService {
 		body.put("store", true);
 
 		List<Map<String, String>> messages = new ArrayList<>();
-<<<<<<< HEAD
 		messages.add(Map.of("role", "user", "content", userMessage + " 이 일기를 이모지 5개만 사용해서 요약해줘 "));
-=======
-		messages.add(Map.of("role", "user", "content", userMessage + " 이 일기를 이모지 5개로으로 요약해줘 "));
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 		body.put("messages", messages);
 
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
 		// 요청 전송
 		ResponseEntity<String> responseEntity = restTemplate.postForEntity(API_URL, requestEntity, String.class);
-<<<<<<< HEAD
 		String responseBody = responseEntity.getBody();
 		
 		 try {
@@ -62,8 +54,5 @@ public class Diary_gptService {
 		        e.printStackTrace();
 		        return "😕 요약 실패";
 		    }
-=======
-		return responseEntity.getBody();
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	}
 }
