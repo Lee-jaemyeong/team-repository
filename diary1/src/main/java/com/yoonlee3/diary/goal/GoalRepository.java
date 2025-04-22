@@ -14,10 +14,17 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 	
 	//R
 	@Query("select g from Goal g where g.id = :goal_id")
+<<<<<<< HEAD
 	Goal findByGoalId(Long goal_id);
 	
 	@Query("select g from Goal g where g.user.id = :user_id")
 	List<Goal> findByUserId(Long user_id);
+=======
+	Goal selectByGoalId(Long goal_id);
+	
+	@Query("select g from Goal g where g.user.id = :user_id")
+	List<Goal> selectByUserId(Long user_id);
+>>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	
 	//U
 	@Modifying
