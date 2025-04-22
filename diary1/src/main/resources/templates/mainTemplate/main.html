@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="~{fragments/layout}">
+				
+<th:block layout:fragment="content">
+		<div class="container-fluid p-3"
+			style="border-bottom: 1px solid #9d9d9d;">
+			<!-- 프로필영역 -->
+			<div class="d-flex bd-highlight mb-3">
+				<div>
+					<img src="https://placehold.co/80x80" alt=""
+						class="rounded-circle p-2 bd-highlight" style="margin-right: 5px;">
+				</div>
+				<div class="container p-2 bd-highlight  align-self-center"
+					style="width: 100%;">
+					<ul class="list-unstyled">
+						<li><a href="#"
+							class="link-underline link-underline-opacity-0"
+							style="color: #000000; font-weight: bold; font-size: 20px;">NAME</a></li>
+						<li style="font-size: 16px; color: #9d9d9d;">소속(친구or그룹명)</li>
+					</ul>
+				</div>
+				<div class="ms-auto p-2 bd-highlight align-self-center"
+					style="width: 100%; text-align: end;">imoji</div>
+			</div>
+			<!-- 프로필영역 -->
+			<div class="container-fluid p-3" style="border: 0px solid gray;">
+				<h1 style="font-size: 1.3em; margin-left: 5px;">{Diary Title}
+					Lorem ipsum dolor sit amet consectetur adipisicing elit. .</h1>
+			</div>
+		</div>
+		
+</th:block>
+				
+
+</html>
