@@ -32,7 +32,9 @@ public class UserController {
 	@Autowired KakaoLogin api;
 	
 	@GetMapping("/")
-	public String main() { return "user/login"; }
+	public String main(Model model) { 
+		model.addAttribute("url" , api.step1());
+		return "user/login"; }
 	
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -55,9 +57,7 @@ public class UserController {
 		}
 	
 	@GetMapping("/user/login")
-	public String login(Model model) { 
-		model.addAttribute("url" , api.step1());
-		return "user/login"; }
+	public String login() {  return "user/login"; }
 	
 	@PostMapping("/user/login")
 	public String login_form() { return "user/login"; }
@@ -146,10 +146,10 @@ public class UserController {
 	        return "user/passchange"; }
 	}
 	
-	@GetMapping("/user/userchange")
-	public String userChange() { return "user/userchange"; }
+	@GetMapping("/fragments/sidebar/nickname")
+	public String userChange() { return "fragments/sideBarMypage"; }
 	
-	@PostMapping("/user/userchange")
+	@PostMapping("/fragments/sidebar/nickname")
 	public String userChange_form(@RequestParam String username,
 	                              Principal principal,
 	                              RedirectAttributes redirectAttributes) {
@@ -167,14 +167,14 @@ public class UserController {
 	        return "redirect:/user/mypage";
 	    } else {
 	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-	        return "redirect:/user/userchange";
+	        return "redirect:/fragments/sideBarMypage";
 	    }
 	}
 	
-	@GetMapping("/user/userdelete")
-	public String userdelete() { return "user/userdelete"; }
+	@GetMapping("/fragments/sidebar/delete")
+	public String userdelete() { return "fragments/sideBarMypage"; }
 	
-	@PostMapping("/user/userdelete")
+	@PostMapping("/fragments/sidebar/delete")
 	public String userdelete_form(@RequestParam("password") String password,
 	                              Principal principal,
 	                              RedirectAttributes redirectAttributes) {
@@ -193,9 +193,9 @@ public class UserController {
 	            return "redirect:/user/login";
 	        } else {
 	            redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-	            return "redirect:/user/userdelete"; }
+	            return "redirect:/fragments/sideBarMypage"; }
 	    } else {
 	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-	        return "redirect:/user/userdelete"; }
+	        return "redirect:/fragments/sideBarMypage"; }
 	}
 }

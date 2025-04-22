@@ -24,13 +24,11 @@ public class UserSecurity {
 @Bean SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http.authorizeHttpRequests(
 			(authorizeHttpRequests) -> authorizeHttpRequests
-										   // admin만 접근가능
-			                               //.requestMatchers( new AntPathRequestMatcher("/admin/**") )
-			                               //.hasRole("ROLE_ADMIN")	// ADMIN 역할    
-			                               // member만 접근가능
-			                               //.requestMatchers( new AntPathRequestMatcher("/member/**") )
-			                               //.hasRole("ROLE_MEMBER")	// MEMBER 역할 
-			                               // 기타페이지 모두 접근가능( 로그인 필요 없음 )
+									    .requestMatchers(
+									            new AntPathRequestMatcher("/css/**"),
+									            new AntPathRequestMatcher("/js/**"),
+									            new AntPathRequestMatcher("/images/**")
+									        ).permitAll()
 			                               .requestMatchers(
 			                            		   new AntPathRequestMatcher("/diary/emoji"),
 			                            		   new AntPathRequestMatcher("/**") )
