@@ -7,19 +7,63 @@
 			<a href="#" class="img logo rounded-circle mb-5"
 				style="background-image: url(#); background-color: white;"></a>
 			<ul class="list-unstyled components mb-5" style="height: 45%;">
-				<li><a href="#">HOME</a></li>
+				<li><a href="#" class="nav-link">HOME</a></li>
 				<li><a href="#pageSubmenu" data-toggle="collapse"
-					aria-expanded="false" class="dropdown-toggle">GROUP</a>
+					aria-expanded="false" class="dropdown-toggle nav-link">GROUP</a>
 					<ul class="collapse list-unstyled" id="pageSubmenu">
 						<li class="d-flex bd-highlight">
-							<div class="flex-grow-1 bd-highlight"><a href="#">GroupName</a></div>
-							<div class="bd-highlight"><a href="#"><i class="bi bi-pencil-fill p-2"></i></a></div>
-							<div class="bd-highlight"><a href="#"><i class="bi bi-trash p-2"></i></a></div>
+							<div class="flex-grow-1 bd-highlight"><a href="#" class="nav-link">GroupName</a></div>
+							<div class="bd-highlight"><a href="#"  data-bs-toggle="modal" data-bs-target="#updateModal" data-bs-whatever="@fat"><i class="bi bi-pencil-fill p-2"></i></a></div>
+							<div class="bd-highlight"><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="bi bi-trash p-2"></i></a></div>
 						</li>
-						<li><a href="#">GroupName</a></li>
-						<li><a href="#">GroupName</a></li>
+						<li><a href="#" class="nav-link">GroupName</a></li>
+						<li><a href="#" class="nav-link">GroupName</a></li>
 					</ul></li>
 			</ul>
+
+<!-- 삭제모달 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p style="text-align: center; padding-top: 2em; color: #000;">그룹을 삭제하시겠습니까?</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+        <div><button type="button" class="btn btn-primary p-2">삭제하기</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 삭제모달 -->
+<!-- 수정모달 -->
+<div class="modal fade" id="updateModal" tabindex="-1"	aria-labelledby="updateModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="color: #000;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">그룹 수정하기</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">그룹명</label>
+						<input type="text" class="form-control" id="recipient-name" value="기존 그룹명 노출">
+					</div>
+					<div class="mb-3">
+						<label for="message-text" class="col-form-label">그룹소개</label>
+						<textarea class="form-control" id="message-text" style="resize: none; height: 15vh;">기존 그룹소개 노출</textarea>
+					</div>
+				</form>
+			</div>
+	    	<div class="modal-footer justify-content-center">
+	        	<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+	        	<div><button type="button" class="btn btn-primary p-2">변경하기</button></div>
+	     	</div>
+		</div>
+	</div>
+</div>
+<!-- 수정모달 -->
 
 			<div class="container-fluide">
 				<a href="#" class="btn p-3 mb-5" 
@@ -32,7 +76,7 @@
 					<script>document.write(new Date().getFullYear());</script>
 					All rights reserved | This template is made with <i
 						class="icon-heart" aria-hidden="true"></i> by <a
-						href="https://colorlib.com" target="_blank">Colorlib.com</a>
+						href="https://colorlib.com" target="_blank" class="nav-link">Colorlib.com</a>
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 				</p>
 			</div>

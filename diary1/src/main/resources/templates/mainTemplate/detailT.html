@@ -29,12 +29,28 @@ style="padding: 3.5em 3em; border-radius: 10% 10% 0 0; background-color: #eee;">
 <!-- 본문영역 -->
 <!-- 수정삭제 -->
 	<div class="d-flex bd-highlight mb-4">
-		<div class="p-2 bd-highlight"><a href="#" class="btn p-3"
-		style="width: 100%;font-size: 18px; font-weight: bold; border: 2px solid #f8b739;">삭제하기</a></div>
+		<div class="p-2 bd-highlight"><button type="button" class="btn p-3" data-bs-toggle="modal" data-bs-target="#pageDeleteModal"
+		style="width: 100%;font-size: 18px; font-weight: bold; border: 2px solid #f8b739;">삭제하기</button></div>
 		<div class="p-2 flex-grow-1 bd-highlight"><a href="#" class="btn p-3" 
 		style="width: 100%;font-size: 18px; font-weight: bold; background-color: #f8b739; border: 2px solid #f8b739;">수정하기</a></div>
 	</div>
 <!-- 수정삭제 -->
+
+<!-- 삭제모달 -->
+<div class="modal fade" id="pageDeleteModal" tabindex="-1" aria-labelledby="pageDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p style="text-align: center; padding-top: 2em;">일기를 삭제하시겠습니까?</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+        <div><button type="button" class="btn btn-primary p-2">삭제하기</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 삭제모달 -->
 </div>
 		
 </th:block>

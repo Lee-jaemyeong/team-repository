@@ -7,18 +7,23 @@
 	<!-- 목표(Goal) 항목 -->
 	<div class="container-fluid p-3">
 		<div class="d-flex justify-content-between">
-			<h1 class="p-2 bd-highlight" style="font-size: 2em;">Today List</h1>
-			<a class="p-2 bd-highlight" href="#" 
-			style="font-size: 1.8em; font-weight: bold;">+</a>
+			<h1 class="p-2 bd-highlight" style="font-size: 1.8em;">Today List</h1>
+			<a class="p-2 bd-highlight nav-link" href="#createGoalModal" 
+			style="font-size: 1.5em; font-weight: bold;" data-bs-toggle="modal"
+			>+</a>
 		</div>
 		<table class="table">
 		<caption>목표 테이블</caption>
 			<tbody>
 				<tr>
-					<td scope="row" style="width: 1%;"><a href="#"><i class="bi bi-pencil-fill"></i></a></td>
-					<td scope="row" style="width: 1%;"><a href="#"><i class="bi bi-trash"></i></a></td>
+					<td scope="row" style="width: 1%;">
+						<a href="#updategoalModal" class="nav-link" data-bs-toggle="modal">
+						<i class="bi bi-pencil-fill"></i></a></td>
+					<td scope="row" style="width: 1%;">
+						<a href="#deletegoalModal" class="nav-link" data-bs-toggle="modal" >
+						<i class="bi bi-trash" ></i></a></td>
 					<td scope="row"
-					style="font-size: 1.2em; font-weight: bold;">목표명이길어지면이런식으로</td>
+					style="font-size: 1.1em;">목표명이길어지면이런식으로</td>
 					<td scope="row"
 					style="color: #9b9b9b;">2025.04.21~2025.05.21</td>
 					<td scope="row" style="text-align: right; padding-right: 1.5em;">
@@ -28,15 +33,89 @@
 			</tbody>
 		</table>
 	</div>
+<!-- 생성모달 -->
+<div class="modal fade" id="createGoalModal" tabindex="-1"	aria-labelledby="createGoalModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="color: #000;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="createGoalModalLabel">목표 생성하기</h1>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">목표명</label>
+						<input type="text" class="form-control" id="recipient-name">
+					</div>
+					<div class="mb-3 d-flex justify-content-around">
+						<div><label for="start" class="col-form-label mr-3">시작일</label>
+						<input type="date" id="start"></div>
+						<div><label for="end" class="col-form-label mr-3">종료일</label>
+						<input type="date" id="end"></div>
+					</div>
+				</form>
+			</div>
+	    	<div class="modal-footer justify-content-center">
+	        	<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+	        	<div><button type="button" class="btn btn-primary p-2">생성하기</button></div>
+	     	</div>
+		</div>
+	</div>
+</div>
+<!-- 생성모달 -->
+<!-- 수정모달 -->
+<div class="modal fade" id="updategoalModal" tabindex="-1"	aria-labelledby="updategoalModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="color: #000;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="updategoalModalLabel">목표 수정하기</h1>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">목표명</label>
+						<input type="text" class="form-control" id="recipient-name" value="기존 목표명 노출">
+					</div>
+					<div class="mb-3 d-flex justify-content-around">
+						<div><label for="start" class="col-form-label mr-3">시작일</label>
+						<input type="date" id="start" value="2025-04-22"></div>
+						<div><label for="end" class="col-form-label mr-3">종료일</label>
+						<input type="date" id="end" value="2025-04-22"></div>
+					</div>
+				</form>
+			</div>
+	    	<div class="modal-footer justify-content-center">
+	        	<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+	        	<div><button type="button" class="btn btn-primary p-2">변경하기</button></div>
+	     	</div>
+		</div>
+	</div>
+</div>
+<!-- 수정모달 -->
+<!-- 삭제모달 -->
+<div class="modal fade" id="deletegoalModal" tabindex="-1" aria-labelledby="deletegoalModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p style="text-align: center; padding-top: 2em; color: #000;">"목표명"을 삭제하시겠습니까?</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+        <div><button type="button" class="btn btn-primary p-2">삭제하기</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 삭제모달 -->	
+	
 	<!-- 목표(Goal) 항목 -->
 	<!-- 내 일기 리스트 -->
 	<div class="container-fluid p-3">
 		<div class="d-flex justify-content-between">
-			<h1 class="p-2 bd-highlight" style="font-size: 2em;">My Diary</h1>
+			<h1 class="p-2 bd-highlight" style="font-size: 1.8em;">My Diary</h1>
 			<span class="p-2 bd-highlight" style="line-height: 4em;">nn diary</span>
 		</div>
 		<div class="d-flex bd-highlight mb-3 p-3" style="border-bottom: 1px solid #9d9d9d;">
-			<h1 style="font-size: 1.3em; margin-left: 5px;width: 180%;">{Diary Title}
+			<h1 style="font-size: 1.1em; margin-left: 5px;width: 180%;">{Diary Title}
 					Lorem ipsum dolor sit amet consectetur adipisicing elit. .</h1>
 			<div class="ms-auto p-2 bd-highlight align-self-center"
 				 style="width: 100%; text-align: end;">imoji</div>
