@@ -11,22 +11,22 @@
     <div class="container p-2 bd-highlight  align-self-center" style="width: 100%; color: #000000; font-weight: bold; font-size: 20px;">NAME</div>
   </div>
   <!-- 작성자 프로필정보 -->
-  <!-- 목표 -->
-  <div class="container-fluid mb-3">
-	   <div class="mt-3" 
-	   style="border-bottom: 1px solid #9d9d9d; padding: 0 4em;">
-		   <input class="form-check-input" type="checkbox" disabled
-		   value="" id="" style="accent-color: #f8b739;" >
-		   <p>목표명</p>
-	   </div>
-	   <div class="mt-3"
-	   style="border-bottom: 1px solid #9d9d9d;padding: 0 4em;">
-		   <input class="form-check-input" type="checkbox" disabled
-		   value="" id="" style="accent-color: #f8b739;" >
-		   <p>목표명</p>
-	   </div>
-  </div>
-  <!-- 목표 -->
+   <!-- 목표 -->
+   <div class="container-fluid">
+   	<table class="table">
+   	<caption>완료 목표 테이블</caption>
+   		<tbody>
+   			<tr>
+	   			<td scope="row">목표명이길어지면이런식으로</td>
+				<td scope="row" style="text-align: right; padding-right: 1.5em;">
+					<input type="checkbox" value="" id="" style="accent-color: #f8b739;" disabled>
+				</td>
+   			</tr>
+   		</tbody>
+   	</table>
+   </div>
+   <!-- 목표 -->
+   
    <!-- 글쓰기폼 -->
     <div class="container-fluid">
       <form>
@@ -34,13 +34,13 @@
           <div class="flex-grow-1 bd-highlight" style="margin-right: 0.6em;">
             <input class="form-control form-control-lg" type="text" placeholder="제목을 입력하세요" aria-label="default input example">
           </div>
-          <select class="form-select p-2 bd-highlight" aria-label="Default select example" style="width: 19%; margin-right: 0.6em;">
+          <select class="form-select p-2 bd-highlight" aria-label="Template" style="width: 19%; margin-right: 0.6em;">
             <option selected>템플릿</option>
             <option value="1">템플릿1</option>
             <option value="2">템플릿2</option>
             <option value="3">템플릿3</option>
           </select>
-          <select class="form-select p-2 bd-highlight" aria-label="Default select example" style="width: 19%;">
+          <select class="form-select p-2 bd-highlight" aria-label="openScope" style="width: 19%;">
             <option selected>공개범위</option>
             <option value="1">전체공개</option>
             <option value="2">친구공개</option>
@@ -50,8 +50,16 @@
         </div>
         <div class="mb-3">
           <!-- <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label> -->
-          <textarea maxlength="500" placeholder="최대 500자" class="form-control" id="exampleFormControlTextarea1" rows="3" style="width: 100%; height: 60vh; resize: none;"></textarea>
+          <textarea maxlength="500" placeholder="최대 500자" class="form-control" id="diaryContent" rows="3" style="width: 100%; height: 60vh; resize: none;"></textarea>
         </div>
+        <!-- 이모티콘 -->
+        <div class="container-fluid d-flex bd-highlight mb-3" >
+        	<div class="bd-highlight"><button class="btn p-2 mr-3" 
+        		style="background-color: #eee;">이모티콘으로 일기 요약받기</button></div>
+        	<div class="flex-grow-1 bd-highlight"><input type="text" id="" 
+        		style="border: 1px solid #eee; padding: 0.5em; width: 100%;"></div>
+        </div>
+        <!-- 이모티콘 -->
         <div class="d-flex bd-highlight mb-4">
           <div class="p-2 bd-highlight">
 	          <button type="submit" class="btn p-3" 
