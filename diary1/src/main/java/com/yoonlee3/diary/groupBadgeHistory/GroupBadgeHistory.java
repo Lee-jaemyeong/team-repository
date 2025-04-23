@@ -25,26 +25,6 @@ public class GroupBadgeHistory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "group_badge_history_id")
 	private Long id;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	
-=======
-
->>>>>>> 64f87d4 (0422)
-	@ManyToOne
-	@JoinColumn(name = "group_id")
-	private YL3Group group;
-
-	@ManyToOne
-	@JoinColumn(name = "badge_id")
-	private Badge badge;
-<<<<<<< HEAD
-	
-	@Column(updatable = false , nullable=false)
-=======
-=======
->>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 	@ManyToOne
 	@JoinColumn(name = "group_id")
@@ -55,14 +35,6 @@ public class GroupBadgeHistory {
 	private Badge badge;
 
 	@Column(updatable = false, nullable = false)
-<<<<<<< HEAD
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
-=======
-
-	@Column(updatable = false, nullable = false)
->>>>>>> 64f87d4 (0422)
-=======
->>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	private LocalDateTime create_date = LocalDateTime.now();
 
 }

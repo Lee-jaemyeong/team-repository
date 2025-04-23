@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -44,6 +45,31 @@ public class GroupController {
 		return "group/group";
 	}
 	
+	// 그룹 수정하기
+	@GetMapping("gorup/update")
+	public String gorupUpdate_get(YL3Group group, Model model ) {
+		YL3Group findGroup = groupService.findById(group.getId());
+		model.addAttribute("findGroup", findGroup);
+		return "user/mypage";
+	}
+	
+	// 그룹 수정하기
+	@PostMapping("gorup/update")
+	public String gorupUpdate_post(Principal principal, YL3Group group) {
+		String username = principal.getName();
+		User user = userService.findByUsername(username);
+		groupService.updateGroup(group, user);
+		return "user/mypage";
+	}
+	
+	// 그룹 생성하기 화면(post)
+	@PostMapping("group/insert")
+	public String groupInsert_post(Principal principal, YL3Group group) {
+		String username = principal.getName();
+		User user = userService.findByUsername(username);
+		groupService.insertGroup(group, user);
+		return "user/mypage";
+	}
 	
 	// 그룹 탈퇴하기 화면(get)
 	@GetMapping("group/leave")

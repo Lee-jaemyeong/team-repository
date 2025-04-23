@@ -25,18 +25,8 @@ public class JoinToGroupService {
 	// 그룹 참여하기
 	@Transactional
 	public void joinToGroup(Long group_id, Long user_id) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-		YL3Group group = groupRepository.findById(group_id).orElseThrow(() -> new RuntimeException("그룹 없음"));
-		User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("유저 없음"));
-=======
 		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("해당 그룹은 존재하지 않습니다."));
 		User user = userService.findById(user_id);
->>>>>>> 64f87d4 (0422)
-=======
-		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("해당 그룹은 존재하지 않습니다."));
-		User user = userService.findById(user_id);
->>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 		group.getUsers().add(user);
 		user.getGroups().add(group);
@@ -45,46 +35,12 @@ public class JoinToGroupService {
 		if (currentSize >= 8) {
 			throw new IllegalStateException("그룹 인원이 최대 8명을 초과할 수 없습니다.");
 		}
-<<<<<<< HEAD
-<<<<<<< HEAD
-		groupRepository.save(group);
-=======
 
->>>>>>> 64f87d4 (0422)
-=======
-
->>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	}
 
 	// 그룹 떠나기
 	@Transactional
 	public void leaveGroup(Long group_id, Long user_id) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-		YL3Group group = groupRepository.findById(group_id).orElseThrow(() -> new RuntimeException("그룹 없음"));
-		User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("유저 없음"));
-=======
-		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("해당 그룹은 존재하지 않습니다."));
-		User user = userService.findById(user_id);
->>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
-
-		if (!group.getUsers().contains(user)) {
-
-			throw new IllegalStateException("해당 유저는 그룹에 속해있지 않습니다.");
-
-		} else if (group.getGroup_leader().equals(user)) {
-
-			throw new IllegalStateException("그룹 리더는 그룹을 탈퇴할 수 없습니다. ");
-
-		} else {
-
-			group.getUsers().remove(user);
-			user.getGroups().remove(group);
-
-		}
-<<<<<<< HEAD
-		groupRepository.save(group);
-=======
 		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("해당 그룹은 존재하지 않습니다."));
 		User user = userService.findById(user_id);
 
@@ -102,9 +58,6 @@ public class JoinToGroupService {
 			user.getGroups().remove(group);
 
 		}
->>>>>>> 64f87d4 (0422)
-=======
->>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	}
 
 	// 그룹 수 확인하기
