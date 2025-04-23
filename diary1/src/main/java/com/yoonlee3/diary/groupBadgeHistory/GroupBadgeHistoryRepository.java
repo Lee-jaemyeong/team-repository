@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface GroupBadgeHistoryRepository extends JpaRepository<GroupBadgeHistory, Long> {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//C
 	//R
 	@Query("select gbh from GroupBadgeHistory gbh where gbh.group.id = :group_id ")
@@ -27,4 +28,15 @@ public interface GroupBadgeHistoryRepository extends JpaRepository<GroupBadgeHis
 
 	// D
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+	// C
+	
+	// R
+	@Query("select gbh from GroupBadgeHistory gbh where gbh.group.id = :group_id ")
+	List<GroupBadgeHistory> findGroupBadgeHistory(Long group_id);
+	
+	// U
+	
+	// D
+>>>>>>> 64f87d4 (0422)
 }

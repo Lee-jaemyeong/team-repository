@@ -11,14 +11,21 @@ import org.springframework.transaction.annotation.Transactional;
 public interface GroupAchivRepository extends JpaRepository<GroupAchiv, Long> {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//C
 	//R
+=======
+	// C
+
+	// R
+>>>>>>> 64f87d4 (0422)
 	@Query("select ga from GroupAchiv ga where ga.group.id = :group_id")
 	List<GroupAchiv> findByGroupAchiv(Long group_id);
-	
+
 	@Query("select count(*) from Goal g where g.user.id= :user_id and g.startDate <= :currentDate"
 			+ " and g.dueDate >= :currentDate")
 	int findNowGoalSize(Long user_id, LocalDate currentDate);
+<<<<<<< HEAD
 	
 	//U
 	//D
@@ -37,4 +44,10 @@ public interface GroupAchivRepository extends JpaRepository<GroupAchiv, Long> {
 	
 	// D
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+
+	// U
+
+	// D
+>>>>>>> 64f87d4 (0422)
 }

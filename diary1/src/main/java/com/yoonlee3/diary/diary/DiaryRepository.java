@@ -11,9 +11,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> 64f87d4 (0422)
 	@Query("select d from Diary d order by id desc")
 	List<Diary> findAllByOrderByDesc();
-	
+
 	@Modifying
 	@Transactional
 	@Query("update Diary d set d.diary_title= :diary_title, d.diary_content= :diary_content where d.id= :id")
@@ -23,6 +27,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 	@Transactional
 	@Query("delete from Diary d where d.id= :id")
 	int deleteByDId(Long id);
+<<<<<<< HEAD
 =======
 
 	@Modifying
@@ -35,4 +40,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 	@Query("delete from Diary d where d.id= :diary_id")
 	int deleteByDId(Long diary_id);
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+
+>>>>>>> 64f87d4 (0422)
 }

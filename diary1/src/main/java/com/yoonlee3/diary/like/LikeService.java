@@ -6,41 +6,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yoonlee3.diary.diary.Diary;
-import com.yoonlee3.diary.diary.DiaryRepository;
+import com.yoonlee3.diary.diary.DiaryService;
 import com.yoonlee3.diary.user.User;
-import com.yoonlee3.diary.user.UserRepository;
+import com.yoonlee3.diary.user.UserService;
 
 @Service
 public class LikeService {
-    @Autowired LikeRepository likeRepository;
-    @Autowired DiaryRepository diaryRepository;
-    @Autowired UserRepository userRepository;
+	
+	@Autowired
+	LikeRepository likeRepository;
+	@Autowired
+	DiaryService diaryService;
+	@Autowired
+	UserService userService;
 
-    @Transactional
-    public boolean toggleLike(Long diaryId, Long userId) {
-        var existingLike = likeRepository.findByDiaryIdAndUserId(diaryId, userId);
+	@Transactional
+	public boolean toggleLike(Long diaryId, Long userId) {
+		var existingLike = likeRepository.findByDiaryIdAndUserId(diaryId, userId);
 
-        if (existingLike.isPresent()) {
-            likeRepository.delete(existingLike.get());
-            return false;
-        } else {
-            Diary diary = diaryRepository.findById(diaryId).orElseThrow(() -> new RuntimeException("다이어리가 없습니다."));
-            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+		if (existingLike.isPresent()) {
+			likeRepository.delete(existingLike.get());
+			return false;
+		} else {
+			Diary diary = diaryService.findById(diaryId);
+			User user = userService.findById(userId);
 
-            Likes like = new Likes();
-            like.setDiary(diary);
-            like.setUser(user);
-            likeRepository.save(like);
-            return true;
-        }
-    }
+			Likes like = new Likes();
+			like.setDiary(diary);
+			like.setUser(user);
+			likeRepository.save(like);
+			return true;
+		}
+	}
 
-    public boolean isLiked(Long diaryId, Long userId) {
-        return likeRepository.findByDiaryIdAndUserId(diaryId, userId).isPresent();
-    }
-    
-    public long getLikeCount(Long diaryId) {
-        return likeRepository.countByDiaryId(diaryId);
-    }
+	public boolean isLiked(Long diaryId, Long userId) {
+		return likeRepository.findByDiaryIdAndUserId(diaryId, userId).isPresent();
+	}
+
+	public long getLikeCount(Long diaryId) {
+		return likeRepository.countByDiaryId(diaryId);
+	}
 }
-

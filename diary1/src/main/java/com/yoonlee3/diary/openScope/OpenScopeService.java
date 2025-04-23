@@ -1,10 +1,13 @@
 package com.yoonlee3.diary.openScope;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.util.Optional;
 
 =======
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+>>>>>>> 64f87d4 (0422)
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

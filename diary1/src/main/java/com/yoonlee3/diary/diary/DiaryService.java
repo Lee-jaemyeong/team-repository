@@ -25,7 +25,7 @@ public class DiaryService {
 	}
 
 	@Transactional
-	public Diary find(Long diary_id) {
+	public Diary findById(Long diary_id) {
 		Diary diary = diaryRepository.findById(diary_id).get();
 		return diary;
 	}

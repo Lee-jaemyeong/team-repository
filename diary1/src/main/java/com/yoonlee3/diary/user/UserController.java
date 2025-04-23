@@ -1,7 +1,6 @@
 package com.yoonlee3.diary.user;
 
 import java.security.Principal;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -10,7 +9,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +24,7 @@ import com.yoonlee3.diary.user_kakao.KakaoLogin;
 @Controller
 public class UserController {
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	@Autowired UserService service;
 	@Autowired UserRepository userRepository;
@@ -51,10 +50,31 @@ public class UserController {
 	// localhost:8080/user/login
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	
+=======
+	@Autowired
+	UserService userService;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	KakaoLogin api;
+
+	@GetMapping("/")
+	public String main(Model model) {
+		model.addAttribute("url", api.step1());
+		return "user/login";
+	}
+
+	@GetMapping("/user/login")
+	public String login() {
+		return "user/login";
+	}
+
+>>>>>>> 64f87d4 (0422)
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {
 			String email = principal.getName();
+<<<<<<< HEAD
 <<<<<<< HEAD
 		    User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일에 해당하는 사용자를 찾을 수 없습니다: " + email));
 		    model.addAttribute("nickname", user.getUsername());
@@ -62,6 +82,10 @@ public class UserController {
 			User user = userRepository.findByEmail(email).orElseThrow();
 			model.addAttribute("nickname", user.getUsername());
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+			User user = userService.findByEmail(email);
+			model.addAttribute("nickname", user.getUsername());
+>>>>>>> 64f87d4 (0422)
 		} else {
 			model.addAttribute("nickname", "Guest");
 		}
@@ -71,6 +95,7 @@ public class UserController {
 	public String myPage(Model model, Principal principal) {
 		String email = principal.getName();
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다."));
 		model.addAttribute("nickname", user.getUsername()); 
@@ -91,6 +116,13 @@ public class UserController {
 	}
 
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+		User user = userService.findByEmail(email);
+		model.addAttribute("nickname", user.getUsername());
+		return "user/mypage";
+	}
+
+>>>>>>> 64f87d4 (0422)
 	@PostMapping("/user/login")
 	public String login_form() {
 		return "user/login";
@@ -117,7 +149,11 @@ public class UserController {
 			user.setUsername(userForm.getUsername());
 			user.setEmail(userForm.getEmail());
 			user.setPassword(userForm.getPassword());
+<<<<<<< HEAD
 			service.insertUser(user);
+=======
+			userService.insertUser(user);
+>>>>>>> 64f87d4 (0422)
 		} catch (DataIntegrityViolationException e) { // 무결성 - 중복키, 외래키제약, 데이터형식불일치
 			e.printStackTrace();
 			bindingResult.reject("failed", "등록된 유저입니다.");
@@ -137,7 +173,11 @@ public class UserController {
 
 	@PostMapping("/user/find")
 	public String find_form(@RequestParam("email") String email, Model model) {
+<<<<<<< HEAD
 		Optional<User> user = userRepository.findByEmail(email);
+=======
+		User user = userService.findByEmail(email);
+>>>>>>> 64f87d4 (0422)
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentEmail;
@@ -148,7 +188,11 @@ public class UserController {
 			currentEmail = authentication.getPrincipal().toString();
 		}
 
+<<<<<<< HEAD
 		if (user.isPresent() && user.get().getEmail().equals(currentEmail)) {
+=======
+		if ( user.getEmail().equals(currentEmail)) {
+>>>>>>> 64f87d4 (0422)
 			model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
 			return "user/passchange";
 		} else {
@@ -156,6 +200,7 @@ public class UserController {
 			return "user/find";
 		}
 	}
+<<<<<<< HEAD
 
 	@GetMapping("/user/passchange")
 	public String passchange() {
@@ -253,11 +298,62 @@ public class UserController {
 =======
 			user.setUsername(username);
 			userRepository.save(user);
+=======
+
+	@GetMapping("/user/passchange")
+	public String passchange() {
+		return "user/passchange";
+	}
+
+	@PostMapping("/user/passchange")
+	public String passchange_form(@RequestParam("email") String email, @RequestParam("password") String password,
+			Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String loggedEmail = authentication.getName();
+		User user = userService.findByEmail(email);
+
+		if ( user != null) {
+
+			if (loggedEmail.equals(user.getEmail())) {
+				String encodedPassword = passwordEncoder.encode(password);
+				user.setPassword(encodedPassword);
+				userService.insertUser(user);
+
+				model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
+				return "redirect:/user/mypage";
+			} else {
+				model.addAttribute("msg", "다시 입력해주세요.");
+				return "user/passchange";
+			}
+		} else {
+			model.addAttribute("msg", "다시 입력해주세요.");
+			return "user/passchange";
+		}
+	}
+
+	@GetMapping("/fragments/sidebar/nickname")
+	public String userChange() {
+		return "fragments/sideBarMypage";
+	}
+
+	@PostMapping("/fragments/sidebar/nickname")
+	public String userChange_form(@RequestParam String username, Principal principal,
+			RedirectAttributes redirectAttributes) {
+
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+
+		if (user != null) {
+
+			user.setUsername(username);
+			userService.insertUser(user);
+>>>>>>> 64f87d4 (0422)
 
 			redirectAttributes.addFlashAttribute("msg", "닉네임이 변경되었습니다.");
 			return "redirect:/user/mypage";
 		} else {
 			redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
+<<<<<<< HEAD
 			return "redirect:/user/userchange";
 		}
 	}
@@ -268,10 +364,23 @@ public class UserController {
 	}
 
 	@PostMapping("/user/userdelete")
+=======
+			return "redirect:/fragments/sideBarMypage";
+		}
+	}
+
+	@GetMapping("/fragments/sidebar/delete")
+	public String userdelete() {
+		return "fragments/sideBarMypage";
+	}
+
+	@PostMapping("/fragments/sidebar/delete")
+>>>>>>> 64f87d4 (0422)
 	public String userdelete_form(@RequestParam("password") String password, Principal principal,
 			RedirectAttributes redirectAttributes) {
 
 		String email = principal.getName();
+<<<<<<< HEAD
 		Optional<User> opUser = userRepository.findByEmail(email);
 
 		if (opUser.isPresent()) {
@@ -279,12 +388,21 @@ public class UserController {
 
 			if (passwordEncoder.matches(password, user.getPassword())) {
 				userRepository.delete(user);
+=======
+		User user = userService.findByEmail(email);
+
+		if ( user != null) {
+
+			if (passwordEncoder.matches( password, user.getPassword())) {
+				userService.deleteByEmailAndPassword(password, email);
+>>>>>>> 64f87d4 (0422)
 				SecurityContextHolder.clearContext();
 
 				redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
 				return "redirect:/user/login";
 			} else {
 				redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
+<<<<<<< HEAD
 				return "redirect:/user/userdelete";
 			}
 		} else {
@@ -292,5 +410,13 @@ public class UserController {
 			return "redirect:/user/userdelete";
 		}
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+				return "redirect:/fragments/sideBarMypage";
+			}
+		} else {
+			redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
+			return "redirect:/fragments/sideBarMypage";
+		}
+>>>>>>> 64f87d4 (0422)
 	}
 }

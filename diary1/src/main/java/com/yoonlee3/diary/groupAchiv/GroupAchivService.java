@@ -19,6 +19,7 @@ import com.yoonlee3.diary.user.User;
 @Service
 public class GroupAchivService {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 	@Autowired GroupAchivRepository groupAchivRepository;
 	@Autowired GoalSatusService goalSatusService;
@@ -94,10 +95,28 @@ public class GroupAchivService {
 		return groupAchivRepository.save(groupAchiv);
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 		
+=======
+
+	@Autowired
+	GroupAchivRepository groupAchivRepository;
+	@Autowired
+	GoalSatusService goalSatusService;
+	@Autowired
+	GoalService goalService;
+	@Autowired
+	GroupService groupService;
+	@Autowired
+	GroupBadgeHistoryService historyService;
+
+	public GroupAchiv insertGroupAchiv(YL3Group group) {
+
+		Set<User> users = group.getUsers();
+
+>>>>>>> 64f87d4 (0422)
 		int successGoal = 0;
 		int successUser = 0;
 		int successGroup = 0;
-		
+
 		LocalDate currentDate = LocalDate.now();
 		for (User user : users) {
 			int goalSize = groupAchivRepository.findNowGoalSize(user.getId(), currentDate);
@@ -122,14 +141,14 @@ public class GroupAchivService {
 		int lastDay = YearMonth.now().lengthOfMonth();
 		// 그룹의 성공한 하루 수 / 한달 일 수
 		double groupAchivement = (double) successGroup / lastDay;
-		
+
 		if (groupAchivement > 0.6) {
 			// 그룹 뱃지 상승
 			groupService.updateGroupBadge(group.getId());
 			// GroupBadgeHistory에 저장
 			historyService.insertHistory(group, group.getBadge());
 		}
-		
+
 		GroupAchiv groupAchiv = new GroupAchiv();
 		groupAchiv.setGroup(group);
 		groupAchiv.setMonth(currentDate);
