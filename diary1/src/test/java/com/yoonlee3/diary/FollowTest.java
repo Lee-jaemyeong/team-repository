@@ -2,6 +2,7 @@ package com.yoonlee3.diary;
 
 import com.yoonlee3.diary.jw.*;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,28 +17,51 @@ class FollowTest {
     // 팔로우 추가 테스트
     //@Disabled 
     //@Test
-    public void insert() {
-        // 예시로 10명의 사용자 (user1, user2, ..., user10)를 대상으로 팔로우 관계 20개 생성
-        for (int followerId = 1; followerId <= 10; followerId++) {
-            for (int followingId = 1; followingId <= 10; followingId++) {
-                // follower와 following이 동일하지 않도록 설정
-                if (followerId != followingId) {
-                    String followerUsername  = "user" + followerId;
-                    String followingUsername = "user" + followingId;
+    public void follow() {
+        // 원하는 팔로우 관계를 수동으로 정의 (key = 팔로우하는 사람, value = 팔로우 당하는 사람 리스트)
+        Map<String, List<String>> followMap = Map.of(
+            "user1", List.of("user2", "user3"),
+            "user2", List.of("user4", "user5"),
+            "user3", List.of("user1", "user6"),
+            "user5", List.of("user7"),
+            "user8", List.of("user9", "user10")
+        );
 
-                    // User 객체를 가져옵니다.
-                    User follower  = userRepository.findByUsername(followerUsername);
-                    User following = userRepository.findByUsername(followingUsername);
+        // 설정된 팔로우 관계대로 저장
+        for (Map.Entry<String, List<String>> entry : followMap.entrySet()) {
+            String followerUsername = entry.getKey();
+            List<String> followingUsernames = entry.getValue();
 
-                    // Follow 객체를 생성하고 설정
-                    Follow follow = new Follow();
-                    follow.setFollower(follower);
-                    follow.setFollowing(following);
+            User follower = userRepository.findByUsername(followerUsername);
+            if (follower == null) {
+                System.out.println(followerUsername + " 사용자를 찾을 수 없습니다.");
+                continue;
+            }
 
-                    // Follow 객체를 저장
-                    followRepository.save(follow);
-                    System.out.println(followerUsername + "가 " + followingUsername + "을(를) 팔로우했습니다.");
+            for (String followingUsername : followingUsernames) {
+                if (followerUsername.equals(followingUsername)) {
+                    System.out.println("자기 자신은 팔로우할 수 없습니다.");
+                    continue;
                 }
+
+                User following = userRepository.findByUsername(followingUsername);
+                if (following == null) {
+                    System.out.println(followingUsername + " 사용자를 찾을 수 없습니다.");
+                    continue;
+                }
+
+                // 중복 체크
+                if (followRepository.findByFollowerAndFollowing(follower, following) != null) {
+                    System.out.println(followerUsername + "는 이미 " + followingUsername + "을(를) 팔로우하고 있습니다.");
+                    continue;
+                }
+
+                Follow follow = new Follow();
+                follow.setFollower(follower);
+                follow.setFollowing(following);
+                followRepository.save(follow);
+
+                System.out.println(followerUsername + "가 " + followingUsername + "을(를) 팔로우했습니다.");
             }
         }
     }
@@ -77,12 +101,11 @@ class FollowTest {
     // 언팔로우 테스트
     //@Disabled 
     //@Test
-    public void delete() {
-        // 먼저 팔로우 관계를 설정
-        User follower = userRepository.findByUsername("user2");
-        User following = userRepository.findByUsername("user3");
+    public void unfollow() {
 
-        // Follow 객체 찾기
+        User follower = userRepository.findByUsername("user2");
+        User following = userRepository.findByUsername("user4");
+
         Follow follow = followRepository.findByFollowerAndFollowing(follower, following);
 
         // 팔로우 관계 삭제

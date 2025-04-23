@@ -2,6 +2,7 @@ package com.yoonlee3.diary.jw;
 
 import lombok.RequiredArgsConstructor;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowService {
 
     private final FollowRepository followRepository;
-
+    private final UserRepository userRepository;
+    
+    // 팔로우 기능
     @Transactional
     public void follow(User follower, User following) {
         if (!followRepository.existsByFollowerAndFollowing(follower, following)) {
@@ -33,29 +36,35 @@ public class FollowService {
         return followRepository.findByFollowing(following);
     }	
 
+    // 언팔로우 기능
     @Transactional
     public void unfollow(User follower, User following) {
         followRepository.deleteByFollowerAndFollowing(follower, following);
     }
     
-    //  사용자 프로필 DTO
-    public UserProfileDto getUserProfile(User user) {
-        long followerCount = followRepository.countByFollowing(user);
-        long followingCount = followRepository.countByFollower(user);
+    // 팔로우 여부 확인
+    public boolean isFollowing(User loginUser, User targetUser) {
+        return followRepository.existsByFollowerAndFollowing(loginUser, targetUser);
+    }
 
-        // 프로필 이미지 URL이 없는 경우 기본 이미지 URL 설정
-        String image = user.getProfileImageUrl() != null 
-            ? user.getProfileImageUrl() 
-            : "https://cdn.example.com/default-profile.png";
-
+    public UserProfileDto getUserProfile(User viewer, User target) {
+        long followers = followRepository.countByFollowing(target);  // 팔로워 수
+        long followings = followRepository.countByFollower(target);  // 팔로잉 수
         
+        // 프로필 이미지 URL 설정 (기본값 설정)
+        String image = target.getProfileImageUrl() != null ? target.getProfileImageUrl() : "https://cdn.example.com/default-profile.png";
+        
+        // 로그인한 사용자가 해당 사용자를 팔로우 중인지 여부
+        boolean isFollowing = followRepository.existsByFollowerAndFollowing(viewer, target);
+
+        // UserProfileDto 반환
         return new UserProfileDto(
-            user.getUser_id(),
-            user.getUsername(),
-            user.getProfileImageUrl(),
-            followerCount,
-            followingCount
+            target.getUser_id(),
+            target.getUsername(),
+            image,
+            followers,
+            followings,
+            isFollowing
         );
     }
-    
 }
