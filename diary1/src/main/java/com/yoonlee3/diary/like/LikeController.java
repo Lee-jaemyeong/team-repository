@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/diary/like")
 @RequiredArgsConstructor
 public class LikeController {
+	
     private final LikeService likeService;
     private final UserRepository userRepository;
 
