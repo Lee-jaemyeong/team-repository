@@ -2,6 +2,7 @@ package com.yoonlee3.diary.diary;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,9 @@ public class DiaryController {
 
 	@GetMapping("/diary/list")
 	public String list(Model model) {
-		model.addAttribute("list", service.findAll());
-		return "diary/list";
+		List<Diary> diaryList = service.findAll();
+		model.addAttribute("list", diaryList);
+		return "/main";
 	}
 
 	@GetMapping("/diary/detail/{id}")
@@ -66,13 +68,13 @@ public class DiaryController {
 		} else {
 			model.addAttribute("isLiked", false); // 비로그인 시 좋아요 상태는 false
 		}
-		return "diary/detail";
+		return "mainTemplate/detail";
 	}
 
 	@GetMapping("/diary/insert")
 	public String insert_get(Principal principal, Model model) {
 		model.addAttribute("username", principal.getName());
-		return "diary/write";
+		return "mainTemplate/write";
 	}
 
 	@PostMapping("/diary/insert")
@@ -81,7 +83,7 @@ public class DiaryController {
 		User user = userService.findByEmail(email);
 		diary.setUser(user);
 		service.insert(diary);
-		return "redirect:/diary/list";
+		return "redirect:/main";
 	}
 
 	@PostMapping("/diary/emoji")
@@ -137,5 +139,10 @@ public class DiaryController {
 		rttr.addFlashAttribute("msg", msg);
 		service.delete(diary); // ## 글삭제기능
 		return "redirect:/diary/list";
+	}
+	
+	@GetMapping("/main")
+	public String goMain() {
+	    return "mainTemplate/main";
 	}
 }

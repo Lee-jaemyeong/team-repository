@@ -41,7 +41,7 @@
 				<h1 class="modal-title fs-5" id="createGoalModalLabel">목표 생성하기</h1>
 			</div>
 			<div class="modal-body">
-				<form>
+				<form th:action="@{/goal/insert}">
 					<div class="mb-3">
 						<label for="recipient-name" class="col-form-label">목표명</label>
 						<input type="text" class="form-control" id="recipient-name">
@@ -52,12 +52,12 @@
 						<div><label for="end" class="col-form-label mr-3">종료일</label>
 						<input type="date" id="end"></div>
 					</div>
+					<div class="modal-footer justify-content-center">
+	        			<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+	        			<div><button type="submit" class="btn btn-primary p-2">생성하기</button></div>
+	     			</div>
 				</form>
 			</div>
-	    	<div class="modal-footer justify-content-center">
-	        	<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
-	        	<div><button type="button" class="btn btn-primary p-2">생성하기</button></div>
-	     	</div>
 		</div>
 	</div>
 </div>

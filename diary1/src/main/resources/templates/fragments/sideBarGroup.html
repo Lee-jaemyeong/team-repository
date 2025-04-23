@@ -4,10 +4,10 @@
 
 	<nav id="sidebar">
 		<div class="p-4 pt-5">
-			<a href="#" class="img logo rounded-circle mb-5"
+			<a th:href="@{/mypage}" class="img logo rounded-circle mb-5"
 				style="background-image: url(#); background-color: white;"></a>
 			<ul class="list-unstyled components mb-5" style="height: 45%;">
-				<li><a href="#" class="nav-link">HOME</a></li>
+				<li><a th:href="@{/main}" class="nav-link">HOME</a></li>
 				<li><a href="#pageSubmenu" data-toggle="collapse"
 					aria-expanded="false" class="dropdown-toggle nav-link">GROUP</a>
 					<ul class="collapse list-unstyled" id="pageSubmenu">

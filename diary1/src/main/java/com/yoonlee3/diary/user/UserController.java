@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.user;
 
 import java.security.Principal;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -24,23 +25,15 @@ import com.yoonlee3.diary.user_kakao.KakaoLogin;
 @Controller
 public class UserController {
 
-	@Autowired
-	UserService userService;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
-	KakaoLogin api;
+	@Autowired UserService userService;
+	@Autowired UserRepository userRepository;
+	@Autowired private PasswordEncoder passwordEncoder;
+	@Autowired KakaoLogin api;
 
 	@GetMapping("/")
 	public String main(Model model) {
 		model.addAttribute("url", api.step1());
 		return "user/login";
-	}
-
-	@GetMapping("/user/login")
-	public String login(Model model) {  
-		model.addAttribute("url" , api.step1());
-		return "user/login"; 
 	}
 
 	@ModelAttribute
@@ -53,6 +46,12 @@ public class UserController {
 			model.addAttribute("nickname", "Guest");
 		}
 	
+	}
+	
+	@GetMapping("/user/login")
+	public String login(Model model) {  
+		model.addAttribute("url" , api.step1());
+		return "user/login"; 
 	}
 
 	@GetMapping("/user/mypage")
@@ -110,24 +109,16 @@ public class UserController {
 
 	@PostMapping("/user/find")
 	public String find_form(@RequestParam("email") String email, Model model) {
-		User user = userService.findByEmail(email);
+		 try {
+			 	User user = userService.findByEmail(email);
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentEmail;
+			 	model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
+			 	return "user/passchange";
 
-		if (authentication.getPrincipal() instanceof UserDetails) {
-			currentEmail = ((UserDetails) authentication.getPrincipal()).getUsername();
-		} else {
-			currentEmail = authentication.getPrincipal().toString();
-		}
-
-		if ( user.getEmail().equals(currentEmail)) {
-			model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
-			return "user/passchange";
-		} else {
-			model.addAttribute("msg", "이메일을 확인해주세요.");
-			return "user/find";
-		}
+		    } catch (RuntimeException e) {
+		        model.addAttribute("msg", "이메일을 입력해주세요.");
+		        return "user/find";
+		    }
 	}
 
 	@GetMapping("/user/passchange")
@@ -136,31 +127,28 @@ public class UserController {
 	}
 
 	@PostMapping("/user/passchange")
-	public String passchange_form(@RequestParam("email") String email, @RequestParam("password") String password,
-			Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String loggedEmail = authentication.getName();
-		User user = userService.findByEmail(email);
+	public String passchange_form(
+	    @RequestParam("email") String email,
+	    @RequestParam("password") String password, 
+	    Model model) {
+	    
+	    Optional<User> opuser = userRepository.findByEmail(email);
+	    
+	    if (opuser.isPresent()) {
+	        User user = opuser.get();
+	        
+	        String encodedPassword = passwordEncoder.encode(password);
+	        user.setPassword(encodedPassword);
+	        userRepository.save(user);
 
-		if ( user != null) {
-
-			if (loggedEmail.equals(user.getEmail())) {
-				String encodedPassword = passwordEncoder.encode(password);
-				user.setPassword(encodedPassword);
-				userService.insertUser(user);
-
-				model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
-				return "redirect:/user/mypage";
-			} else {
-				model.addAttribute("msg", "다시 입력해주세요.");
-				return "user/passchange";
-			}
-		} else {
-			model.addAttribute("msg", "다시 입력해주세요.");
-			return "user/passchange";
-		}
+	        model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
+	        return "redirect:/user/login";
+	    } else {
+	        model.addAttribute("msg", "비밀번호 변경에 실패했습니다.");
+	        return "user/passchange";
+	    }
 	}
-
+	
 	@GetMapping("/fragments/sidebar/nickname")
 	public String userChange() {
 		return "fragments/sideBarMypage";
@@ -186,33 +174,38 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/fragments/sidebar/delete")
+	@GetMapping("/user/delete")
 	public String userdelete() {
 		return "fragments/sideBarMypage";
 	}
 
-	@PostMapping("/fragments/sidebar/delete")
-	public String userdelete_form(@RequestParam("password") String password, Principal principal,
-			RedirectAttributes redirectAttributes) {
-
+	@PostMapping("/user/delete")
+	public String userdelete_form(@RequestParam("password") String password,
+	                              Principal principal,
+	                              RedirectAttributes redirectAttributes) {
+		
 		String email = principal.getName();
-		User user = userService.findByEmail(email);
+	    Optional<User> opUser = userRepository.findByEmail(email);
 
-		if ( user != null) {
+	    if (opUser.isPresent()) {
+	        User user = opUser.get();
+	        
+	        if (passwordEncoder.matches(password, user.getPassword())) {
+	            userRepository.delete(user);
+	            SecurityContextHolder.clearContext();
 
-			if (passwordEncoder.matches( password, user.getPassword())) {
-				userService.deleteByEmailAndPassword(password, email);
-				SecurityContextHolder.clearContext();
-
-				redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
-				return "redirect:/user/login";
-			} else {
-				redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-				return "redirect:/fragments/sideBarMypage";
-			}
-		} else {
-			redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-			return "redirect:/fragments/sideBarMypage";
-		}
+	            redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
+	            return "redirect:/user/login";
+	        } else {
+	            redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
+	            return "redirect:/mypage"; }
+	    } else {
+	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
+	        return "redirect:/mypage"; }
+	}
+	
+	@GetMapping("/mypage")
+	public String goMain() {
+	    return "user/mypage";
 	}
 }

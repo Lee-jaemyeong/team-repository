@@ -27,10 +27,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("update User u set u.password= :password where u.email= :email ")
 	int updateByIdAndPassword(String password, String email);
 
-	// D
-	@Modifying
-	@Transactional
-	@Query("delete from User u where u.password= :password and u.email= :email ")
-	int deleteByIdAndPassword(String password, String email);
 	
 }

@@ -48,9 +48,5 @@ public class UserService {
 		return userRepository.updateById(user.getId(), user.getUsername());
 	}
 
-	// delete
-	public int deleteByEmailAndPassword(String password, String email) {
-		return userRepository.deleteByIdAndPassword(password, email);
-	}
 
 }
