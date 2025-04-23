@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:fragment="sideBarMypage">
 
 	<nav id="sidebar">
@@ -88,29 +89,27 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<form>
+				<form method="post" th:action="@{/fragments/sidebar/nickname}">
 					<div class="mb-3">
 						<label for="recipient-name" class="col-form-label">닉네임 변경</label>
-						<input type="text" class="form-control" id="recipient-name" value="기존 닉네임 노출">
+						<input type="text" class="form-control" id="recipient-name" th:value="${nickname}">
 					</div>
+					<div class="modal-footer justify-content-center">
+	        			<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+	        			<div><button type="button" class="btn btn-primary p-2">변경하기</button></div>
+	     			</div>
 				</form>
 			</div>
-	    	<div class="modal-footer justify-content-center">
-	        	<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
-	        	<div><button type="button" class="btn btn-primary p-2">변경하기</button></div>
-	     	</div>
 		</div>
 	</div>
 </div>
 <!-- 수정모달 -->
-
-
 			<div class="container-fluide">
-				<a href="#" class="btn mb-3" 
-				style="width: 100%; font-weight: bold; color: #f8b739; border: 3px solid #f8b739; ">로그아웃</a>
+				<a th:href="@{/user/logout}" class="btn mb-3" 
+				style="width: 100%; font-weight: bold; color: #f8b739; border: 3px solid #f8b739; " sec:authorize="isAuthenticated()">로그아웃</a>
 			</div>
 			<div class="container-fluide">
-				<a href="#" class="btn mb-3" 
+				<a th:href="@{/fragments/sidebar/delete}" class="btn mb-3" 
 				style="width: 100%; font-weight: bold; color: #d10e00; border: 3px solid #d10e00;"
 				  data-bs-toggle="modal" data-bs-target="#leaveModal" data-bs-whatever="@fat">탈퇴하기</a>
 			</div>

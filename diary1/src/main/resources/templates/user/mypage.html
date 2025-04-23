@@ -1,26 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" 
 				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-<<<<<<< Updated upstream
-				layout:decorate="~{fragments/layout}"
-				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<!-- layout:decorate="~{fragments/layout}"  fragments폴더안에 layout 렌더링 -->
-<head>
-<meta charset="UTF-8">
-<title>USER</title>
-</head>
-<body>
-	<div layout:fragment="content">
-		<div class="container my-3">
-			<h3 th:text="MYPAGE"></h3>  <!-- authorize 인가: 권한 -->
-			<div class="alert alert-info" sec:authorize="hasRole('ADMIN')" > ADMIN ROLE </div>
-			<div class="alert alert-info" sec:authorize="hasRole('USER')" > USER ROLE </div>
-			<hr/>
-			<div class="alert alert-info" sec:authentication="principal.username" ></div> 
-		</div>
-	</div>
-</body>
-=======
 				layout:decorate="~{fragments/layoutMypage}">
 				
 <th:block layout:fragment="content">
@@ -173,5 +153,4 @@
 </th:block>
 				
 
->>>>>>> Stashed changes
 </html>

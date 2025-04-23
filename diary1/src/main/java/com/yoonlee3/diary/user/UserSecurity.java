@@ -1,5 +1,6 @@
 package com.yoonlee3.diary.user;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,23 +15,35 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class UserSecurity {
-	@Bean SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+	@Value("http://localhost:8080/kakaologout")
+	private String kakao_redirect_url;
+	
+	@Value("${kakao_api}")
+	private String kakao_api;
+@Bean SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http.authorizeHttpRequests(
 			(authorizeHttpRequests) -> authorizeHttpRequests
-										   // admin만 접근가능
-			                               //.requestMatchers( new AntPathRequestMatcher("/admin/**") )
-			                               //.hasRole("ROLE_ADMIN")	// ADMIN 역할    
-			                               // member만 접근가능
-			                               //.requestMatchers( new AntPathRequestMatcher("/member/**") )
-			                               //.hasRole("ROLE_MEMBER")	// MEMBER 역할 
-			                               // 기타페이지 모두 접근가능( 로그인 필요 없음 )
-			                               .requestMatchers( new AntPathRequestMatcher("/**") )
+									    .requestMatchers(
+									            new AntPathRequestMatcher("/css/**"),
+									            new AntPathRequestMatcher("/js/**"),
+									            new AntPathRequestMatcher("/images/**")
+									        ).permitAll()
+			                               .requestMatchers(
+			                            		   new AntPathRequestMatcher("/diary/emoji"),
+			                            		   new AntPathRequestMatcher("/**") )
 			                               .permitAll() // 모든사용자 접근가능
 		).formLogin(  // login
 			(formLogin) -> 	formLogin.loginPage("/user/login").defaultSuccessUrl("/user/mypage")
 		).logout(  // logout
-			(logout) ->	logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessUrl("/user/login").invalidateHttpSession(true)
-		);
+			(logout) ->	logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessHandler((request, response, authentication) -> {
+			    String kakaoLogoutUrl = "https://kauth.kakao.com/oauth/logout"
+			            + "?client_id=" + kakao_api
+			            + "&logout_redirect_uri=" + kakao_redirect_url;
+
+			    response.sendRedirect(kakaoLogoutUrl);
+			}).invalidateHttpSession(true)
+		)
+        .csrf().disable();
 		return http.build();
 	}
 	
@@ -41,7 +54,7 @@ public class UserSecurity {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 	
-	@Bean PasswordEncoder passwordEncoder() {
+	@Bean public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 }
