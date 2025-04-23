@@ -15,19 +15,23 @@ import com.yoonlee3.diary.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity @Getter @Setter
+@Entity
+@Getter
+@Setter
 @IdClass(LikesId.class)
 public class Likes {
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "diary_id")
-    private Diary diary;
-    
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 	
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "diary_id")
+	private Diary diary;
+
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
 	@Column(updatable = false)
 	private LocalDateTime createDate = LocalDateTime.now();
+	
 }

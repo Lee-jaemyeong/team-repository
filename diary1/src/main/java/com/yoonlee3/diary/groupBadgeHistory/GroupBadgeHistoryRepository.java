@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface GroupBadgeHistoryRepository extends JpaRepository<GroupBadgeHistory, Long> {
 
-	//C
-	//R
+	// C
+	
+	// R
 	@Query("select gbh from GroupBadgeHistory gbh where gbh.group.id = :group_id ")
 	List<GroupBadgeHistory> findGroupBadgeHistory(Long group_id);
-	//U
-	//D
+	
+	// U
+	
+	// D
 }

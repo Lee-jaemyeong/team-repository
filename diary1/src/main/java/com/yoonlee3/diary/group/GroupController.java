@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user.User;
-import com.yoonlee3.diary.user.UserRepository;
+import com.yoonlee3.diary.user.UserService;
 
 @Controller
 public class GroupController {
@@ -17,7 +17,7 @@ public class GroupController {
 	@Autowired
 	GroupService groupService;
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 	@Autowired
 	JoinToGroupService joinToGroupService;
 
@@ -37,7 +37,7 @@ public class GroupController {
 	@PostMapping("group/join")
 	public String groupJoin_post(Principal principal, YL3Group group, User user) {
 		String username = principal.getName();
-		user = userRepository.findByUsername(username);
+		user = userService.findByUsername(username);
 		Long user_id = user.getId();
 		Long group_id = group.getId();
 		joinToGroupService.joinToGroup(group_id, user_id);
@@ -55,7 +55,7 @@ public class GroupController {
 	@PostMapping("group/leave")
 	public String groupLeave_Post(Principal principal, YL3Group group, User user) {
 		String username = principal.getName();
-		user = userRepository.findByUsername(username);
+		user = userService.findByUsername(username);
 		Long user_id = user.getId();
 		Long group_id = group.getId();
 		
@@ -73,7 +73,7 @@ public class GroupController {
 	@PostMapping("group/delete")
 	public String groupDelete_post(Principal principal, YL3Group group, User user) {
 		String username = principal.getName();
-		user = userRepository.findByUsername(username);
+		user = userService.findByUsername(username);
 		Long user_id = user.getId();
 		Long group_id = group.getId();
 		

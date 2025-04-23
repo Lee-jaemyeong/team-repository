@@ -9,16 +9,18 @@ import javax.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity @Getter @Setter
+@Entity
+@Getter
+@Setter
 public class Template {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="template_id")
+	@Column(name = "template_id")
 	private Long id;
-	
+
 	private String template_title;
-	
+
 	private String template_content;
 
 }
