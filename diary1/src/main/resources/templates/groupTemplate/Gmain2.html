@@ -5,8 +5,12 @@
 
 <th:block layout:fragment="content">
 
-	<div class="container-fluid p-3"
+	<div class="container-fluid p-3 "
 		style="border-bottom: 1px solid #9d9d9d;">
+		<div class="d-flex align-items-center mb-5 p-3" style="border: 1px solid #eee;">
+			<div><img src="https://placehold.co/50x50"></div>
+			<div style="margin-left: 1.2em;">공지영역</div>
+		</div>
 		<!-- 프로필영역 -->
 		<div class="d-flex bd-highlight mb-3">
 			<div>
@@ -30,23 +34,6 @@
 			<h1 style="font-size: 1.3em; margin-left: 5px;">{Diary Title}
 				Lorem ipsum dolor sit amet consectetur adipisicing elit. .</h1>
 		</div>
-		<!-- 목표 -->
-		<div class="container-fluid">
-			<table class="table">
-				<caption>Group Success</caption>
-				<tbody>
-					<tr>
-						<td scope="row" style="padding-right: 2em;">목표명</td>
-						<td scope="row"
-							style="text-align: center; background-color: #f8b739;">날짜</td>
-						<td scope="row" style="text-align: center;">날짜</td>
-						<td scope="row" style="text-align: center;">날짜</td>
-						<!-- 고민사항:성공여부에 따라 자동으로 배경색이 변할 수 있나... 아니면 다른 식으로 표기를 해야하나... -->
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<!-- 목표 -->
 	</div>
 
 </th:block>
