@@ -14,18 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.RequestParam;
 =======
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yoonlee3.diary.like.LikeService;
-=======
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserService;
 
@@ -36,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class DiaryController {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	@Autowired DiaryService service;
 	@Autowired UserRepository userRepository;
 	@Autowired Diary_gptService api;
@@ -43,13 +42,19 @@ public class DiaryController {
 	
 =======
 	
+=======
+
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@Autowired
 	DiaryService service;
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 	@Autowired
 	Diary_gptService api;
+	@Autowired
+	LikeService likeService;
 
+<<<<<<< HEAD
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 =======
 
@@ -63,10 +68,13 @@ public class DiaryController {
 	LikeService likeService;
 
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {
 			String email = principal.getName();
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		    User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("사용자 정보가 없습니다."));
@@ -121,6 +129,9 @@ public class DiaryController {
 =======
 			User user = userRepository.findByEmail(email)
 					.orElseThrow(() -> new UsernameNotFoundException("사용자 정보가 없습니다."));
+=======
+			User user = userService.findByEmail(email);
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 			model.addAttribute("nickname", user.getUsername());
 		} else {
 			model.addAttribute("nickname", "Guest");
@@ -134,8 +145,20 @@ public class DiaryController {
 	}
 
 	@GetMapping("/diary/detail/{id}")
-	public String detail(@PathVariable Long id, Model model) {
-		model.addAttribute("dto", service.find(id));
+	public String detail(@PathVariable Long id, Model model, Principal principal) {
+		model.addAttribute("dto", service.findById(id));
+
+		long likeCount = likeService.getLikeCount(id);
+		model.addAttribute("likeCount", likeCount);
+
+		if (principal != null) {
+			String email = principal.getName();
+			User user = userService.findByEmail(email);
+			boolean isLiked = likeService.isLiked(id, user.getId());
+			model.addAttribute("isLiked", isLiked); // 좋아요 여부 추가
+		} else {
+			model.addAttribute("isLiked", false); // 비로그인 시 좋아요 상태는 false
+		}
 		return "diary/detail";
 	}
 
@@ -146,16 +169,13 @@ public class DiaryController {
 	}
 
 	@PostMapping("/diary/insert")
-	public String insert_post(Diary diary, Principal principal, Model model ) {
+	public String insert_post(Diary diary, Principal principal) {
 		String email = principal.getName();
-		User user = userRepository.findByEmail(email).orElseThrow();
+		User user = userService.findByEmail(email);
 		diary.setUser(user);
-		
-		String emoji = api.getAIResponse(diary.getDiary_content());
-		model.addAttribute("emoji", emoji);
-		
 		service.insert(diary);
 		return "redirect:/diary/list";
+<<<<<<< HEAD
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 =======
 	public String insert_get(Principal principal, Model model) {
@@ -173,6 +193,10 @@ public class DiaryController {
 		return "redirect:/diary/list";
 	}
 
+=======
+	}
+
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@PostMapping("/diary/emoji")
 	@ResponseBody
 	public Map<String, String> getSummary(@RequestBody Map<String, String> request) {
@@ -182,6 +206,7 @@ public class DiaryController {
 		result.put("emoji", emoji);
 		return result;
 	}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	
@@ -231,11 +256,19 @@ public class DiaryController {
 		service.delete(diary); //## 글삭제기능
 		return "redirect:/diary/list"; 
 =======
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 	@GetMapping("/diary/update/{id}")
-	public String update_get(@PathVariable Long id, Model model) {
-		model.addAttribute("dto", service.update_view(id)); // ## 수정할 글 가져오기
-		return "diary/edit";
+	public String update_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
+		Diary diary = service.update_view(id); // ## 수정할 글 가져오기
+		if (diary.getUser().getEmail().equals(principal.getName())) {
+			model.addAttribute("dto", diary); // 수정할 일기 가져오기
+			return "diary/edit";
+		} else {
+			rttr.addFlashAttribute("msg", "본인이 작성한 글만 수정할 수 있습니다.");
+			return "redirect:/diary/list";
+		}
 	}
 
 	@PostMapping("/diary/update")
@@ -249,9 +282,15 @@ public class DiaryController {
 	}
 
 	@GetMapping("/diary/delete/{id}")
-	public String delete_get(@PathVariable Long id, Model model) {
-		model.addAttribute("id", id);
-		return "diary/delete";
+	public String delete_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
+		Diary diary = service.findById(id);
+		if (diary.getUser().getEmail().equals(principal.getName())) {
+			model.addAttribute("id", id);
+			return "diary/delete";
+		} else {
+			rttr.addFlashAttribute("msg", "본인이 작성한 글만 삭제할 수 있습니다.");
+			return "redirect:/diary/list";
+		}
 	}
 
 	@PostMapping("/diary/delete")
@@ -266,8 +305,11 @@ public class DiaryController {
 		service.delete(diary); // ## 글삭제기능
 		return "redirect:/diary/list";
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 =======
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	}
 }

@@ -20,7 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.yoonlee3.diary.badge.Badge;
-import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.groupAchiv.GroupAchiv;
 import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistory;
 import com.yoonlee3.diary.user.User;
@@ -39,6 +38,7 @@ public class YL3Group {
 	private Long id;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 	@Column(unique=true , nullable=false)  
 =======
@@ -49,6 +49,10 @@ public class YL3Group {
 
 	@Column(unique = true, nullable = false)
 >>>>>>> 64f87d4 (0422)
+=======
+
+	@Column(unique = true, nullable = false)
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	private String group_title;
 
 	@Column(nullable = false)
@@ -66,6 +70,7 @@ public class YL3Group {
 	private Badge badge;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 	
 =======
@@ -74,12 +79,16 @@ public class YL3Group {
 =======
 
 >>>>>>> 64f87d4 (0422)
+=======
+
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@ManyToMany
 	@JoinTable(name = "Group_has_User", // 조인 테이블 이름
 			joinColumns = @JoinColumn(name = "group_id"), // 현재 엔티티(PK)
 			inverseJoinColumns = @JoinColumn(name = "user_id") // 상대 엔티티(PK)
 	)
 	private Set<User> users = new HashSet<>();
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	
@@ -91,11 +100,14 @@ public class YL3Group {
 =======
 =======
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
 	private List<GroupBadgeHistory> badgeHistories = new ArrayList<>();
 
 	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	private List<GroupAchiv> groupAchiv = new ArrayList<>();
@@ -105,4 +117,8 @@ public class YL3Group {
 	private List<GroupAchiv> groupAchiv = new ArrayList<>();
 
 >>>>>>> 64f87d4 (0422)
+=======
+	private List<GroupAchiv> groupAchiv = new ArrayList<>();
+
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 }

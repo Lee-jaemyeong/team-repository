@@ -27,6 +27,7 @@ public class User {
 	private Long id;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		
 	@Column(unique=true , nullable=false)  
 =======
@@ -51,12 +52,15 @@ public class User {
 }
 =======
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 	@Column(unique = true, nullable = false)
 	private String username;
-
 	@Column(nullable = false)
 	private String password;
+
+	private String nickname;
 
 	@Column(unique = true, nullable = false)
 	private String email;
@@ -66,7 +70,11 @@ public class User {
 
 	@ManyToMany(mappedBy = "users")
 	private Set<YL3Group> groups = new HashSet<>();
+<<<<<<< HEAD
 =======
 
 >>>>>>> 64f87d4 (0422)
+=======
+
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 }

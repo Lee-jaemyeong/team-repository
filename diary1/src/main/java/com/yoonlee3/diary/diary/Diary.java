@@ -1,11 +1,6 @@
 package com.yoonlee3.diary.diary;
 
 import java.time.LocalDateTime;
-<<<<<<< HEAD
-=======
-import java.util.ArrayList;
-import java.util.List;
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,10 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 import org.hibernate.annotations.Cascade;
@@ -27,6 +22,8 @@ import com.yoonlee3.diary.group.YL3Group;
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 =======
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.template.Template;
 import com.yoonlee3.diary.user.User;
@@ -45,16 +42,19 @@ public class Diary {
 	private Long id;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 	@Column(nullable=false)
 =======
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 	@Column(nullable = false)
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	private String diary_title;
-
+	
 	@Column(nullable = false)
 	private String diary_content;
+<<<<<<< HEAD
 	
 <<<<<<< HEAD
 	@Column(nullable = false )
@@ -75,16 +75,22 @@ public class Diary {
 <<<<<<< HEAD
 	
 =======
+=======
+
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@Column(nullable = false)
 	private String diary_emoji;
-	
-	@Column(updatable = false , nullable=false)
+
+	@Column(updatable = false)
 	private LocalDateTime create_date = LocalDateTime.now();
 
+<<<<<<< HEAD
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 =======
 
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	private User user;
@@ -96,9 +102,4 @@ public class Diary {
 	@OneToOne
 	@JoinColumn(name = "template_id")
 	private Template template;
-<<<<<<< HEAD
-=======
-	
-
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 }

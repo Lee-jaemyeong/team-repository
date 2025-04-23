@@ -26,6 +26,7 @@ public class UserController {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	@Autowired UserService service;
 	@Autowired UserRepository userRepository;
 	@Autowired private PasswordEncoder passwordEncoder;
@@ -36,17 +37,21 @@ public class UserController {
 		model.addAttribute("url" , api.step1());
 		return "user/login"; }
 =======
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@Autowired
-	UserService service;
-	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	KakaoLogin api;
 
 	@GetMapping("/")
-	public String main() {
+	public String main(Model model) {
+		model.addAttribute("url", api.step1());
 		return "user/login";
 	}
+<<<<<<< HEAD
 	// localhost:8080/user/login
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 	
@@ -63,17 +68,23 @@ public class UserController {
 		model.addAttribute("url", api.step1());
 		return "user/login";
 	}
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 	@GetMapping("/user/login")
 	public String login() {
 		return "user/login";
 	}
 
+<<<<<<< HEAD
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {
 			String email = principal.getName();
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		    User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일에 해당하는 사용자를 찾을 수 없습니다: " + email));
@@ -86,6 +97,10 @@ public class UserController {
 			User user = userService.findByEmail(email);
 			model.addAttribute("nickname", user.getUsername());
 >>>>>>> 64f87d4 (0422)
+=======
+			User user = userService.findByEmail(email);
+			model.addAttribute("nickname", user.getUsername());
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 		} else {
 			model.addAttribute("nickname", "Guest");
 		}
@@ -97,15 +112,19 @@ public class UserController {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다."));
 		model.addAttribute("nickname", user.getUsername()); 
 =======
 		User user = userRepository.findByEmail(email).orElseThrow();
+=======
+		User user = userService.findByEmail(email);
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 		model.addAttribute("nickname", user.getUsername());
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 		return "user/mypage";
 	}
 
+<<<<<<< HEAD
 	@GetMapping("/user/login")
 <<<<<<< HEAD
 	public String login() {  return "user/login"; }
@@ -123,6 +142,8 @@ public class UserController {
 	}
 
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	@PostMapping("/user/login")
 	public String login_form() {
 		return "user/login";
@@ -150,10 +171,14 @@ public class UserController {
 			user.setEmail(userForm.getEmail());
 			user.setPassword(userForm.getPassword());
 <<<<<<< HEAD
+<<<<<<< HEAD
 			service.insertUser(user);
 =======
 			userService.insertUser(user);
 >>>>>>> 64f87d4 (0422)
+=======
+			userService.insertUser(user);
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 		} catch (DataIntegrityViolationException e) { // 무결성 - 중복키, 외래키제약, 데이터형식불일치
 			e.printStackTrace();
 			bindingResult.reject("failed", "등록된 유저입니다.");
@@ -174,10 +199,14 @@ public class UserController {
 	@PostMapping("/user/find")
 	public String find_form(@RequestParam("email") String email, Model model) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		Optional<User> user = userRepository.findByEmail(email);
 =======
 		User user = userService.findByEmail(email);
 >>>>>>> 64f87d4 (0422)
+=======
+		User user = userService.findByEmail(email);
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentEmail;
@@ -189,10 +218,14 @@ public class UserController {
 		}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		if (user.isPresent() && user.get().getEmail().equals(currentEmail)) {
 =======
 		if ( user.getEmail().equals(currentEmail)) {
 >>>>>>> 64f87d4 (0422)
+=======
+		if ( user.getEmail().equals(currentEmail)) {
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 			model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
 			return "user/passchange";
 		} else {
@@ -212,15 +245,14 @@ public class UserController {
 			Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String loggedEmail = authentication.getName();
-		Optional<User> opuser = userRepository.findByEmail(email);
+		User user = userService.findByEmail(email);
 
-		if (opuser.isPresent()) {
-			User user = opuser.get();
+		if ( user != null) {
 
 			if (loggedEmail.equals(user.getEmail())) {
 				String encodedPassword = passwordEncoder.encode(password);
 				user.setPassword(encodedPassword);
-				userRepository.save(user);
+				userService.insertUser(user);
 
 				model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
 				return "redirect:/user/mypage";
@@ -233,70 +265,23 @@ public class UserController {
 			return "user/passchange";
 		}
 	}
-<<<<<<< HEAD
-	
+
 	@GetMapping("/fragments/sidebar/nickname")
-	public String userChange() { return "fragments/sideBarMypage"; }
-	
-	@PostMapping("/fragments/sidebar/nickname")
-	public String userChange_form(@RequestParam String username,
-	                              Principal principal,
-	                              RedirectAttributes redirectAttributes) {
-
-	    String email = principal.getName();
-	    Optional<User> opUser = userRepository.findByEmail(email);
-
-	    if (opUser.isPresent()) {
-	        User user = opUser.get();
-
-	        user.setUsername(username);
-	        userRepository.save(user);
-
-	        redirectAttributes.addFlashAttribute("msg", "닉네임이 변경되었습니다.");
-	        return "redirect:/user/mypage";
-	    } else {
-	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-	        return "redirect:/fragments/sideBarMypage";
-	    }
-	}
-	
-	@GetMapping("/fragments/sidebar/delete")
-	public String userdelete() { return "fragments/sideBarMypage"; }
-	
-	@PostMapping("/fragments/sidebar/delete")
-	public String userdelete_form(@RequestParam("password") String password,
-	                              Principal principal,
-	                              RedirectAttributes redirectAttributes) {
-		
-=======
-
-	@GetMapping("/user/userchange")
 	public String userChange() {
-		return "user/userchange";
+		return "fragments/sideBarMypage";
 	}
 
-	@PostMapping("/user/userchange")
+	@PostMapping("/fragments/sidebar/nickname")
 	public String userChange_form(@RequestParam String username, Principal principal,
 			RedirectAttributes redirectAttributes) {
 
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 		String email = principal.getName();
-		Optional<User> opUser = userRepository.findByEmail(email);
+		User user = userService.findByEmail(email);
 
-		if (opUser.isPresent()) {
-			User user = opUser.get();
+		if (user != null) {
 
-<<<<<<< HEAD
-	            redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
-	            return "redirect:/user/login";
-	        } else {
-	            redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-	            return "redirect:/fragments/sideBarMypage"; }
-	    } else {
-	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-	        return "redirect:/fragments/sideBarMypage"; }
-=======
 			user.setUsername(username);
+<<<<<<< HEAD
 			userRepository.save(user);
 =======
 
@@ -348,21 +333,29 @@ public class UserController {
 			user.setUsername(username);
 			userService.insertUser(user);
 >>>>>>> 64f87d4 (0422)
+=======
+			userService.insertUser(user);
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
 			redirectAttributes.addFlashAttribute("msg", "닉네임이 변경되었습니다.");
 			return "redirect:/user/mypage";
 		} else {
 			redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
 <<<<<<< HEAD
+<<<<<<< HEAD
 			return "redirect:/user/userchange";
+=======
+			return "redirect:/fragments/sideBarMypage";
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 		}
 	}
 
-	@GetMapping("/user/userdelete")
+	@GetMapping("/fragments/sidebar/delete")
 	public String userdelete() {
-		return "user/userdelete";
+		return "fragments/sideBarMypage";
 	}
 
+<<<<<<< HEAD
 	@PostMapping("/user/userdelete")
 =======
 			return "redirect:/fragments/sideBarMypage";
@@ -376,16 +369,23 @@ public class UserController {
 
 	@PostMapping("/fragments/sidebar/delete")
 >>>>>>> 64f87d4 (0422)
+=======
+	@PostMapping("/fragments/sidebar/delete")
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	public String userdelete_form(@RequestParam("password") String password, Principal principal,
 			RedirectAttributes redirectAttributes) {
 
 		String email = principal.getName();
 <<<<<<< HEAD
+<<<<<<< HEAD
 		Optional<User> opUser = userRepository.findByEmail(email);
+=======
+		User user = userService.findByEmail(email);
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 
-		if (opUser.isPresent()) {
-			User user = opUser.get();
+		if ( user != null) {
 
+<<<<<<< HEAD
 			if (passwordEncoder.matches(password, user.getPassword())) {
 				userRepository.delete(user);
 =======
@@ -396,6 +396,10 @@ public class UserController {
 			if (passwordEncoder.matches( password, user.getPassword())) {
 				userService.deleteByEmailAndPassword(password, email);
 >>>>>>> 64f87d4 (0422)
+=======
+			if (passwordEncoder.matches( password, user.getPassword())) {
+				userService.deleteByEmailAndPassword(password, email);
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 				SecurityContextHolder.clearContext();
 
 				redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
@@ -403,12 +407,17 @@ public class UserController {
 			} else {
 				redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
 <<<<<<< HEAD
+<<<<<<< HEAD
 				return "redirect:/user/userdelete";
+=======
+				return "redirect:/fragments/sideBarMypage";
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 			}
 		} else {
 			redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-			return "redirect:/user/userdelete";
+			return "redirect:/fragments/sideBarMypage";
 		}
+<<<<<<< HEAD
 >>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 =======
 				return "redirect:/fragments/sideBarMypage";
@@ -418,5 +427,7 @@ public class UserController {
 			return "redirect:/fragments/sideBarMypage";
 		}
 >>>>>>> 64f87d4 (0422)
+=======
+>>>>>>> d81df584b87b2b860a5fd8f1bd8d58dff7de28fe
 	}
 }

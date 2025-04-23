@@ -15,7 +15,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class UserSecurity {
-<<<<<<< HEAD
 	@Value("http://localhost:8080/kakaologout")
 	private String kakao_redirect_url;
 	
@@ -45,34 +44,17 @@ public class UserSecurity {
 			}).invalidateHttpSession(true)
 		)
         .csrf().disable();
-=======
-	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-				// admin만 접근가능
-				// .requestMatchers( new AntPathRequestMatcher("/admin/**") )
-				// .hasRole("ROLE_ADMIN") // ADMIN 역할
-				// member만 접근가능
-				// .requestMatchers( new AntPathRequestMatcher("/member/**") )
-				// .hasRole("ROLE_MEMBER") // MEMBER 역할
-				// 기타페이지 모두 접근가능( 로그인 필요 없음 )
-				.requestMatchers(new AntPathRequestMatcher("/**")).permitAll() // 모든사용자 접근가능
-		).formLogin( // login
-				(formLogin) -> formLogin.loginPage("/user/login").defaultSuccessUrl("/user/mypage")).logout( // logout
-						(logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-								.logoutSuccessUrl("/user/login").invalidateHttpSession(true));
->>>>>>> f6d6340bbc8f87a9c50ea7475293e98804f7b2d1
 		return http.build();
 	}
-
+	
 	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
+	AuthenticationManager authenticationManager(
+			AuthenticationConfiguration authenticationConfiguration
+	) throws Exception{ 
 		return authenticationConfiguration.getAuthenticationManager();
 	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
+	
+	@Bean public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 }
