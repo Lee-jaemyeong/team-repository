@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" 
 				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-				layout:decorate="~{fragments/layoutGroup}">
+				layout:decorate="~{fragments/layout}">
 				
 <th:block layout:fragment="content">
 
@@ -29,7 +29,7 @@
   <!-- 목표 -->
    <!-- 글쓰기폼 -->
     <div class="container-fluid">
-      <form>
+      <form th:action="@{/diary/isert}" method="post">
         <div class="d-flex bd-highlight mb-4">
           <div class="flex-grow-1 bd-highlight" style="margin-right: 0.6em;">
             <input class="form-control form-control-lg" type="text" placeholder="제목을 입력하세요" aria-label="default input example">

@@ -1,6 +1,8 @@
 package com.yoonlee3.diary.user;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -19,6 +21,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.yoonlee3.diary.goal.Goal;
+import com.yoonlee3.diary.goal.GoalService;
+import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user_kakao.KakaoLogin;
 
 @Controller
@@ -30,19 +36,19 @@ public class UserController {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	KakaoLogin api;
-
+	@Autowired
+	private GoalService goalService;
+	@Autowired
+	JoinToGroupService joinToGroupService;
+	
+	// 처음 화면
 	@GetMapping("/")
 	public String main(Model model) {
 		model.addAttribute("url", api.step1());
 		return "user/login";
 	}
-
-	@GetMapping("/user/login")
-	public String login(Model model) {  
-		model.addAttribute("url" , api.step1());
-		return "user/login"; 
-	}
-
+	
+	// 로그인 된 유저 닉네임 설정
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {
@@ -52,15 +58,32 @@ public class UserController {
 		} else {
 			model.addAttribute("nickname", "Guest");
 		}
-	
 	}
 
+	@GetMapping("/user/login")
+	public String login(Model model) {
+		model.addAttribute("url" , api.step1());
+		return "user/login";
+	}
+	
+	// 마이페이지
 	@GetMapping("/user/mypage")
 	public String myPage(Model model, Principal principal) {
+		model.addAttribute("isMyPage", true);
 		String email = principal.getName();
 
 		User user = userService.findByEmail(email);
+		System.out.println(user.getNickname());
 		model.addAttribute("nickname", user.getUsername());
+		
+		List<Goal> goal = goalService.findTodayGoalByUserId(user);
+		System.out.println(".......goal list........"+goal);
+		model.addAttribute("goal", goal);
+		
+		Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+		System.out.println("그룹 잘 가져왔니............?" + groups.toString());
+		model.addAttribute("groups", groups);
+		
 		return "user/mypage";
 	}
 
@@ -68,7 +91,8 @@ public class UserController {
 	public String login_form() {
 		return "user/login";
 	}
-
+	
+	// 가입하기 화면
 	@GetMapping("/user/join")
 	public String join(UserForm userForm) {
 		return "user/join";
@@ -102,7 +126,8 @@ public class UserController {
 		}
 		return "user/login";
 	}
-
+	
+	// 유저 찾기
 	@GetMapping("/user/find")
 	public String find() {
 		return "user/find";
@@ -129,7 +154,8 @@ public class UserController {
 			return "user/find";
 		}
 	}
-
+	
+	// 비밀번호
 	@GetMapping("/user/passchange")
 	public String passchange() {
 		return "user/passchange";
@@ -215,4 +241,17 @@ public class UserController {
 			return "redirect:/fragments/sideBarMypage";
 		}
 	}
+	
+	@GetMapping("/mypage")
+	public String goMypage() {
+	    return "user/mypage";
+	}
+	
+	@GetMapping("/main")
+	public String goMain(Model model) {
+		model.addAttribute("isMainPage", true);
+		return "mainTemplate/main";
+	}
+	@GetMapping("/user/follow")
+	public String follow() {return "user/follow";}	
 }

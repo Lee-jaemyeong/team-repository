@@ -8,16 +8,24 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.yoonlee3.diary.user.User;
+
 public interface GoalRepository extends JpaRepository<Goal, Long> {
 	
 	//C
 	
 	//R
+	// 목표 아이디로 찾기
 	@Query("select g from Goal g where g.id = :goal_id")
 	Goal findByGoalId(Long goal_id);
 	
-	@Query("select g from Goal g where g.user.id = :user_id")
+	// 유저의 전체 목표 가져오기
+	@Query("select g from Goal g where g.user.id= :user_id")
 	List<Goal> findByUserId(Long user_id);
+	
+	// 유저의 오늘 해야할 목표 가져오기
+	@Query("select g from Goal g where g.user.id= :user_id and g.dueDate >= :today")
+	List<Goal> findTodayGoalByUserId(Long user_id, Date today);
 	
 	//U
 	@Modifying

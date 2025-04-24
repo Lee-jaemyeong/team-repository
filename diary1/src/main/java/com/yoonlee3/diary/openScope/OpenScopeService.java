@@ -13,4 +13,8 @@ public class OpenScopeService {
 		return openScopeRepository.findByOpenScopeId(openScope.getId());
 	}
 
+	public OpenScope findOpenScopeId(Long open_scope_id) {
+		return openScopeRepository.findByOpenScopeId(open_scope_id);
+	}
+
 }

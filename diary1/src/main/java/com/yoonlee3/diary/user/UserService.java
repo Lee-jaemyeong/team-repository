@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.user;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,10 @@ public class UserService {
 
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username);
+	}
+
+	public boolean SameUsername(String username) {
+		return userRepository.existsByUsername(username); // 닉네임 중복 확인
 	}
 
 	// update

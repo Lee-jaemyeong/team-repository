@@ -1,88 +1,270 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:fragment="sideBar">
 
 	<nav id="sidebar">
 		<div class="p-4 pt-5">
-			<a href="#" class="img logo rounded-circle mb-5"
+			<!-- 프로필 -->
+			<a th:href="@{/user/mypage}" class="img logo rounded-circle mb-3"
 				style="background-image: url(#); background-color: white;"></a>
+			<div class="container-fluid mb-2"
+				style="text-align: center; font-weight: bold;" th:text="${nickname}"></div>
+			<div class="d-flex justify-content-center mb-3">
+				<div style="padding: 0 10px;">
+					<a th:href="@{/user/follow}" class="nav-link">{n}팔로잉</a>
+				</div>
+				<div style="padding: 0 10px;">
+					<a th:href="@{/user/follow}" class="nav-link">{n}팔로워</a>
+				</div>
+			</div>
+			<div class="container">
+				<a href="#profileModal" class="btn p-2 mb-2"
+					style="width: 100%; font-weight: bold; color: #fff; font-size: 0.8em;"
+					data-bs-toggle="modal">프로필 수정</a>
+			</div>
+			<!-- 프로필 -->
+			<!-- 	<div th:text="${groups}"></div> -->
 			<ul class="list-unstyled components mb-5" style="height: 45%;">
-				<li><a href="#" class="nav-link">HOME</a></li>
-				<li><a href="#pageSubmenu" data-toggle="collapse"
+				<li><a th:href="@{/main}" class="nav-link">HOME</a></li>
+				<li><a href="#pageSubmenu" data-bs-toggle="collapse"
 					aria-expanded="false" class="dropdown-toggle nav-link">GROUP</a>
-					<ul class="collapse list-unstyled" id="pageSubmenu">
+					<ul class="collapse list-unstyled" id="pageSubmenu"
+						th:each="group : ${groups}">
 						<li class="d-flex bd-highlight">
-							<div class="flex-grow-1 bd-highlight"><a href="#" class="nav-link">GroupName</a></div>
-							<div class="bd-highlight"><a href="#"  data-bs-toggle="modal" data-bs-target="#updateModal" data-bs-whatever="@fat"><i class="bi bi-pencil-fill p-2"></i></a></div>
-							<div class="bd-highlight"><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="bi bi-trash p-2"></i></a></div>
+							<div th:if="${groups == null or #sets.isEmpty(groups)}">그룹이
+								없습니다.</div>
+							<div class="flex-grow-1 bd-highlight">
+								<a th:href="@{|/group/group/${group.id}|}" class="nav-link"
+									th:text="${group.group_title}"></a>
+							</div>
+							<div class="bd-highlight">
+								<a href="javascript:void(0);" data-bs-toggle="modal"
+									data-bs-target="#updateModal" data-bs-whatever="@fat"
+									th:attr="onclick=|openGroupUpdateModal('${group.id}', '${group.group_content}', '${group.group_title}')|">
+									<i class="bi bi-pencil-fill p-2"></i>
+								</a>
+							</div>
+							<div class="bd-highlight">
+								<a href="javascript:void(0);" data-bs-toggle="modal"
+									data-bs-target="#deleteModal"
+									th:attr="onclick=|openGroupDeleteModal('${group.id}')|"><i
+									class="bi bi-trash p-2"> </i></a>
+							</div>
 						</li>
-						<li><a href="#" class="nav-link">GroupName</a></li>
-						<li><a href="#" class="nav-link">GroupName</a></li>
 					</ul></li>
 			</ul>
-
-<!-- 삭제모달 -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p style="text-align: center; padding-top: 2em; color: #000;">그룹을 삭제하시겠습니까?</p>
-      </div>
-      <div class="modal-footer justify-content-center">
-        <div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
-        <div><button type="button" class="btn btn-primary p-2">삭제하기</button></div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- 삭제모달 -->
-<!-- 수정모달 -->
-<div class="modal fade" id="updateModal" tabindex="-1"	aria-labelledby="updateModalLabel" aria-hidden="true">
-	<div class="modal-dialog" style="color: #000;">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="exampleModalLabel">그룹 수정하기</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<form>
-					<div class="mb-3">
-						<label for="recipient-name" class="col-form-label">그룹명</label>
-						<input type="text" class="form-control" id="recipient-name" value="기존 그룹명 노출">
+			<!-- 메인 페이지 버튼 -->
+			<!-- 메인 페이지 버튼 -->
+			<th:block th:if="${isMainPage}">
+				<div class="container-fluide">
+					<a th:href="@{diary/insert}" class="btn p-3 mb-5"
+						style="width: 100%; background-color: #f8b739; font-weight: bold; color: #fff;">일기쓰기</a>
+				</div>
+			</th:block>
+			<!-- 마이페이지 버튼 -->
+			<!-- 마이페이지 버튼 -->
+			<th:block th:if="${isMyPage}">
+				<div class="container-fluide">
+					<a th:href="@{/user/logout}" class="btn mb-3"
+						style="width: 100%; font-weight: bold; color: #f8b739; border: 3px solid #f8b739;"
+						sec:authorize="isAuthenticated()">로그아웃</a>
+				</div>
+				<div class="container-fluide">
+					<a th:href="@{/fragments/sidebar/delete}" class="btn mb-3"
+						style="width: 100%; font-weight: bold; color: #d10e00; border: 3px solid #d10e00;"
+						data-bs-toggle="modal" data-bs-target="#leaveModal"
+						data-bs-whatever="@fat">탈퇴하기</a>
+				</div>
+			</th:block>
+			<!-- 그룹 페이지 버튼 -->
+			<!-- 그룹 페이지 버튼 -->
+			<th:block th:if="${isGroupPage}">
+				<div class="container-fluide">
+					<a href="@{diary/insert}" class="btn p-3 mb-3"
+						style="width: 100%; font-weight: bold; color: #fff; background-color: #f8b739;">일기쓰기</a>
+				</div>
+				<div class="container-fluide">
+					<a th:href="@{/group/insert}" class="btn p-3 mb-3"
+						style="width: 100%; font-weight: bold; color: #f8b739; border: 3px solid #f8b739;">그룹생성</a>
+				</div>
+			</th:block>
+			<!-- 삭제모달 -->
+			<div class="modal fade" id="deleteModal" tabindex="-1"
+				aria-labelledby="deleteModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<form id="deleteGroupForm" method="post">
+								<p style="text-align: center; padding-top: 2em; color: #000;">그룹을
+									삭제하시겠습니까?</p>
+								<div class="modal-footer justify-content-center">
+									<div>
+										<button type="reset" class="btn btn-secondary p-2"
+											data-bs-dismiss="modal">취소</button>
+									</div>
+									<div>
+										<button type="submit" class="btn btn-primary p-2">삭제하기</button>
+									</div>
+								</div>
+							</form>
+						</div>
 					</div>
-					<div class="mb-3">
-						<label for="message-text" class="col-form-label">그룹소개</label>
-						<textarea class="form-control" id="message-text" style="resize: none; height: 15vh;">기존 그룹소개 노출</textarea>
+				</div>
+			</div>
+			<!-- 삭제모달 -->
+			<!-- 수정모달 -->
+			<div class="modal fade" id="updateModal" tabindex="-1"
+				aria-labelledby="updateModalLabel" aria-hidden="true">
+				<div class="modal-dialog" style="color: #000;">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">그룹 수정하기</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<form id="updateGroupForm" method="post">
+								<div class="mb-3">
+									<label for="group_title" class="col-form-label"></label> <input
+										type="text" class="form-control" id="group_title_update"
+										name="group_title" value="">
+								</div>
+								<div class="mb-3">
+									<label for="group_content" class="col-form-label"></label>
+									<textarea class="form-control" id="group_content_update"
+										name="group_content" style="resize: none; height: 15vh;"
+										value=""></textarea>
+								</div>
+								<div class="modal-footer justify-content-center">
+									<div>
+										<button type="reset" class="btn btn-secondary p-2"
+											data-bs-dismiss="modal">취소</button>
+									</div>
+									<div>
+										<button type="submit" class="btn btn-primary p-2">변경하기</button>
+									</div>
+								</div>
+							</form>
+						</div>
 					</div>
-				</form>
+				</div>
 			</div>
-	    	<div class="modal-footer justify-content-center">
-	        	<div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
-	        	<div><button type="button" class="btn btn-primary p-2">변경하기</button></div>
-	     	</div>
-		</div>
-	</div>
-</div>
-<!-- 수정모달 -->
-
-			<div class="container-fluide">
-				<a href="#" class="btn p-3 mb-5" 
-				style="width: 100%; background-color: #f8b739; font-weight: bold; color: #fff;">일기쓰기</a>
+			<!-- 수정모달 -->
+			<!-- 수정모달 -->
+			<div class="modal fade" id="profileModal" tabindex="-1"
+				aria-labelledby="profileModalLabel" aria-hidden="true">
+				<div class="modal-dialog" style="color: #000;">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="profileModalLabel">프로필 수정하기</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<form method="post" th:action="@{/fragments/sidebar/nickname}">
+								<div class="mb-3">
+									<label for="recipient-name" class="col-form-label">닉네임
+										변경</label> <input type="text" class="form-control" id="recipient-name"
+										th:value="${nickname}">
+								</div>
+								<div class="modal-footer justify-content-center">
+									<div>
+										<button type="button" class="btn btn-secondary p-2"
+											data-bs-dismiss="modal">취소</button>
+									</div>
+									<div>
+										<button type="button" class="btn btn-primary p-2">변경하기</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 			</div>
+			<!-- 삭제모달 -->
+			<!-- 삭제모달 -->
+			<div class="modal fade" id="leaveModal" tabindex="-1"
+				aria-labelledby="leaveModalLabel" aria-hidden="true">
+				<div class="modal-dialog" style="color: #000;">
+					<div class="modal-content">
+						<div class="modal-body">
+							<h1
+								style="text-align: center; padding-top: 1.5em; font-size: 1.8em;">탈퇴하시겠습니까?</h1>
+							<form id="@{|/user/delete/{id}|}" method="post">
+								<div class="mb-3">
+									<label for="recipient-name" class="col-form-label">비밀번호</label>
+									<input type="password" class="form-control" id="recipient-name">
+								</div>
+								<div class="modal-footer justify-content-center">
+									<div>
+										<button type="reset" class="btn btn-secondary p-2"
+											data-bs-dismiss="modal">취소</button>
+									</div>
+									<div>
+										<button type="submit" class="btn btn-primary p-2">탈퇴하기</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			
 			<div class="footer">
 				<p>
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 					Copyright &copy;
-					<script>document.write(new Date().getFullYear());</script>
+					<script>
+						document.write(new Date().getFullYear());
+					</script>
 					All rights reserved | This template is made with <i
 						class="icon-heart" aria-hidden="true"></i> by <a
 						href="https://colorlib.com" target="_blank" class="nav-link">Colorlib.com</a>
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 				</p>
 			</div>
-
 		</div>
 	</nav>
+</th:block>
+<th:block layout:fragment="script">
+	<script>
+		//goal
+		function openUpdateModal(id, content, dueDate, openScopeId) {
+			document.getElementById("goal_content_update").value = content;
+			document.getElementById("dueDate_update").value = dueDate;
+			document.getElementById("openScope_update").value = openScopeId;
 
+			// 동적으로 action 설정
+			document.getElementById("updateGoalForm").action = `/goal/update/${id}`;
+		}
+
+		function openDeleteModal(id) {
+			document.getElementById("deleteGoalForm").action = `/goal/delete/${id}`;
+		}
+
+		/// group
+		function openGroupUpdateModal(id, content, title) {
+			console.log("함수 호출 성공");
+			document.getElementById("group_title_update").value = title;
+			document.getElementById("group_content_update").value = content;
+
+			if (goalContentInput && dueDateInput && openScopeInput) {
+				goalContentInput.value = content;
+				dueDateInput.value = dueDate;
+				openScopeInput.value = openScopeId;
+
+				// 동적으로 action 설정
+				document.getElementById("updateGoalForm").action = `/goal/update/${id}`;
+			} else {
+				console.error("모달에 필드가 누락되었습니다.");
+			}
+
+		}
+
+		function openGroupDeleteModal(id) {
+			document.getElementById("deleteGroupForm").action = `/group/delete/${id}`;
+		}
+	</script>
 </th:block>
 </html>

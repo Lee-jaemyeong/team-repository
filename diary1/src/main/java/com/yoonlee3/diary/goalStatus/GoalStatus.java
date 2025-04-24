@@ -1,6 +1,6 @@
 package com.yoonlee3.diary.goalStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +24,7 @@ public class GoalStatus {
 	private Long id;
 	
 	@Column(updatable = false)
-	private LocalDateTime createDate = LocalDateTime.now();
+	private LocalDate createDate;
 	
 	@Column(nullable=false)
 	private Boolean is_success;
