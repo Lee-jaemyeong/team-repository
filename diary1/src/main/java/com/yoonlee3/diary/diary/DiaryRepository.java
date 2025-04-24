@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-
-	@Query("select d from Diary d order by id desc")
+	
+	@Query("select d from Diary d order by d.id desc")
 	List<Diary> findAllByOrderByDesc();
 
 	@Modifying

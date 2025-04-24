@@ -13,10 +13,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yoonlee3.diary.like.LikeService;
+import com.yoonlee3.diary.openScope.OpenScope;
+import com.yoonlee3.diary.openScope.OpenScopeService;
+import com.yoonlee3.diary.template.Template;
+import com.yoonlee3.diary.template.TemplateService;
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserService;
 
@@ -27,13 +32,17 @@ import lombok.RequiredArgsConstructor;
 public class DiaryController {
 
 	@Autowired
-	DiaryService service;
+	DiaryService diaryService;
 	@Autowired
 	UserService userService;
 	@Autowired
 	Diary_gptService api;
 	@Autowired
 	LikeService likeService;
+	@Autowired
+	OpenScopeService openScopeService;
+	@Autowired
+	TemplateService templateService;
 
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -46,16 +55,24 @@ public class DiaryController {
 		}
 	}
 
-	@GetMapping("/diary/list")
-	public String list(Model model) {
-		List<Diary> diaryList = service.findAll();
-		model.addAttribute("list", diaryList);
-		return "/main";
+	@GetMapping("/main")
+	public String goMain(Model model) {
+		model.addAttribute("list", diaryService.findAll());
+	    return "mainTemplate/main";
 	}
+	
+	/*
+	@GetMapping("/diary/list")
+	@ResponseBody
+	public List<Diary> getDiaryList() {
+	    List<Diary> diaryList = diaryService.findAll();
+	    return diaryList;
+	}
+	*/
 
-	@GetMapping("/diary/detail/{id}")
+	@GetMapping("/mainTemplate/detail/{id}")
 	public String detail(@PathVariable Long id, Model model, Principal principal) {
-		model.addAttribute("dto", service.findById(id));
+		model.addAttribute("dto", diaryService.findById(id));
 
 		long likeCount = likeService.getLikeCount(id);
 		model.addAttribute("likeCount", likeCount);
@@ -78,11 +95,18 @@ public class DiaryController {
 	}
 
 	@PostMapping("/diary/insert")
-	public String insert_post(Diary diary, Principal principal) {
+	public String insert_post(Diary diary, @RequestParam Long open_scope_id, @RequestParam Long template_id, Principal principal) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
+		
 		diary.setUser(user);
-		service.insert(diary);
+		
+		OpenScope openScope = openScopeService.findOpenScopeById(open_scope_id);
+		diary.setOpenScope(openScope);
+		Template template = templateService.findTempalteById(template_id);
+		diary.setTemplate(template);
+		
+		diaryService.insert(diary);
 		return "redirect:/main";
 	}
 
@@ -98,7 +122,7 @@ public class DiaryController {
 
 	@GetMapping("/diary/update/{id}")
 	public String update_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
-		Diary diary = service.update_view(id); // ## 수정할 글 가져오기
+		Diary diary = diaryService.update_view(id); // ## 수정할 글 가져오기
 		if (diary.getUser().getEmail().equals(principal.getName())) {
 			model.addAttribute("dto", diary); // 수정할 일기 가져오기
 			return "diary/edit";
@@ -111,7 +135,7 @@ public class DiaryController {
 	@PostMapping("/diary/update")
 	public String update_post(Diary diary, RedirectAttributes rttr) {
 		String msg = "fail";
-		if (service.update(diary) > 0) {
+		if (diaryService.update(diary) > 0) {
 			msg = "글수정완료!";
 		}
 		rttr.addFlashAttribute("msg", msg);
@@ -120,29 +144,46 @@ public class DiaryController {
 
 	@GetMapping("/diary/delete/{id}")
 	public String delete_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
-		Diary diary = service.findById(id);
-		if (diary.getUser().getEmail().equals(principal.getName())) {
-			model.addAttribute("id", id);
-			return "diary/delete";
-		} else {
-			rttr.addFlashAttribute("msg", "본인이 작성한 글만 삭제할 수 있습니다.");
-			return "redirect:/diary/list";
-		}
+	    Diary diary = diaryService.findById(id);
+	    
+	    // 다이어리가 존재하고, 현재 로그인한 사용자가 작성자와 일치하는지 확인
+	    if (diary == null) {
+	        rttr.addFlashAttribute("msg", "다이어리를 찾을 수 없습니다.");
+	        return "redirect:/main";
+	    }
+	    
+	    if (diary.getUser().getEmail().equals(principal.getName())) {
+	        // 삭제 요청 전에 확인 메시지 표시
+	        model.addAttribute("diary", diary); // 삭제할 다이어리 정보를 모델에 추가
+	        return "/diary/delete/{id}"; // 삭제 확인 페이지로 이동
+	    } else {
+	        rttr.addFlashAttribute("msg", "본인이 작성한 글만 삭제할 수 있습니다.");
+	        return "redirect:/main";
+	    }
 	}
 
-	@PostMapping("/diary/delete")
-	public String delete_post(Diary diary, RedirectAttributes rttr) {
-		String msg = "fail";
-		if (service.delete(diary) > 0) {
-			msg = "글삭제성공!";
-		}
-		rttr.addFlashAttribute("msg", msg);
-		service.delete(diary); // ## 글삭제기능
-		return "redirect:/diary/list";
+	@PostMapping("/diary/delete/{id}")
+	public String delete_post(@PathVariable Long id, Principal principal, RedirectAttributes rttr) {
+	    Diary diary = diaryService.findById(id);
+
+	    // 다이어리 존재 여부와 로그인한 사용자가 작성자인지 확인
+	    if (diary == null) {
+	        rttr.addFlashAttribute("msg", "다이어리를 찾을 수 없습니다.");
+	        return "redirect:/main";
+	    }
+
+	    if (diary.getUser().getEmail().equals(principal.getName())) {
+	        // 삭제 처리
+	        if (diaryService.delete(diary) > 0) {
+	            rttr.addFlashAttribute("msg", "글삭제 성공!");
+	        } else {
+	            rttr.addFlashAttribute("msg", "글삭제 실패!");
+	        }
+	    } else {
+	        rttr.addFlashAttribute("msg", "본인이 작성한 글만 삭제할 수 있습니다.");
+	    }
+	    
+	    return "redirect:/main";
 	}
 	
-	@GetMapping("/main")
-	public String goMain() {
-	    return "mainTemplate/main";
-	}
 }

@@ -81,7 +81,7 @@ public class GroupController {
 		return "group/main";
 	}
 
-	@GetMapping("/grouppage")
+	@GetMapping("/groupmain")
 	public String goMain() {
 	    return "group/Gmain";
 	}

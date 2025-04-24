@@ -39,18 +39,19 @@
           <div class="flex-grow-1 bd-highlight" style="margin-right: 0.6em;">
             <input class="form-control form-control-lg" type="text" name="diary_title" id="diary_title" placeholder="제목을 입력하세요" aria-label="default input example">
           </div>
-          <select class="form-select p-2 bd-highlight" aria-label="Template" style="width: 19%; margin-right: 0.6em;">
+          <select class="form-select p-2 bd-highlight" aria-label="Template" name="template_id" style="width: 19%; margin-right: 0.6em;">
             <option selected>템플릿</option>
             <option value="1">템플릿1</option>
             <option value="2">템플릿2</option>
             <option value="3">템플릿3</option>
           </select>
-          <select class="form-select p-2 bd-highlight" aria-label="openScope" style="width: 19%;">
+          <select class="form-select p-2 bd-highlight" aria-label="openScope"  name="open_scope_id" style="width: 19%;">
             <option selected>공개범위</option>
-            <option value="1">전체공개</option>
+            <option value="1">나만보기</option>
             <option value="2">친구공개</option>
             <option value="3">그룹공개</option>
-            <option value="4" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">관리자작성</option>
+            <option value="4">전체공개</option>
+            <option value="5" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">관리자작성</option>
           </select>
         </div>
         <div class="mb-3">

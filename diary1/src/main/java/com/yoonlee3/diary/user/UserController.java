@@ -163,14 +163,19 @@ public class UserController {
 
 		if (user != null) {
 
+	        if (userService.SameUsername(username)) {
+	            redirectAttributes.addFlashAttribute("msg", "이미 존재하는 닉네임입니다.");
+	            return "redirect:/mypage";
+	        }
+			
 			user.setUsername(username);
 			userService.insertUser(user);
 
 			redirectAttributes.addFlashAttribute("msg", "닉네임이 변경되었습니다.");
-			return "redirect:/user/mypage";
+			return "redirect:/mypage";
 		} else {
 			redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-			return "redirect:/fragments/sideBarMypage";
+			return "redirect:/user/mypage";
 		}
 	}
 

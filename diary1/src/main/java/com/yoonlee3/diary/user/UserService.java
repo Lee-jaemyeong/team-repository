@@ -38,6 +38,10 @@ public class UserService {
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
+	
+    public boolean SameUsername(String username) {
+        return userRepository.existsByUsername(username);  // 닉네임 중복 확인
+    }
 
 	// update
 	public int updateByPass(User user) {

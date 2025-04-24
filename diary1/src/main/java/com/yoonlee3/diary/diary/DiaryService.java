@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.diary;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -12,8 +13,8 @@ public class DiaryService {
 	@Autowired DiaryRepository diaryRepository;
 	
 	public List<Diary> findAll() { 
-		return diaryRepository.findAllByOrderByDesc();
-	}
+	    return diaryRepository.findAllByOrderByDesc(); 
+	} 
 	
 	@Transactional
 	public Diary findById(Long diary_id) {

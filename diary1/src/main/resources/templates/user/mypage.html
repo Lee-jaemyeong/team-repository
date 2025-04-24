@@ -4,6 +4,18 @@
 				layout:decorate="~{fragments/layoutMypage}">
 				
 <th:block layout:fragment="content">
+	<div th:if="${msg}" class="alert alert-success" id="alert">
+	    <span th:text="${msg}"></span>
+	    <button id="close-alert" class="btn btn-primary">확인</button>
+	</div>
+	<script>
+	    document.getElementById("close-alert")?.addEventListener("click", function() {
+	        var alert = document.getElementById("alert");
+	        if (alert) {
+	            alert.style.display = "none"; // 알림창 숨기기
+	        }
+	    });
+	</script>
 	<!-- 목표(Goal) 항목 -->
 	<div class="container-fluid p-3">
 		<div class="d-flex justify-content-between">
