@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}">
+
+<th:block layout:fragment="content">
+<!-- 탭 버튼 -->
+<ul class="nav nav-tabs justify-content-center" id="followTab" role="tablist">
+	<li class="nav-item w-50" role="presentation">
+		<button class="nav-link active w-100" id="following-tab" data-bs-toggle="tab"
+			data-bs-target="#following" type="button" role="tab" aria-controls="following"
+			aria-selected="true">팔로잉</button>
+	</li>	
+	<li class="nav-item w-50" role="presentation">
+		<button class="nav-link w-100" id="follower-tab" data-bs-toggle="tab"
+			data-bs-target="#follower" type="button" role="tab"
+			aria-controls="follower" aria-selected="false">팔로워</button>
+	</li>
+</ul>
+<!-- 탭 버튼 -->
+<div class="container-fluid p-3">
+	<div class="tab-content" id="followTebContent">
+<!-- 팔로잉 탭 -->
+		<div class="tab-pane fade show active" id="following" role="tabpanel" aria-labelledby="following-tab">
+			<table class="table">
+				<tr>
+					<td><div class="d-flex align-items-center">
+						<div class="p-2 bd-highlight"><img class="rounded-circle" src="https://placehold.co/80x80"></div>
+						<div class="p-2 flex-grow-1 bd-highlight"
+							style="font-size: 1.2em; font-weight: bold;">username</div>
+						<div class="p-2 bd-highlight"><button class="btn" id="followBtn"
+							style="border: 2px solid #f8b739; background-color: #f8b739; font-weight: bold;">팔로우</button></div>
+					</div></td>
+				</tr>
+			</table>
+		</div>
+<!-- 팔로잉 탭 -->
+			
+<!-- 팔로워 탭 -->
+		<div class="tab-pane fade" id="follower" role="tabpanel" aria-labelledby="follower-tab">
+			<table class="table">
+				<tr>
+					<td><div class="d-flex align-items-center">
+						<div class="p-2 bd-highlight"><img class="rounded-circle" src="https://placehold.co/80x80"></div>
+						<div class="p-2 flex-grow-1 bd-highlight"
+							style="font-size: 1.2em; font-weight: bold;">username</div>
+						<div class="p-2 bd-highlight"><button class="btn" id="followBtn"
+							style="border: 2px solid #f8b739; background-color: #f8b739; font-weight: bold;">팔로우</button></div>
+					</div></td>
+				</tr>
+			</table>
+		</div>
+<!-- 팔로워 탭 -->
+	</div>
+</div>
+<script>
+	let key="${param.key}";
+	console.log(key);
+	if(key=="follower"){
+		$("#follower-tab").removeClass("active");
+		$("#following-tab").addClass("active");
+		
+		$("#following").removeClass("show active");
+		$("#follower").addClass("show active");
+	}else if (key=="following"){
+		$("#following-tab").removeClass("active");
+		$("#follower-tab").addClass("active");
+		
+		$("#follower").removeClass("show active");
+		$("#following").addClass("show active");
+	};
+</script>
+
+</th:block>
+
+
+</html>

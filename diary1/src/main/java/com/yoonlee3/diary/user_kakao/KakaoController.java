@@ -2,6 +2,7 @@ package com.yoonlee3.diary.user_kakao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.yoonlee3.diary.user.User;
+import com.yoonlee3.diary.user.UserRepository;
 import com.yoonlee3.diary.user.UserRole;
 import com.yoonlee3.diary.user.UserService;
 
@@ -26,17 +28,19 @@ public class KakaoController {
 	KakaoLogin api;
 	@Autowired
 	UserService userService;
-
+	@Autowired UserRepository userRepository;
 	@GetMapping("/kakao")
+	
 	public String loginuser(@RequestParam("code") String code, Model model) {
 		List<String> infos = api.step2(code);
 		String nickname = infos.get(0);
 		String profile = infos.get(1);
 		String email = nickname + "@kakao.com"; // 임시 이메일 대체값 (카카오는 이메일 제공 X)
 
-		User user = userService.findByEmail(email);
-
-		if ( user == null ) {
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+	    User user;
+		
+		if ( optionalUser.isPresent() == false ) {
 			// 신규 유저 저장
 			user = new User();
 			user.setEmail(email);
@@ -44,7 +48,9 @@ public class KakaoController {
 			user.setNickname(nickname);
 			user.setUsername(nickname);
 			userService.insertUser(user);
-		} 
+		} else {
+	        user = optionalUser.get();
+	    }
 		
 		List<GrantedAuthority> authorities = new ArrayList<>();
 
@@ -55,7 +61,7 @@ public class KakaoController {
 			authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
 		}
 
-		UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getEmail(),
+		UserDetails userDetails = new org.springframework.security.core.userdetails.User( user.getEmail(),
 				user.getPassword(), // 비밀번호는 null일 수 있음
 				authorities);
 
@@ -64,7 +70,7 @@ public class KakaoController {
 
 		model.addAttribute("nickname", nickname);
 		model.addAttribute("profile_image", profile);
-		return "user/mypage"; // view
+		return "redirect:/user/mypage"; // view
 	}
 
 	@GetMapping("/kakaologout")

@@ -161,5 +161,16 @@ public class GroupHasuser {
 		
 	}
 	
+	@Disabled
+	void isnertg() {
+		User user5 = new User();
+		user5.setId(7L);
+		
+		YL3Group group5 = new YL3Group();
+		group5.setId(4l);
+		
+		joinToGroupService.joinToGroup(group5.getId(), user5.getId());
+	}
+	
 	
 }

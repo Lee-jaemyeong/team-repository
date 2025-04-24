@@ -18,7 +18,6 @@ import javax.persistence.OneToOne;
 
 import com.yoonlee3.diary.goalStatus.GoalStatus;
 import com.yoonlee3.diary.openScope.OpenScope;
-import com.yoonlee3.diary.template.Template;
 import com.yoonlee3.diary.user.User;
 
 import lombok.Getter;
@@ -49,11 +48,10 @@ public class Goal {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	@OneToOne(mappedBy = "goal")
+	private GoalStatus goalStatus;
+	
 	@OneToMany(mappedBy = "goal", cascade = CascadeType.REMOVE)
 	List<GoalStatus> goalStatuses = new ArrayList<>();
-	
-	@OneToOne
-	@JoinColumn(name = "template_id")
-	private Template template;
 	
 }

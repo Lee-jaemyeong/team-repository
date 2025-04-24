@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
-				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-				layout:decorate="~{fragments/layout}"
-				xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-><!-- layout:decorate="~{fragments/layout}"  fragments폴더안에 layout 렌더링 -->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- layout:decorate="~{fragments/layout}"  fragments폴더안에 layout 렌더링 -->
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -25,9 +25,11 @@
 			<tbody>
 				<tr th:each=" dto , state : ${list} ">
 					<td th:text="${list.size() - state.index}"></td>
-					<td><a th:href="@{|/diary/detail/${dto.id}|}" th:text="${dto.diary_title}"></a></td>
+					<td><a th:href="@{|/diary/detail/${dto.id}|}"
+						th:text="${dto.diary_title}"></a></td>
 					<td th:text="${dto.user != null ? dto.user.username : '알 수 없음'}"></td>
-					<td th:text="${ #temporals.format(dto.create_date , 'yyyy-MM-dd HH:mm') }"></td>
+					<td
+						th:text="${ #temporals.format(dto.create_date , 'yyyy-MM-dd HH:mm') }"></td>
 				</tr>
 			</tbody>
 		</table>

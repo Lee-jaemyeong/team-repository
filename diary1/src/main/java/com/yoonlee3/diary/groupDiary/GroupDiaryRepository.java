@@ -1,15 +1,21 @@
 package com.yoonlee3.diary.groupDiary;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.yoonlee3.diary.diary.Diary;
 
 public interface GroupDiaryRepository extends JpaRepository<GroupDiary, Long> {
 
 	// C
 
 	// R
+	@Query("select gd from GroupDiary gd where gd.group.id = :group_id")
+	List<GroupDiary> findByGroupId(Long group_id);
 
 	// U
 

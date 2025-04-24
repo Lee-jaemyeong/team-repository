@@ -1,5 +1,7 @@
 package com.yoonlee3.diary.groupHasUser;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +67,13 @@ public class JoinToGroupService {
 	public int checkGroupSize(Long group_id) {
 		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("해당 그룹은 존재하지 않습니다."));
 		return group.getUsers().size();
+	}
+	
+	// 유저가 속한 그룹 불러오기
+	@Transactional
+	public Set<YL3Group> findGroupById(Long user_id){
+		User user = userService.findById(user_id);
+		return user.getGroups();
 	}
 
 }
