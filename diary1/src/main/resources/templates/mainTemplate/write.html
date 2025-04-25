@@ -60,9 +60,9 @@
         </div>
         <!-- 이모티콘 -->
         <div class="container-fluid d-flex bd-highlight mb-3" >
-        	<div class="bd-highlight"><button class="btn p-2 mr-3" 
-        		style="background-color: #eee;">이모티콘으로 일기 요약받기</button></div>
+        	<div class="bd-highlight"><button type="button" id="emojiBtn" class="btn p-2 mr-3" style="background-color: #eee;">이모티콘으로 일기 요약받기</button></div>
         	<div class="flex-grow-1 bd-highlight">
+        	<label for="diary_emoji">요약</label>
         	<input type="text" id="diary_emoji" name="diary_emoji"
         		style="border: 1px solid #eee; padding: 0.5em; width: 100%;"></div>
         </div>
@@ -81,9 +81,43 @@
         </div>
       </form>
     </div>
-   <!-- 글쓰기폼 -->
-		
-</th:block>
-				
+   <!-- 글쓰기폼 -->	
+	<th:block layout:fragment="jQuery">
+			<script type="text/javascript">
+				$(function() {
+					$(".emoji").hide();
+					$("#emojiBtn").on("click", function() {
+						$(".emoji").fadeIn();
+						let diary_content = $("#diary_content").val(); // 입력값 공백없이
+						console.log(diary_content);
+						if (diary_content.length > 0) { // 검색어가 공백이 아닐 때 호출
+							getEmoji(diary_content);
+							$(".emoji").fadeIn();
+						}
+					})
+				});
+				function getEmoji(diary_content) {
+					$.ajax({
+						url : "/diary/emoji",
+						type : "POST",
+						data : JSON.stringify({
+							content : diary_content
+						}),
+						dataType : "json",
+						contentType : "application/json;charset=UTF-8",
+						error : function(zhr, status, msg) {
+							console.error(status + "/" + msg);
+						},
+						success : function(json) {
+							console.log(json);
+							if (json && json.emoji && json.emoji.length > 0) {
+								$("#diary_emoji").val(json.emoji);
+							} // E if
+						}
+					});
+				}
+			</script>
+	</th:block>	
+</th:block>			
 
 </html>

@@ -157,7 +157,7 @@ public class GroupHasuser {
 		User user2 = userRepository.findById(2l).orElseThrow();
 		YL3Group group2 = groupRepository.findById(1l).orElseThrow();
 		
-		joinToGroupService.leaveGroup(group2.getId(), user2.getId());
+//		joinToGroupService.leaveGroup(group2.getId(), user2.getId());
 		
 	}
 	

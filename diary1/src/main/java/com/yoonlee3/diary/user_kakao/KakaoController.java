@@ -72,7 +72,7 @@ public class KakaoController {
 		    
 		model.addAttribute("nickname" , nickname);
 		model.addAttribute("profile_image" , profile);
-		return "user/mypage"; // view
+		return "redirect:/mypage"; // view
 	}
 
 	@GetMapping("/kakaologout")

@@ -16,14 +16,19 @@ public class DiaryService {
 	    return diaryRepository.findAllByOrderByDesc(); 
 	} 
 	
+	public List<Diary> findByEmail(String email) {
+	    List<Diary> diaries = diaryRepository.findByUserEmail(email);
+	    return diaries;
+	}
+	
 	@Transactional
 	public Diary findById(Long diary_id) {
 		Diary diary = diaryRepository.findById(diary_id).get();
 		return diary;
 	}
 	
-	public void insert(Diary diary) {
-		diaryRepository.save(diary);
+	public Diary insert(Diary diary) {
+		return diaryRepository.save(diary);
 	}
 	
 	public Diary update_view(Long id) {

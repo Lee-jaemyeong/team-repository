@@ -1,9 +1,11 @@
 package com.yoonlee3.diary.diary;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.yoonlee3.diary.group.GroupService;
+import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.groupDiary.GroupDiaryService;
+import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.like.LikeService;
 import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.openScope.OpenScopeService;
@@ -31,18 +37,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DiaryController {
 
-	@Autowired
-	DiaryService diaryService;
-	@Autowired
-	UserService userService;
-	@Autowired
-	Diary_gptService api;
-	@Autowired
-	LikeService likeService;
-	@Autowired
-	OpenScopeService openScopeService;
-	@Autowired
-	TemplateService templateService;
+	@Autowired DiaryService diaryService;
+	@Autowired UserService userService;
+	@Autowired Diary_gptService api;
+	@Autowired LikeService likeService;
+	@Autowired OpenScopeService openScopeService;
+	@Autowired TemplateService templateService;
+	@Autowired JoinToGroupService joinToGroupService;
+	@Autowired GroupService groupService;
+	@Autowired GroupDiaryService groupDiaryService;
 
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -50,14 +53,20 @@ public class DiaryController {
 			String email = principal.getName();
 			User user = userService.findByEmail(email);
 			model.addAttribute("nickname", user.getUsername());
-		} else {
-			model.addAttribute("nickname", "Guest");
-		}
+			model.addAttribute("user", user);
+			
+			Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+	        model.addAttribute("groups", groups);
+	    } else {
+	        model.addAttribute("nickname", "Guest");
+	        model.addAttribute("groups", Collections.emptySet());
+	    }
 	}
 
 	@GetMapping("/main")
-	public String goMain(Model model) {
+	public String mainList(Model model) {
 		model.addAttribute("list", diaryService.findAll());
+		model.addAttribute("isMainPage", true);
 	    return "mainTemplate/main";
 	}
 	
@@ -110,6 +119,23 @@ public class DiaryController {
 		return "redirect:/main";
 	}
 
+	/// 그룹 다이어리 쓰기
+	@PostMapping("group/{id}/diary/insert")
+	public String insertGroupDiary_post(Diary diary, Principal principal, @PathVariable("id") Long group_id) {
+		// 유저찾기
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		
+		// 다이어리 저장
+		diary.setUser(user);
+		Diary savediary = diaryService.insert(diary);
+		
+		// 그룹 다이어리로 저장
+		YL3Group group = groupService.findById(group_id);
+		groupDiaryService.insertGroupDiary(group, savediary);
+		return "redirect:/group/group/" + group_id;
+	}
+	
 	@PostMapping("/diary/emoji")
 	@ResponseBody
 	public Map<String, String> getSummary(@RequestBody Map<String, String> request) {
@@ -118,6 +144,24 @@ public class DiaryController {
 		Map<String, String> result = new HashMap<>();
 		result.put("emoji", emoji);
 		return result;
+	}
+	
+	@GetMapping("group/groupDiaryDetail/{id}")
+	public String groupDiaryDetail_get(@PathVariable("id") Long diary_id, Model model, Principal principal) {
+		model.addAttribute("dto", diaryService.findById(diary_id));
+
+		long likeCount = likeService.getLikeCount(diary_id);
+		model.addAttribute("likeCount", likeCount);
+
+		if (principal != null) {
+			String email = principal.getName();
+			User user = userService.findByEmail(email);
+			boolean isLiked = likeService.isLiked(diary_id, user.getId());
+			model.addAttribute("isLiked", isLiked); // 좋아요 여부 추가
+		} else {
+			model.addAttribute("isLiked", false); // 비로그인 시 좋아요 상태는 false
+		}
+		return "diary/detail";
 	}
 
 	@GetMapping("/diary/update/{id}")

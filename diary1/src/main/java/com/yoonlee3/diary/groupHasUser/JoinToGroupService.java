@@ -1,5 +1,7 @@
 package com.yoonlee3.diary.groupHasUser;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,23 +42,22 @@ public class JoinToGroupService {
 
 	// 그룹 떠나기
 	@Transactional
-	public void leaveGroup(Long group_id, Long user_id) {
-		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("해당 그룹은 존재하지 않습니다."));
-		User user = userService.findById(user_id);
+	public void leaveGroup(YL3Group group, User user) {
+		YL3Group findgroup = groupRepository.findById(group.getId()).orElseThrow(()-> new RuntimeException("해당 그룹은 존재하지 않습니다."));
+		User finduser = userService.findById(user.getId());
 
-		if (!group.getUsers().contains(user)) {
+		if (!findgroup.getUsers().contains(finduser)) {
 
 			throw new IllegalStateException("해당 유저는 그룹에 속해있지 않습니다.");
 
-		} else if (group.getGroup_leader().equals(user)) {
+		} else if (findgroup.getGroup_leader().equals(finduser)) {
 
 			throw new IllegalStateException("그룹 리더는 그룹을 탈퇴할 수 없습니다. ");
 
 		} else {
 
-			group.getUsers().remove(user);
-			user.getGroups().remove(group);
-
+			findgroup.getUsers().remove(finduser);
+			finduser.getGroups().remove(findgroup);
 		}
 	}
 
@@ -67,4 +68,11 @@ public class JoinToGroupService {
 		return group.getUsers().size();
 	}
 
+	// 유저가 속한 그룹 불러오기
+	@Transactional
+	public Set<YL3Group> findGroupById(Long user_id){
+		User user = userService.findById(user_id);
+		return user.getGroups();
+	}
+	
 }

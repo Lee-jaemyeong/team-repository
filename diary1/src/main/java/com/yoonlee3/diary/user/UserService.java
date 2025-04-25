@@ -32,11 +32,15 @@ public class UserService {
 	}
 
 	public User findByEmail(String email) {
-		return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
+	    return userRepository.findByEmail(email).orElse(null);
 	}
 
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username);
+	}
+	
+	public List<User> findUsersByUsername(String username) {
+	    return userRepository.findUsersByUsername(username);
 	}
 	
     public boolean SameUsername(String username) {
