@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.group;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,11 @@ public class GroupService {
 	GroupBadgeHistoryService historyService;
 
 	// insert
-	public YL3Group insertGroup(YL3Group group, User user) {
-		group.setGroup_leader(user);
-		joinToGroupService.joinToGroup(group.getId(), user.getId());
-		return groupRepository.save(group);
+	public void insertGroup(YL3Group group) {
+		YL3Group save = groupRepository.save(group);
+		User user = save.getGroup_leader();
+		System.out.println("...........................유저야......."+user);
+		joinToGroupService.joinToGroup(save.getId(), user.getId());
 	}
 
 	// read
@@ -51,6 +53,13 @@ public class GroupService {
 
 	// delete
 	public int deleteGroup(Long group_id, Long user_id) {
+		YL3Group group = groupRepository.findById(group_id).orElseThrow(()-> new RuntimeException("여기는 GroupService............ 그룹이 존재하지 않아요 흑흑"));
+		// 그룹안에 있는 유저들 가져오기
+		Set<User> users = group.getUsers();
+		// 그룹 떠나게 하기
+		for(User u : users) {
+			joinToGroupService.leaveGroup(group_id, u.getId());
+		}
 		return groupRepository.deleteGroup(group_id, user_id);
 	}
 

@@ -1,8 +1,10 @@
 package com.yoonlee3.diary.diary;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.like.LikeService;
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserService;
@@ -26,13 +30,15 @@ import lombok.RequiredArgsConstructor;
 public class DiaryController {
 
 	@Autowired
-	DiaryService service;
+	DiaryService diaryService;
 	@Autowired
 	UserService userService;
 	@Autowired
 	Diary_gptService api;
 	@Autowired
 	LikeService likeService;
+	@Autowired
+	JoinToGroupService joinToGroupService;
 
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -40,20 +46,25 @@ public class DiaryController {
 			String email = principal.getName();
 			User user = userService.findByEmail(email);
 			model.addAttribute("nickname", user.getUsername());
-		} else {
-			model.addAttribute("nickname", "Guest");
-		}
+			model.addAttribute("user", user);
+			
+			Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+	        model.addAttribute("groups", groups);
+	    } else {
+	        model.addAttribute("nickname", "Guest");
+	        model.addAttribute("groups", Collections.emptySet());
+	    }
 	}
 
 	@GetMapping("/diary/list")
 	public String list(Model model) {
-		model.addAttribute("list", service.findAll());
+		model.addAttribute("list", diaryService.findAll());
 		return "diary/list";
 	}
 
 	@GetMapping("/diary/detail/{id}")
 	public String detail(@PathVariable Long id, Model model, Principal principal) {
-		model.addAttribute("dto", service.findById(id));
+		model.addAttribute("dto", diaryService.findById(id));
 
 		long likeCount = likeService.getLikeCount(id);
 		model.addAttribute("likeCount", likeCount);
@@ -80,15 +91,15 @@ public class DiaryController {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 		diary.setUser(user);
-		service.insert(diary);
+		diaryService.insert(diary);
 		return "redirect:/diary/list";
 	}
 
 	@PostMapping("/diary/emoji")
 	@ResponseBody
 	public Map<String, String> getSummary(@RequestBody Map<String, String> request) {
-		String diaryContent = request.get("content");
-		String emoji = api.getAIResponse(diaryContent);
+		String diary_content = request.get("content");
+		String emoji = api.getAIResponse(diary_content);
 		Map<String, String> result = new HashMap<>();
 		result.put("emoji", emoji);
 		return result;
@@ -96,7 +107,7 @@ public class DiaryController {
 
 	@GetMapping("/diary/update/{id}")
 	public String update_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
-		Diary diary = service.update_view(id); // ## 수정할 글 가져오기
+		Diary diary = diaryService.update_view(id); // ## 수정할 글 가져오기
 		if (diary.getUser().getEmail().equals(principal.getName())) {
 			model.addAttribute("dto", diary); // 수정할 일기 가져오기
 			return "diary/edit";
@@ -109,7 +120,7 @@ public class DiaryController {
 	@PostMapping("/diary/update")
 	public String update_post(Diary diary, RedirectAttributes rttr) {
 		String msg = "fail";
-		if (service.update(diary) > 0) {
+		if (diaryService.update(diary) > 0) {
 			msg = "글수정완료!";
 		}
 		rttr.addFlashAttribute("msg", msg);
@@ -118,7 +129,7 @@ public class DiaryController {
 
 	@GetMapping("/diary/delete/{id}")
 	public String delete_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
-		Diary diary = service.findById(id);
+		Diary diary = diaryService.findById(id);
 		if (diary.getUser().getEmail().equals(principal.getName())) {
 			model.addAttribute("id", id);
 			return "diary/delete";
@@ -131,11 +142,11 @@ public class DiaryController {
 	@PostMapping("/diary/delete")
 	public String delete_post(Diary diary, RedirectAttributes rttr) {
 		String msg = "fail";
-		if (service.delete(diary) > 0) {
+		if (diaryService.delete(diary) > 0) {
 			msg = "글삭제성공!";
 		}
 		rttr.addFlashAttribute("msg", msg);
-		service.delete(diary); // ## 글삭제기능
+		diaryService.delete(diary); // ## 글삭제기능
 		return "redirect:/diary/list";
 	}
 }

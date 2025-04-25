@@ -7,8 +7,7 @@
 
   <!-- 그룹정보 -->
   <div class="container p-2"
-    style="width: 100%; color: #000000; font-weight: bold; font-size: 20px; margin-left: 1em;">
-    GROUP NAME
+    style="width: 100%; color: #000000; font-weight: bold; font-size: 20px; margin-left: 1em;" th:text="group.group_title">
   </div>
   <!-- 그룹정보 -->
   <!-- 목표 -->
@@ -29,7 +28,7 @@
   <!-- 목표 -->
    <!-- 글쓰기폼 -->
     <div class="container-fluid">
-      <form th:action="@{/diary/isert}" method="post">
+      <form th:action="@{group/diary/isert}" method="post">
         <div class="d-flex bd-highlight mb-4">
           <div class="flex-grow-1 bd-highlight" style="margin-right: 0.6em;">
             <input class="form-control form-control-lg" type="text" placeholder="제목을 입력하세요" aria-label="default input example">

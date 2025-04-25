@@ -4,37 +4,41 @@
 	layout:decorate="~{fragments/layout}">
 
 <th:block layout:fragment="content">
-
 	<!-- 목표(Goal) 항목 -->
 	<div class="container-fluid p-3">
-	<div class="d-flex justify-content-between">
-			<h1 class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.8em;">Today List</h1>		
-			<div class="bd-highlight p-2" style="width: 35%;"><div class="input-group">
-				<input type="text" id="datePicker" class="form-control datepicker">
-				<label class="input-group-text" for="datePicker"><i class="bi bi-calendar3"></i></label>
-			</div></div>
+		<div class="d-flex justify-content-between">
+			<div class="p-2"><a class="btn" th:href="@{/user/goalComplate}"><i class="bi bi-patch-check-fill" style="color: #f8b739;"></i></a></div>
+			<h1 class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.8em;">Today
+				List</h1>
+			<div class="bd-highlight p-2" style="width: 35%;">
+				<div class="input-group">
+					<input type="text" id="datePicker" class="form-control datepicker">
+					<label class="input-group-text" for="datePicker"><i
+						class="bi bi-calendar3"></i></label>
+				</div>
+			</div>
 			<script>
-				$('#datePicker').val(new Date().toISOString().substring(0,10));
-				$(function(){
+				$('#datePicker').val(new Date().toISOString().substring(0, 10));
+				$(function() {
 					$('.datepicker').datepicker({
-						format:"yyyy-mm-dd" ,
-						autoclose:true ,
-						templates: {
-							leftArrow: '&laquo',
-							rightArrow: '&raquo'
+						format : "yyyy-mm-dd",
+						autoclose : true,
+						templates : {
+							leftArrow : '&laquo',
+							rightArrow : '&raquo'
 						},
-						todayHighlight: true ,
-						language: "ko"
-					})
-					.on("changeDate", function(e){
+						todayHighlight : true,
+						language : "ko"
+					}).on("changeDate", function(e) {
 						console.log(e);
 					})
-					
+
 				});//END Function
-			</script>	
-			<div class="p-2 bd-highlight"><a class="nav-link" href="#createGoalModal" 
-			style="font-size: 1.5em; font-weight: bold;" data-bs-toggle="modal"
-			>+</a></div>
+			</script>
+			<div class="p-2 bd-highlight">
+				<a class="nav-link" href="#createGoalModal"
+					style="font-size: 1.5em; font-weight: bold;" data-bs-toggle="modal">+</a>
+			</div>
 		</div>
 		<table class="table">
 			<caption>목표 테이블</caption>
@@ -53,19 +57,18 @@
 					</a></td>
 					<td scope="row" th:text="${g.goal_content}"
 						style="font-size: 1.1em;"></td>
-					<td scope="row" th:text="${g.dueDate}" style="color: #9b9b9b;"></td>
+					<td scope="row" th:text="|~${g.dueDate}|" style="color: #9b9b9b;"></td>
 					<td scope="row" style="text-align: right; padding-right: 1.5em;">
 						<form th:action="@{|/goal/success/${g.id}|}" method="post">
 							<input type="checkbox" name="is_success" value="true"
-								th:checked="${g.goalStatus != null and g.goalStatus.is_success == true}"
+								th:checked=" ${g.goalStatus != null and g.goalStatus.is_success == true}"
 								onchange="this.form.submit()" />
 						</form>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<div><a class="btn w-100" th:href="@{/user/goalComplate}"
-			style="font-weight: bold; background-color: #f8b739;">완료 목표 보기</a></div>
+
 	</div>
 	<!-- 생성모달 -->
 	<div class="modal fade" id="createGoalModal" tabindex="-1"
@@ -96,7 +99,8 @@
 						<div class="mb-3 d-flex justify-content-around">
 							<div>
 								<label for="dueDate_insert" class="col-form-label">종료일</label> <input
-									type="date" id="dueDate_insert" name="dueDate" value="" required>
+									type="date" id="dueDate_insert" name="dueDate" value=""
+									required>
 							</div>
 						</div>
 						<div class="modal-footer justify-content-center">
@@ -127,12 +131,12 @@
 						<div class="mb-3">
 							<label for="goal_content" class="col-form-label">목표명</label> <input
 								type="text" class="form-control" id="goal_content_update"
-								name="goal_content" >
+								name="goal_content">
 						</div>
 						<div class="mb-3 d-flex justify-content-around">
 							<div>
-								<label for="dueDate" class="col-form-label mr-3">종료일</label>
-								<input type="date" id="dueDate_update" name="dueDate" required>
+								<label for="dueDate" class="col-form-label mr-3">종료일</label> <input
+									type="date" id="dueDate_update" name="dueDate" required>
 							</div>
 							<select class="form-select p-2 form-select" id="openScope_update"
 								name="open_scope_id" required
@@ -188,20 +192,32 @@
 	<!-- 목표(Goal) 항목 -->
 	<!-- 내 일기 리스트 -->
 	<div class="container-fluid p-3">
-		<div class="d-flex justify-content-between">
-			<h1 class="p-2 bd-highlight" style="font-size: 1.8em;">My Diary</h1>
-			<span class="p-2 bd-highlight" style="line-height: 4em;">nn
-				diary</span>
-		</div>
-		<div class="d-flex bd-highlight mb-3 p-3"
-			style="border-bottom: 1px solid #9d9d9d;">
-			<h1 style="font-size: 1.1em; margin-left: 5px; width: 180%;">{Diary
-				Title} Lorem ipsum dolor sit amet consectetur adipisicing elit. .</h1>
-			<div class="ms-auto p-2 bd-highlight align-self-center"
-				style="width: 100%; text-align: end;">imoji</div>
-		</div>
+				<table
+			class="table table-striped  table-bordered table-hover text-center">
+			<caption>DIARY-LIST</caption>
+			<thead>
+				<tr>
+					<th scope="col">NO</th>
+					<th scope="col">TITLE</th>
+					<th scope="col">EMOJI</th>
+					<th scope="col">WRITER</th>
+					<th scope="col">DATE</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each=" dto , state : ${list} ">
+					<td th:text="${list.size() - state.index}"></td>
+					<td><a th:href="@{|/diary/detail/${dto.id}|}"
+						th:text="${dto.diary_title}"></a></td>
+					<td th:text="${dto.diary_emoji}"></td>
+					<td th:text="${dto.user != null ? dto.user.username : '알 수 없음'}"></td>
+					<td
+						th:text="${ #temporals.format(dto.create_date , 'yyyy-MM-dd HH:mm') }"></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
-	<!-- 내 일기 리스트 -->
+	
 </th:block>
 
 

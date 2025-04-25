@@ -18,6 +18,7 @@
 				<tr>
 					<th scope="col">NO</th>
 					<th scope="col">TITLE</th>
+					<th scope="col">EMOJI</th>
 					<th scope="col">WRITER</th>
 					<th scope="col">DATE</th>
 				</tr>
@@ -27,6 +28,7 @@
 					<td th:text="${list.size() - state.index}"></td>
 					<td><a th:href="@{|/diary/detail/${dto.id}|}"
 						th:text="${dto.diary_title}"></a></td>
+					<td th:text="${dto.diary_emoji}"></td>
 					<td th:text="${dto.user != null ? dto.user.username : '알 수 없음'}"></td>
 					<td
 						th:text="${ #temporals.format(dto.create_date , 'yyyy-MM-dd HH:mm') }"></td>

@@ -22,28 +22,14 @@ public class GoalSatusService {
 	@Autowired GoalRepository goalRepository;
 	
 	//C
-	public GoalStatus insertGoalStatus( GoalStatus goalStatus ) {
+	public GoalStatus insertGoalStatus( GoalStatus goalStatus, LocalDate today ) {
 		
 		Goal goal = goalStatus.getGoal();
+		System.out.println("여기는 GoalStatusService.................goal 잘 가져왔니.........?" + goalStatus);
 	    Boolean is_success = goalStatus.getIs_success();
+	    System.out.println("여기는 GoalStatusService................. is_success 잘 가져왔니.........?" + is_success);
 
-		
-		LocalDate today = LocalDate.now();
-
-	    GoalStatus existing = goalStatusRepository.findByGoalAndCreateDate(goal, today)
-	        .orElse(null);
-
-	    if (existing != null) {
-	        existing.setIs_success(is_success);
-	        return goalStatusRepository.save(existing);
-	    } else {
-	        GoalStatus newStatus = new GoalStatus();
-	        newStatus.setGoal(goal);
-	        newStatus.setCreateDate(today);
-	        newStatus.setIs_success(is_success);
-	        return goalStatusRepository.save(newStatus);
-	    }
-	
+	    return goalStatusRepository.save(goalStatus);
 	}
 	
 	// R : 유저의 목표 리스트 가져오기
@@ -59,8 +45,16 @@ public class GoalSatusService {
 	
 	// 오늘 성공한 목표의 수 구하기
 	public int findTodaySuccess(Goal goal) {
-		LocalDate currentDate = LocalDate.now();
-		return goalStatusRepository.findTodaySuccess(goal.getId(), currentDate );
+		LocalDate today = LocalDate.now();
+		System.out.println("여기는 GoalStatusService.....현재 날짜는.......................?" + today);
+		return goalStatusRepository.findTodaySuccess( goal.getId(), today );
+	}
+	
+	// 오늘 상태 있는지 확인하기
+	public Optional<GoalStatus> findTodayStatus(Goal goal) {
+		LocalDate today = LocalDate.now();
+		System.out.println("여기는 GoalStatusService.....현재 날짜는.......................?" + today);
+		return goalStatusRepository.findTodayStatus(goal.getId(), today);
 	}
 	
 	// 현재 달의 목표 상태들 가져오기

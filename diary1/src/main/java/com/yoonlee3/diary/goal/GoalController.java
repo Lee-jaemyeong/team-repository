@@ -73,27 +73,29 @@ public class GoalController {
 
 		//오늘 날짜 확인
 		LocalDate today = LocalDate.now();
+		System.out.println("오늘 날짜는...................?" + today);
 		
 		Goal goal = goalService.findByGoalId(goal_id);
 		// 기존 상태가 존재하는지 확인
-		Optional<GoalStatus> findGoalStatus = goalSatusService.findByGoalAndCreateDate(goal, today);
+		Optional<GoalStatus> findGoalStatus = goalSatusService.findTodayStatus(goal);
 
 		GoalStatus goalStatus;
 
 		if (findGoalStatus.isPresent()) {
 			goalStatus = findGoalStatus.get();
-			System.out.println("..................체크 성공.........?"+is_success);
+			System.out.println("..................Status 있지만 체크 성공.........?"+is_success);
 			// 체크박스가 비어있으면 false 처리
 			goalStatus.setIs_success(is_success != null ? is_success : false);
 		} else {
 			goalStatus = new GoalStatus();
 			goalStatus.setGoal(goal);
 			goalStatus.setCreateDate(today);
-			System.out.println("..................체크 성공.........?"+is_success);
-			goalStatus.setIs_success(is_success != null ? is_success : false); // 체크박스가 비어있으면 false 처리
+			System.out.println("..................Status 없는데 체크 성공.........?"+is_success);
+			// 체크박스가 비어있으면 false 처리
+			goalStatus.setIs_success(is_success != null ? is_success : false); 
 		}
 
-		goalSatusService.insertGoalStatus(goalStatus); // 상태 저장
+		goalSatusService.insertGoalStatus(goalStatus, today); // 상태 저장
 
 		return "redirect:/user/mypage"; // 변경된 목표 상태 반영 후 페이지로 리디렉션
 	}
@@ -110,7 +112,10 @@ public class GoalController {
 		return "redirect:/user/mypage";
 	}
 	
-	@GetMapping("/user/goalComplate")
-	public String goalComplate() {return "user/goalComplate";}
+	// 완료된 목표 보러가기
+	 @GetMapping("/user/goalComplate")
+	   public String goalComplate(Model model) {
+		 model.addAttribute("isMyPage", true);
+		 return "user/goalComplate";}
 
 }

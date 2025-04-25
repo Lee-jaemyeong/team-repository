@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.user;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.yoonlee3.diary.diary.Diary;
+import com.yoonlee3.diary.diary.DiaryService;
 import com.yoonlee3.diary.goal.Goal;
 import com.yoonlee3.diary.goal.GoalService;
 import com.yoonlee3.diary.group.YL3Group;
@@ -40,14 +43,16 @@ public class UserController {
 	private GoalService goalService;
 	@Autowired
 	JoinToGroupService joinToGroupService;
-	
+	@Autowired
+	DiaryService diaryService;
+
 	// 처음 화면
 	@GetMapping("/")
 	public String main(Model model) {
 		model.addAttribute("url", api.step1());
 		return "user/login";
 	}
-	
+
 	// 로그인 된 유저 닉네임 설정
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -55,17 +60,24 @@ public class UserController {
 			String email = principal.getName();
 			User user = userService.findByEmail(email);
 			model.addAttribute("nickname", user.getUsername());
-		} else {
-			model.addAttribute("nickname", "Guest");
-		}
+			model.addAttribute("user", user);
+			
+			Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+			System.out.println("그룹 찾았지........................" + groups);
+	        model.addAttribute("groups", groups);
+	    } else {
+	        model.addAttribute("nickname", "Guest");
+	        model.addAttribute("groups", Collections.emptySet());
+	    }
 	}
+
 
 	@GetMapping("/user/login")
 	public String login(Model model) {
-		model.addAttribute("url" , api.step1());
+		model.addAttribute("url", api.step1());
 		return "user/login";
 	}
-	
+
 	// 마이페이지
 	@GetMapping("/user/mypage")
 	public String myPage(Model model, Principal principal) {
@@ -75,15 +87,15 @@ public class UserController {
 		User user = userService.findByEmail(email);
 		System.out.println(user.getNickname());
 		model.addAttribute("nickname", user.getUsername());
-		
+
 		List<Goal> goal = goalService.findTodayGoalByUserId(user);
-		System.out.println(".......goal list........"+goal);
+		System.out.println(".......goal list........" + goal);
 		model.addAttribute("goal", goal);
-		
-		Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
-		System.out.println("그룹 잘 가져왔니............?" + groups.toString());
-		model.addAttribute("groups", groups);
-		
+
+		List<Diary> list = diaryService.findByUserId(user.getId());
+		System.out.println("다이어리 잘 있지..................?" + list);
+		model.addAttribute("list", list);
+
 		return "user/mypage";
 	}
 
@@ -91,7 +103,7 @@ public class UserController {
 	public String login_form() {
 		return "user/login";
 	}
-	
+
 	// 가입하기 화면
 	@GetMapping("/user/join")
 	public String join(UserForm userForm) {
@@ -126,7 +138,7 @@ public class UserController {
 		}
 		return "user/login";
 	}
-	
+
 	// 유저 찾기
 	@GetMapping("/user/find")
 	public String find() {
@@ -146,7 +158,7 @@ public class UserController {
 			currentEmail = authentication.getPrincipal().toString();
 		}
 
-		if ( user.getEmail().equals(currentEmail)) {
+		if (user.getEmail().equals(currentEmail)) {
 			model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
 			return "user/passchange";
 		} else {
@@ -154,7 +166,7 @@ public class UserController {
 			return "user/find";
 		}
 	}
-	
+
 	// 비밀번호
 	@GetMapping("/user/passchange")
 	public String passchange() {
@@ -168,7 +180,7 @@ public class UserController {
 		String loggedEmail = authentication.getName();
 		User user = userService.findByEmail(email);
 
-		if ( user != null) {
+		if (user != null) {
 
 			if (loggedEmail.equals(user.getEmail())) {
 				String encodedPassword = passwordEncoder.encode(password);
@@ -224,9 +236,9 @@ public class UserController {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 
-		if ( user != null) {
+		if (user != null) {
 
-			if (passwordEncoder.matches( password, user.getPassword())) {
+			if (passwordEncoder.matches(password, user.getPassword())) {
 				userService.deleteByEmailAndPassword(password, email);
 				SecurityContextHolder.clearContext();
 
@@ -241,17 +253,20 @@ public class UserController {
 			return "redirect:/fragments/sideBarMypage";
 		}
 	}
-	
+
 	@GetMapping("/mypage")
 	public String goMypage() {
-	    return "user/mypage";
+		return "user/mypage";
 	}
-	
+
 	@GetMapping("/main")
 	public String goMain(Model model) {
 		model.addAttribute("isMainPage", true);
 		return "mainTemplate/main";
 	}
+
 	@GetMapping("/user/follow")
-	public String follow() {return "user/follow";}	
+	public String follow() {
+		return "user/follow";
+	}
 }

@@ -48,8 +48,8 @@
 		<!-- end form -->
 		<script>
 			function form() {
-				let diary_title = document.getElementById("#diary_title");
-				let diary_content = document.getElementById("#diary_content");
+				let diary_title = document.getElementById("diary_title");
+				let diary_content = document.getElementById("diary_content");
 				if (diary_title.value == "") {
 					alert("빈칸입니다.");
 					diary_title.focus();
@@ -61,12 +61,16 @@
 					return false;
 				}
 			}
-			
+		</script>
+
+		<th:block layout:fragment="jQuery">
+		<script type="text/javascript">
 			$(function() {
 				$(".emoji").hide();
 				$("#emojiBtn").on("click", function() {
 					$(".emoji").fadeIn();
 					let diary_content = $("#diary_content").val(); // 입력값 공백없이
+					console.log(diary_content);
 					if (diary_content.length > 0) { // 검색어가 공백이 아닐 때 호출
 						getEmoji(diary_content);
 						$(".emoji").fadeIn();
@@ -94,6 +98,7 @@
 				});
 			}
 		</script>
+		</th:block>
 	</div>
 </body>
 </html>

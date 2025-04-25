@@ -13,7 +13,10 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
 	@Query("select d from Diary d order by id desc")
 	List<Diary> findAllByOrderByDesc();
-
+	
+	@Query("select d from Diary d where d.user.id = :user_id")
+	List<Diary> findByUserId(Long user_id);
+	
 	@Modifying
 	@Transactional
 	@Query("update Diary d set d.diary_title= :diary_title, d.diary_content= :diary_content where d.id= :id")
