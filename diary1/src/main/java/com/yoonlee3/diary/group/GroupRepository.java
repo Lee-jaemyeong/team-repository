@@ -15,9 +15,9 @@ public interface GroupRepository extends JpaRepository<YL3Group, Long> {
 
 	// R
 	@Query("select g from YL3Group g where g.group_title = :group_title")
-	List<YL3Group> findByGroupTitle(String group_title);
+	YL3Group findByGroupTitle(String group_title);
 
-	@Query("select g from YL3Group g where g.group_leader = :user_id")
+	@Query("select g from YL3Group g where g.group_leader.id = :user_id")
 	List<YL3Group> findByGroupLeader(Long user_id);
 
 	// U
@@ -29,13 +29,13 @@ public interface GroupRepository extends JpaRepository<YL3Group, Long> {
 	@Modifying
 	@Transactional
 	@Query("update YL3Group g set g.group_title = :group_title, group_content = :group_content"
-			+ " where g.id = :group_id and g.group_leader = :user_id")
+			+ " where g.id = :group_id and g.group_leader.id = :user_id")
 	int updateGroup(String group_title, String group_content, Long group_id, Long user_id);
 
 	// D
 	@Modifying
 	@Transactional
-	@Query("delete from YL3Group g where g.id = :group_id and g.group_leader = :user_id")
+	@Query("delete from YL3Group g where g.id = :group_id and g.group_leader.id = :user_id")
 	int deleteGroup(Long group_id, Long user_id);
 
 }

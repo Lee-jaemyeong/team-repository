@@ -22,4 +22,7 @@ public class OpenScope {
 	@Column(nullable = false)
 	private String openScope_title;
 
+	@Column(nullable = false)
+	private String openScope_value;
+
 }

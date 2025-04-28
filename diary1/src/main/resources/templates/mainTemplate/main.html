@@ -4,31 +4,38 @@
 				layout:decorate="~{fragments/layout}">
 				
 <th:block layout:fragment="content">
-		<div class="container-fluid p-3"
-			style="border-bottom: 1px solid #9d9d9d;">
-			<!-- 프로필영역 -->
-			<div class="d-flex bd-highlight mb-3">
-				<div>
-					<img src="https://placehold.co/80x80" alt=""
-						class="rounded-circle p-2 bd-highlight" style="margin-right: 5px;">
-				</div>
-				<div class="container p-2 bd-highlight  align-self-center"
-					style="width: 100%;">
-					<ul class="list-unstyled">
-						<li><a href="#"
-							class="link-underline link-underline-opacity-0"
-							style="color: #000000; font-weight: bold; font-size: 20px;">NAME</a></li>
-						<li style="font-size: 16px; color: #9d9d9d;">소속(친구or그룹명)</li>
-					</ul>
-				</div>
-				<div class="ms-auto p-2 bd-highlight align-self-center"
-					style="width: 100%; text-align: end;">imoji</div>
-			</div>
-			<!-- 프로필영역 -->
-			<div class="container-fluid p-3" style="border: 0px solid gray;">
-				<h1 style="font-size: 1.3em; margin-left: 5px;">{Diary Title}
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. .</h1>
-			</div>
+		<div th:if="${msg}" class="alert alert-success" id="alert">
+		    <span th:text="${msg}"></span>
+		    <button id="close-alert" class="btn btn-primary">확인</button>
+		</div>
+		<script>
+		    document.getElementById("close-alert")?.addEventListener("click", function() {
+		        var alert = document.getElementById("alert");
+		        if (alert) {
+		            alert.style.display = "none"; // 알림창 숨기기
+		        }
+		    });
+		</script>
+		<div class="container-fluid p-3">
+			<!-- <div> <img src="https://placehold.co/80x80" alt="" class="rounded-circle p-2 bd-highlight" style="margin-right: 5px;"> </div>-->
+			<p th:if="${#lists.isEmpty(list)}" >등록된 일기가 없습니다.</p>
+			<th:block  th:each="dto, state : ${list}">
+				<ul class="list-unstyled d-flex justify-content-between" 
+						style="border-bottom: 1px solid #ccc; padding: 10px 0 30px;">
+					<li class="p-2 flex-grow-1 bd-highlight">
+						<ul class="list-unstyled">
+							<li th:text="${dto.user != null ? dto.user.username : '알 수 없음'}"
+							 style="color: #000000; font-weight: bold; font-size: 20px;"></li>
+							<li style="font-size: 16px; color: #9d9d9d; margin-bottom: 18px;"  th:text="${#temporals.format(dto.create_date, 'yyyy-MM-dd HH:mm')}"></li>
+							<li><a th:href="@{|/mainTemplate/detail/${dto.id}|}" th:text="${dto.diary_title}" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+								style="font-size: 22px; margin-left: 8px; color: #964b00;"></a></li>
+						</ul>
+					</li>
+					<li class="ms-auto p-2 align-self-center" 
+						style="text-align: end;"  th:text="${dto.diary_emoji}"></li>					  
+				
+				</ul>
+			</th:block>
 		</div>
 		
 </th:block>

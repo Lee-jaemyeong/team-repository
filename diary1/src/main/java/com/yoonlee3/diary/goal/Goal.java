@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.goal;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,9 +18,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.yoonlee3.diary.goalStatus.GoalStatus;
 import com.yoonlee3.diary.openScope.OpenScope;
-import com.yoonlee3.diary.template.Template;
 import com.yoonlee3.diary.user.User;
 
 import lombok.Getter;
@@ -36,10 +39,11 @@ public class Goal {
 	private String goal_content;
 	
 	@Column(updatable = false)
-	private LocalDateTime startDate = LocalDateTime.now();
+	private LocalDate startDate = LocalDate.now();
 	
 	@Column(nullable=false)
-	private Date dueDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate dueDate;
 	
 	@OneToOne
 	@JoinColumn(name = "open_scope_id")
@@ -49,11 +53,7 @@ public class Goal {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@OneToMany(mappedBy = "goal", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "goal", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	List<GoalStatus> goalStatuses = new ArrayList<>();
-	
-	@OneToOne
-	@JoinColumn(name = "template_id")
-	private Template template;
 	
 }

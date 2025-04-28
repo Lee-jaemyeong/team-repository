@@ -1,5 +1,6 @@
 package com.yoonlee3.diary.userAchiv;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ public interface UserAchivRepository extends JpaRepository<UserAchiv, Long> {
 
 	// R
 	@Query("select ua from UserAchiv ua where ua.goal.id = :goal_id")
-	Optional<UserAchiv> findById(Long goal_id);
+	UserAchiv findByGoalId(Long goal_id);
 
 	// U
 	

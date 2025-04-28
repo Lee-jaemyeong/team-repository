@@ -32,12 +32,20 @@ public class UserService {
 	}
 
 	public User findByEmail(String email) {
-		return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
+	    return userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("해당 유저는 존재하지 않습니다."));
 	}
 
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
+	
+	public List<User> findUsersByUsername(String username) {
+	    return userRepository.findUsersByUsername(username);
+	}
+	
+    public boolean SameUsername(String username) {
+        return userRepository.existsByUsername(username);  // 닉네임 중복 확인
+    }
 
 	// update
 	public int updateByPass(User user) {
@@ -47,10 +55,13 @@ public class UserService {
 	public int updateByUsername(Long user_id, User user) {
 		return userRepository.updateById(user.getId(), user.getUsername());
 	}
+	
+	public List<User> searchUsers(String keyword) {
+	    return userRepository.findByUsernameContaining(keyword); // username을 포함한 사용자 찾기
+	}
 
-	// delete
-	public int deleteByEmailAndPassword(String password, String email) {
-		return userRepository.deleteByIdAndPassword(password, email);
+	public User getCurrentUser() {
+		return null;
 	}
 
 }
