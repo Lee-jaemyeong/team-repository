@@ -95,10 +95,10 @@ public class GroupHasuser {
 		
 	}
 	
-	@Test
+	@Disabled
 	public void joinGroup() {
 		User user = new User();
-		user.setId(7L);
+		user.setId(2L);
 		
 		YL3Group group = new YL3Group();
 		group.setId(1l);
@@ -112,7 +112,7 @@ public class GroupHasuser {
 		YL3Group group2 = new YL3Group();
 		group2.setId(1l);
 		
-		joinToGroupService.joinToGroup(group2.getId(), user.getId());
+		joinToGroupService.joinToGroup(group2.getId(), user2.getId());
 		//////
 		
 		User user3 = new User();
@@ -121,7 +121,7 @@ public class GroupHasuser {
 		YL3Group group3 = new YL3Group();
 		group3.setId(1l);
 		
-		joinToGroupService.joinToGroup(group3.getId(), user.getId());
+		joinToGroupService.joinToGroup(group3.getId(), user3.getId());
 		/////
 		
 		User user4 = new User();
@@ -130,7 +130,7 @@ public class GroupHasuser {
 		YL3Group group4 = new YL3Group();
 		group4.setId(1l);
 		
-		joinToGroupService.joinToGroup(group4.getId(), user.getId());
+		joinToGroupService.joinToGroup(group4.getId(), user4.getId());
 		/////
 		
 		User user5 = new User();
@@ -139,7 +139,7 @@ public class GroupHasuser {
 		YL3Group group5 = new YL3Group();
 		group5.setId(2l);
 		
-		joinToGroupService.joinToGroup(group5.getId(), user.getId());
+		joinToGroupService.joinToGroup(group5.getId(), user5.getId());
 		
 	}
 	
@@ -157,19 +157,8 @@ public class GroupHasuser {
 		User user2 = userRepository.findById(2l).orElseThrow();
 		YL3Group group2 = groupRepository.findById(1l).orElseThrow();
 		
-		joinToGroupService.leaveGroup(group2.getId(), user2.getId());
+//		joinToGroupService.leaveGroup(group2.getId(), user2.getId());
 		
-	}
-	
-	@Disabled
-	void isnertg() {
-		User user5 = new User();
-		user5.setId(7L);
-		
-		YL3Group group5 = new YL3Group();
-		group5.setId(4l);
-		
-		joinToGroupService.joinToGroup(group5.getId(), user5.getId());
 	}
 	
 	

@@ -22,6 +22,7 @@ import javax.persistence.OneToOne;
 import com.yoonlee3.diary.badge.Badge;
 import com.yoonlee3.diary.groupAchiv.GroupAchiv;
 import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistory;
+import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.user.User;
 
 import lombok.Getter;
@@ -67,4 +68,6 @@ public class YL3Group {
 	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
 	private List<GroupAchiv> groupAchiv = new ArrayList<>();
 
+	@OneToMany(mappedBy = "group")
+	private List<GroupDiary> groupDiaries;
 }

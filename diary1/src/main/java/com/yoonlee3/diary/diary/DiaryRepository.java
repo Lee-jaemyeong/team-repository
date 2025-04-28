@@ -10,12 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-
-	@Query("select d from Diary d order by id desc")
-	List<Diary> findAllByOrderByDesc();
 	
-	@Query("select d from Diary d where d.user.id = :user_id")
-	List<Diary> findByUserId(Long user_id);
+	@Query("select d from Diary d order by d.id desc")
+	List<Diary> findAllByOrderByDesc();
+
+    @Query("SELECT d FROM Diary d WHERE d.user.email = :email ORDER BY d.create_date DESC")
+    List<Diary> findByUserEmail(@Param("email") String email);
 	
 	@Modifying
 	@Transactional
@@ -26,5 +26,14 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 	@Transactional
 	@Query("delete from Diary d where d.id= :id")
 	int deleteByDId(Long id);
-
+	
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	//@Query("select d from Diary d left join Likes l on d.id = l.diary.id group by d.id order by count(l.id) desc")
+	//List<Diary> findByDiaryOrderByLikes();
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	@Query("select d ,  count(l)  as likeCount "
+			+ "from Diary d left join Likes l on d.id = l.diary.id  "
+			+ "group by d  "
+			+ "order by likeCount desc")
+	List<Diary> findByDiaryOrderByLikes();
 }

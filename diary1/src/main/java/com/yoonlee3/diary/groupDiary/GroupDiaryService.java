@@ -12,11 +12,8 @@ import com.yoonlee3.diary.group.YL3Group;
 @Service
 public class GroupDiaryService {
 	
-	@Autowired
-	GroupDiaryRepository groupDiaryRepository;
-	@Autowired
-	DiaryService diaryService;
-	
+	@Autowired GroupDiaryRepository groupDiaryRepository;
+	@Autowired DiaryService diaryService;
 	
 	public List<GroupDiary> findByGroupId(YL3Group group) {
 		return groupDiaryRepository.findByGroupId(group.getId());
@@ -29,8 +26,8 @@ public class GroupDiaryService {
 		return groupDiaryRepository.save(groupDiary);
 	}
 	
-	public int deleteGroupDiary(YL3Group group, Diary diary) {
-		return groupDiaryRepository.deleteGroupDiary(group.getId() , diary.getId());
+	public int deleteGroupDiary(GroupDiary groupDiary) {
+		return groupDiaryRepository.deleteGroupDiary(groupDiary.getId());
 	}
 	
 }

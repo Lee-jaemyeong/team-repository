@@ -15,7 +15,7 @@ public interface GroupRepository extends JpaRepository<YL3Group, Long> {
 
 	// R
 	@Query("select g from YL3Group g where g.group_title = :group_title")
-	List<YL3Group> findByGroupTitle(String group_title);
+	YL3Group findByGroupTitle(String group_title);
 
 	@Query("select g from YL3Group g where g.group_leader = :user_id")
 	List<YL3Group> findByGroupLeader(Long user_id);
@@ -35,7 +35,7 @@ public interface GroupRepository extends JpaRepository<YL3Group, Long> {
 	// D
 	@Modifying
 	@Transactional
-	@Query("delete from YL3Group g where g.id = :group_id and g.group_leader = :user_id")
+	@Query("delete from YL3Group g where g.id = :group_id and g.group_leader.id = :user_id")
 	int deleteGroup(Long group_id, Long user_id);
 
 }

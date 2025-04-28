@@ -14,10 +14,8 @@ import com.yoonlee3.diary.user.User;
 @Service
 public class GoalService {
 
-	@Autowired
-	GoalRepository goalRepository;
-	@Autowired
-	GoalSatusService goalSatusService;
+	@Autowired GoalRepository goalRepository;
+	@Autowired GoalSatusService goalSatusService;
 	
 	//C
 	public Goal insertGoal(Goal goal, User user) {
@@ -39,8 +37,6 @@ public class GoalService {
 		Date toDay = Date.valueOf(today);
 		return goalRepository.findTodayGoalByUserId( user.getId() , toDay );
 	}
-	
-	
 	
 	//U
 	public int updateGoal(Goal goal) {

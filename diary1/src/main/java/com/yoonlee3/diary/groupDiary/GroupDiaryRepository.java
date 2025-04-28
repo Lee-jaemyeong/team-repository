@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yoonlee3.diary.diary.Diary;
-
 public interface GroupDiaryRepository extends JpaRepository<GroupDiary, Long> {
 
 	// C
@@ -22,7 +20,7 @@ public interface GroupDiaryRepository extends JpaRepository<GroupDiary, Long> {
 	// D
 	@Modifying
 	@Transactional
-	@Query("delete from GroupDiary gd where gd.group.id =:group_id and gd.diary.id = :diary_id")
-	int deleteGroupDiary(Long group_id, Long diary_id);
+	@Query("delete from GroupDiary gd where gd.id = :groupDiry_id")
+	int deleteGroupDiary(Long groupDiry_id);
 
 }

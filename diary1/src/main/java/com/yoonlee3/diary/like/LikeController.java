@@ -35,9 +35,9 @@ public class LikeController {
             boolean isLiked = likeService.toggleLike(diaryId, user.getId());
 
             // 상태에 따라 리다이렉트
-            return "redirect:/diary/detail/" + diaryId;
+            return "redirect:/mainTemplate/detail/" + diaryId;
         }
-        return "redirect:/login"; // 비로그인 시 리다이렉트
+        return "redirect:user/login"; // 비로그인 시 리다이렉트
     }
 
     // 좋아요 상태 확인 (GET 요청)

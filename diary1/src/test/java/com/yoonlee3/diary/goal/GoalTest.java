@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.yoonlee3.diary.Diary1Application;
 import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.openScope.OpenScopeRepository;
-import com.yoonlee3.diary.openScope.OpenScopeService;
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserRepository;
 import com.yoonlee3.diary.user.UserService;
@@ -20,25 +19,28 @@ public class GoalTest {
 	@Autowired
 	GoalService goalService;
 	@Autowired
-	OpenScopeRepository openScopeRepository;
+	GoalRepository goalRepository;
 	@Autowired
-	UserService userService;
+	UserRepository userRepository;
+	@Autowired
+	OpenScopeRepository openScopeRepository;
 	
 	@Test
 	void insert() {
 		Goal goal = new Goal();
-		User user = userService.findById(1l);
+		User user = userRepository.findById(1l).orElseThrow();
 		
+		goal.setUser(user);
 		goal.setGoal_content("매일 30분 독서하기");
 		
 
 		Date dueDate = Date.valueOf("2025-04-01");
 		goal.setDueDate(dueDate);
 		
-		OpenScope openscope = openScopeRepository.findById(4L).orElseThrow(()-> new RuntimeException("존재하지 않는 공개범위입니다."));
+		OpenScope openscope = openScopeRepository.findById(4l).orElseThrow();
 		goal.setOpenScope(openscope);
 		
-		goalService.insertGoal(goal, user);
+		goalRepository.save(goal);
 	}
 	
 }

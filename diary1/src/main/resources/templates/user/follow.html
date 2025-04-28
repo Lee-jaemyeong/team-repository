@@ -4,74 +4,156 @@
 	layout:decorate="~{fragments/layout}">
 
 <th:block layout:fragment="content">
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var currentUserId = /*[[${currentUserId}]]*/ 0;  // 서버에서 `currentUserId` 값을 전달
+    /*]]>*/
+</script>
+
 <!-- 탭 버튼 -->
 <ul class="nav nav-tabs justify-content-center" id="followTab" role="tablist">
 	<li class="nav-item w-50" role="presentation">
-		<button class="nav-link active w-100" id="following-tab" data-bs-toggle="tab"
-			data-bs-target="#following" type="button" role="tab" aria-controls="following"
-			aria-selected="true">팔로잉</button>
-	</li>	
-	<li class="nav-item w-50" role="presentation">
 		<button class="nav-link w-100" id="follower-tab" data-bs-toggle="tab"
 			data-bs-target="#follower" type="button" role="tab"
-			aria-controls="follower" aria-selected="false">팔로워</button>
+			aria-controls="follower" aria-selected="false">팔로워<span th:text="${followers != null ? followers.size() : 0}">0</span></button>
 	</li>
+	<li class="nav-item w-50" role="presentation">
+		<button class="nav-link active w-100" id="following-tab" data-bs-toggle="tab"
+			data-bs-target="#following" type="button" role="tab" aria-controls="following"
+			aria-selected="true">팔로잉<span th:text="${followings != null ? followings.size():0}">0</span></button>
+	</li>	
 </ul>
 <!-- 탭 버튼 -->
 <div class="container-fluid p-3">
 	<div class="tab-content" id="followTebContent">
-<!-- 팔로잉 탭 -->
-		<div class="tab-pane fade show active" id="following" role="tabpanel" aria-labelledby="following-tab">
-			<table class="table">
-				<tr>
-					<td><div class="d-flex align-items-center">
-						<div class="p-2 bd-highlight"><img class="rounded-circle" src="https://placehold.co/80x80"></div>
-						<div class="p-2 flex-grow-1 bd-highlight"
-							style="font-size: 1.2em; font-weight: bold;">username</div>
-						<div class="p-2 bd-highlight"><button class="btn" id="followBtn"
-							style="border: 2px solid #f8b739; background-color: #f8b739; font-weight: bold;">팔로우</button></div>
-					</div></td>
-				</tr>
-			</table>
-		</div>
-<!-- 팔로잉 탭 -->
-			
 <!-- 팔로워 탭 -->
-		<div class="tab-pane fade" id="follower" role="tabpanel" aria-labelledby="follower-tab">
-			<table class="table">
-				<tr>
-					<td><div class="d-flex align-items-center">
-						<div class="p-2 bd-highlight"><img class="rounded-circle" src="https://placehold.co/80x80"></div>
-						<div class="p-2 flex-grow-1 bd-highlight"
-							style="font-size: 1.2em; font-weight: bold;">username</div>
-						<div class="p-2 bd-highlight"><button class="btn" id="followBtn"
-							style="border: 2px solid #f8b739; background-color: #f8b739; font-weight: bold;">팔로우</button></div>
-					</div></td>
-				</tr>
-			</table>
-		</div>
-<!-- 팔로워 탭 -->
+<div class="tab-pane fade" id="follower" role="tabpanel" aria-labelledby="follower-tab">
+	<table class="table">
+		<tr th:each="follow : ${followers}">
+			<td>
+				<div class="d-flex align-items-center">
+					<div class="p-2 bd-highlight">
+						<img class="rounded-circle" src="https://placehold.co/80x80">
+					</div>
+					<div class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.2em; font-weight: bold;">
+						<span th:text="${follow.follower.username}">username</span>
+					</div>
+					<div class="p-2 bd-highlight" th:if="${currentUserId != null}">
+						<button
+							class="btn follow-btn"
+							th:if="${follow.follower.id != currentUserId}"
+							th:attr="data-user-id=${follow.follower.id}"
+							th:text="${followingIds.contains(follow.follower.id) ? '팔로잉' : '팔로우'}"
+							th:class="${followingIds.contains(follow.follower.id) ? 'btn follow-btn btn-warning' : 'btn follow-btn'}"
+							style="border: 2px solid #f8b739; font-weight: bold;">
+						</button>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<!-- 팔로워가 없을 경우 메시지 출력 -->
+        <tr th:if="${followers.size() == 0}">
+            <td colspan="3" class="text-center">팔로워가 없습니다.</td>
+        </tr>
+	</table>
+</div>
+
+<!-- 팔로잉 탭 -->
+<div class="tab-pane fade show active" id="following" role="tabpanel" aria-labelledby="following-tab">
+	<table class="table">
+		<tr th:each="follow : ${followings}">
+			<td>
+				<div class="d-flex align-items-center">
+					<div class="p-2 bd-highlight">
+						<img class="rounded-circle" src="https://placehold.co/80x80">
+					</div>
+					<div class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.2em; font-weight: bold;">
+						<span th:text="${follow.following.username}">username</span>
+					</div>
+					<div class="p-2 bd-highlight" th:if="${currentUserId != null}">
+						<button class="btn follow-btn"
+						    th:if="${follow.following.id != currentUserId}"
+						    th:attr="data-user-id=${follow.following.id}"
+						    th:text="${followingIds.contains(follow.following.id) ? '팔로잉' : '팔로우'}"
+						    th:classappend="${followingIds.contains(follow.following.id) ? 'btn follow-btn btn-warning' : 'btn follow-btn'}"
+						    style="border: 2px solid #f8b739; font-weight: bold;">
+						</button>
+
+					</div>
+				</div>
+			</td>
+		</tr>
+		<!-- 팔로잉이 없을 경우 메시지 출력 -->
+        <tr th:if="${followings.size() == 0}">
+            <td colspan="3" class="text-center">팔로잉이 없습니다.</td>
+        </tr>
+	</table>
+</div>
+<!-- 팔로잉 탭 -->
 	</div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-	let key="${param.key}";
-	console.log(key);
-	if(key=="follower"){
-		$("#follower-tab").removeClass("active");
-		$("#following-tab").addClass("active");
-		
-		$("#following").removeClass("show active");
-		$("#follower").addClass("show active");
-	}else if (key=="following"){
-		$("#following-tab").removeClass("active");
-		$("#follower-tab").addClass("active");
-		
-		$("#follower").removeClass("show active");
-		$("#following").addClass("show active");
-	};
+$(document).ready(function() {
+	// 팔로우/언팔로우 버튼 클릭 이벤트
+	$(document).on("click", ".follow-btn", function () {
+		var followingId = $(this).data("user-id"); 
+	    var followerId = currentUserId;
+
+	    if (followerId === followingId) {
+	        alert("자기 자신을 팔로우할 수 없습니다.");
+	        return;
+	    }
+
+	    var button = $(this);
+	    var isFollowing = button.text().trim() === "팔로잉";
+
+	    if (isFollowing) {
+	        $.ajax({
+	            url: "/follow",
+	            type: "DELETE",
+	            data: { followerId, followingId },
+	            success: function() {
+	                alert("언팔로우 성공!");
+	                button.text("팔로우");
+	                button.removeClass("btn-warning");
+	                button.css({
+	                    "background-color": "",
+	                    "color": "",
+	                    "border": "2px solid #f8b739"
+	                });
+	            },
+	            error: function() {
+	                alert("언팔로우 실패");
+	            }
+	        });
+	    } else {
+	        $.ajax({
+	            url: "/follow",
+	            type: "POST",
+	            data: { followerId, followingId },
+	            success: function() {
+	                alert("팔로우 성공!");
+	                button.text("팔로잉");
+	                button.addClass("btn-warning");
+	                button.css({
+	                    "background-color": "#f8b739",
+	                    "color": "",
+	                    "border": "2px solid #f8b739"
+	                });
+	            },
+	            error: function() {
+	                alert("팔로우 실패");
+	            }
+	        });
+	    }
+	});
+});
 </script>
 
 </th:block>
-
 
 </html>

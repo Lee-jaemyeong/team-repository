@@ -23,11 +23,8 @@ public class GoalSatusService {
 	
 	//C
 	public GoalStatus insertGoalStatus( GoalStatus goalStatus, LocalDate today ) {
-		
 		Goal goal = goalStatus.getGoal();
-		System.out.println("여기는 GoalStatusService.................goal 잘 가져왔니.........?" + goalStatus);
 	    Boolean is_success = goalStatus.getIs_success();
-	    System.out.println("여기는 GoalStatusService................. is_success 잘 가져왔니.........?" + is_success);
 
 	    return goalStatusRepository.save(goalStatus);
 	}
@@ -42,12 +39,10 @@ public class GoalSatusService {
 		return goalStatusRepository.findStatusByGoalId(goal.getId());
 	}
 	
-	
 	// 오늘 성공한 목표의 수 구하기
 	public int findTodaySuccess(Goal goal) {
-		LocalDate today = LocalDate.now();
-		System.out.println("여기는 GoalStatusService.....현재 날짜는.......................?" + today);
-		return goalStatusRepository.findTodaySuccess( goal.getId(), today );
+		LocalDate currentDate = LocalDate.now();
+		return goalStatusRepository.findTodaySuccess(goal.getId(), currentDate );
 	}
 	
 	// 오늘 상태 있는지 확인하기
@@ -79,12 +74,10 @@ public class GoalSatusService {
 	public int updateGoal(GoalStatus goalStatus, Goal goal) {
 		return goalStatusRepository.updateGoalStatus(goalStatus.getIs_success(), goal.getId());
 	}
-
 	
 	//D
 	public void deleteStatusByGoal(Goal goal) {
 		List<GoalStatus> goalStatuses = goalStatusRepository.findByGoalId(goal.getId());
 		goalStatusRepository.deleteAll(goalStatuses);
 	}
-	
 }

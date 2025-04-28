@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.goalStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

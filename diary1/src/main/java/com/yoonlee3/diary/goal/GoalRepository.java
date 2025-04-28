@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yoonlee3.diary.user.User;
-
 public interface GoalRepository extends JpaRepository<Goal, Long> {
 	
 	//C

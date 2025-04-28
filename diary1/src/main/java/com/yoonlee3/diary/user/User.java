@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.like.Likes;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +40,6 @@ public class User {
 	private String password;
 
 	private String nickname;
-	
 	private String profileImageUrl;
 
 	@Column(unique = true, nullable = false)
@@ -49,6 +51,12 @@ public class User {
 	@ManyToMany(mappedBy = "users")
 	private Set<YL3Group> groups = new HashSet<>();
 	
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Diary> diaries;
+	
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Likes> likes;
+    
 	@OneToMany(mappedBy = "follower")
     private List<User> follower = new ArrayList<>();
 

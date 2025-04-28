@@ -23,8 +23,6 @@ public class Diary_gptService {
 	private String API_KEY;
 
 	public String getAIResponse(String userMessage) {
-		System.out.println("키 잘 있지.......?" + API_KEY);
-		System.out.println("일기 잘 넘어 갔니.................?" + userMessage );
 		
 		try {	
 		RestTemplate restTemplate = new RestTemplate();
@@ -47,12 +45,9 @@ public class Diary_gptService {
 		ResponseEntity<String> responseEntity = restTemplate.postForEntity(API_URL, requestEntity, String.class);
 		String responseBody = responseEntity.getBody();
 		
-			 
-		    System.out.println("📦 GPT 응답 원문: " + responseBody);
 	        ObjectMapper mapper = new ObjectMapper();
 	        JsonNode root = mapper.readTree(responseBody);
 	        String content = root.path("choices").get(0).path("message").path("content").asText();
-	        System.out.println("이모지 잘 왔니............?" + content);
 		    return content.trim(); // 이모지 요약 텍스트만 반환
 		    } catch (Exception e) {
 		        e.printStackTrace();

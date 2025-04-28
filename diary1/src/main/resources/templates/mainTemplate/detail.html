@@ -9,24 +9,32 @@
 style="padding: 3.5em 3em; border-radius: 10% 10% 0 0; background-color: #eee;">
 <!-- 제목영역 -->
 	<div>
-		<div>공개범위</div>
-		<div class="d-flex justify-content-between">
-			<h1 th:text="DTitle" style="font-size: 1.8em; font-weight: bold;"></h1>
+		<div class="d-flex justify-content-end bd-highlight" th:text="${dto.openScope.openScope_title}"></div>
+		<div class="d-flex justify-content-between mt-3">
+			<h1 th:text="${dto.diary_title}" style="font-size: 1.8em; font-weight: bold;"></h1>
 			<div>imoji</div>
 		</div>
-		<div class="d-flex flex-row bd-highlight mb-3">
-			<p th:text="작성자" class="bd-highlight"></p>
-			<p th:text="작성일" class="bd-highlight"></p>
+		<div class="d-flex justify-content-between bd-highlight mb-3">
+			<p th:text="${dto.diary_title}" class="bd-highlight"></p>
+			<p th:text="${dto.create_date}" class="bd-highlight"></p>
 		</div>
 	</div>
 <!-- 제목영역 -->
 <!-- 본문영역 -->
 	<div class="mb-3">
-		<textarea th:text="본문노출어쩌고저쩌고이러쿵저러쿵" 
+		<textarea th:text="${dto.diary_content}" 
 		maxlength="500" class="form-control p-4" 
 		style="width: 100%; height: 60vh; resize: none; background-color: #fff; border: none;" readonly></textarea>
 	</div>
 <!-- 본문영역 -->
+		<div>
+	        <form th:action="@{/diary/like}" method="post">
+	            <input type="hidden" name="diaryId" th:value="${dto.id}" />
+	            <span th:text="${likeCount}"></span>
+	            <button type="submit" th:text="${isLiked ? '좋아요 취소' : '좋아요'}" class="btn btn-warning">
+	            </button>
+	        </form>
+    	</div>
 <!-- 수정삭제 -->
 	<div class="d-flex bd-highlight mb-4">
 		<div class="p-2 bd-highlight"><button type="button" class="btn p-3" data-bs-toggle="modal" data-bs-target="#pageDeleteModal"
@@ -43,10 +51,12 @@ style="padding: 3.5em 3em; border-radius: 10% 10% 0 0; background-color: #eee;">
       <div class="modal-body">
         <p style="text-align: center; padding-top: 2em;">일기를 삭제하시겠습니까?</p>
       </div>
-      <div class="modal-footer justify-content-center">
-        <div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
-        <div><button type="button" class="btn btn-primary p-2">삭제하기</button></div>
-      </div>
+      <form th:action="@{|/diary/delete/${dto.id}|}" method="post">
+	      <div class="modal-footer justify-content-center">
+	        <div><button type="button" class="btn btn-secondary p-2" data-bs-dismiss="modal">취소</button></div>
+	        <div><button type="submit" class="btn btn-primary p-2">삭제하기</button></div>
+	      </div>
+      </form>
     </div>
   </div>
 </div>
