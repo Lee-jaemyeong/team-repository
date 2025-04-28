@@ -9,11 +9,19 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface DiaryRepository extends JpaRepository<Diary, Long> {
+import com.yoonlee3.diary.user.User;
 
-	@Query("select d from Diary d order by id desc")
+public interface DiaryRepository extends JpaRepository<Diary, Long> {
+	
+	@Query("select d from Diary d order by d.id desc")
 	List<Diary> findAllByOrderByDesc();
 
+	@Query("select d from Diary d where d.user.id = :user_id")
+	List<Diary> findByUserId(Long user_id);
+	
+    @Query("SELECT d FROM Diary d WHERE d.user.email = :email ORDER BY d.create_date DESC")
+    List<Diary> findByUserEmail(@Param("email") String email);
+	
 	@Modifying
 	@Transactional
 	@Query("update Diary d set d.diary_title= :diary_title, d.diary_content= :diary_content where d.id= :id")
@@ -24,4 +32,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 	@Query("delete from Diary d where d.id= :id")
 	int deleteByDId(Long id);
 
+	long countByUser(User currentUser);
+	
 }

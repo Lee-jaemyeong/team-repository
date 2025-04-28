@@ -23,17 +23,17 @@ public class Diary_gptService {
 	private String API_KEY;
 
 	public String getAIResponse(String userMessage) {
+		
+		try {	
 		RestTemplate restTemplate = new RestTemplate();
-
 		// 헤더 설정
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
-		headers.set("Authorization", "Bearer " + API_KEY);
+		headers.set("Authorization", "Bearer " + API_KEY.trim());
 
 		// 요청 바디 작성
 		Map<String, Object> body = new HashMap<>();
 		body.put("model", "gpt-3.5-turbo");
-		body.put("store", true);
 
 		List<Map<String, String>> messages = new ArrayList<>();
 		messages.add(Map.of("role", "user", "content", userMessage + " 이 일기를 이모지 5개만 사용해서 요약해줘 "));
@@ -45,11 +45,10 @@ public class Diary_gptService {
 		ResponseEntity<String> responseEntity = restTemplate.postForEntity(API_URL, requestEntity, String.class);
 		String responseBody = responseEntity.getBody();
 		
-		 try {
-		        ObjectMapper mapper = new ObjectMapper();
-		        JsonNode root = mapper.readTree(responseBody);
-		        String content = root.path("choices").get(0).path("message").path("content").asText();
-		        return content.trim(); // 이모지 요약 텍스트만 반환
+	        ObjectMapper mapper = new ObjectMapper();
+	        JsonNode root = mapper.readTree(responseBody);
+	        String content = root.path("choices").get(0).path("message").path("content").asText();
+		    return content.trim(); // 이모지 요약 텍스트만 반환
 		    } catch (Exception e) {
 		        e.printStackTrace();
 		        return "😕 요약 실패";

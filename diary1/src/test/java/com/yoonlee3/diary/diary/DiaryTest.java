@@ -31,8 +31,7 @@ public class DiaryTest {
 	//@Test 
 	public void findAll() {
 		List<Diary> list = diaryRepository.findAll();
-		
-		System.out.println(list.get(0).getDiary_title());
+		System.out.println(list);
 	}
 	
 	@Disabled 

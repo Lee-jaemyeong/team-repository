@@ -1,5 +1,6 @@
 package com.yoonlee3.diary.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -15,6 +16,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query("select u from User u where u.username= :username")
 	User findByUsername(String username);
+	
+	@Query("select u from User u where u.username= :username")
+	List<User> findUsersByUsername(String username);
+	
+    @Query("select case when count(u) > 0 then true else false end from User u where u.username = :username")
+    boolean existsByUsername(String username);
 
 	// U
 	@Modifying
@@ -27,10 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("update User u set u.password= :password where u.email= :email ")
 	int updateByIdAndPassword(String password, String email);
 
-	// D
-	@Modifying
-	@Transactional
-	@Query("delete from User u where u.password= :password and u.email= :email ")
-	int deleteByIdAndPassword(String password, String email);
+	List<User> findByUsernameContaining(String keyword);
 	
+	List<User> findByUsernameContainingIgnoreCase(String keyword);
 }

@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.diary;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -12,7 +13,12 @@ public class DiaryService {
 	@Autowired DiaryRepository diaryRepository;
 	
 	public List<Diary> findAll() { 
-		return diaryRepository.findAllByOrderByDesc();
+	    return diaryRepository.findAllByOrderByDesc(); 
+	} 
+	
+	public List<Diary> findByEmail(String email) {
+	    List<Diary> diaries = diaryRepository.findByUserEmail(email);
+	    return diaries;
 	}
 	
 	@Transactional
@@ -21,8 +27,13 @@ public class DiaryService {
 		return diary;
 	}
 	
-	public void insert(Diary diary) {
-		diaryRepository.save(diary);
+	@Transactional
+	public List<Diary> findByUserId(Long user_id) {
+		return diaryRepository.findByUserId(user_id);
+	}
+	
+	public Diary insert(Diary diary) {
+		return diaryRepository.save(diary);
 	}
 	
 	public Diary update_view(Long id) {

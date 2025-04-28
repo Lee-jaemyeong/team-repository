@@ -33,7 +33,7 @@ public class UserSecurity {
 			                            		   new AntPathRequestMatcher("/**") )
 			                               .permitAll() // 모든사용자 접근가능
 		).formLogin(  // login
-			(formLogin) -> 	formLogin.loginPage("/user/login").defaultSuccessUrl("/user/mypage")
+			(formLogin) -> 	formLogin.loginPage("/user/login").defaultSuccessUrl("/mypage")
 		).logout(  // logout
 			(logout) ->	logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessHandler((request, response, authentication) -> {
 			    String kakaoLogoutUrl = "https://kauth.kakao.com/oauth/logout"

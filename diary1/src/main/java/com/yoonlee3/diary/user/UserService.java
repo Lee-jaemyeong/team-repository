@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.yoonlee3.diary.follow.BlockRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -13,7 +15,8 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
-
+	private final BlockRepository blockRepository;
+	
 	// insert
 	public User insertUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -32,12 +35,20 @@ public class UserService {
 	}
 
 	public User findByEmail(String email) {
-		return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
+	    return userRepository.findByEmail(email).orElse(null);
 	}
 
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
+	
+	public List<User> findUsersByUsername(String username) {
+	    return userRepository.findUsersByUsername(username);
+	}
+	
+    public boolean SameUsername(String username) {
+        return userRepository.existsByUsername(username);  // 닉네임 중복 확인
+    }
 
 	// update
 	public int updateByPass(User user) {
@@ -47,10 +58,18 @@ public class UserService {
 	public int updateByUsername(Long user_id, User user) {
 		return userRepository.updateById(user.getId(), user.getUsername());
 	}
-
-	// delete
-	public int deleteByEmailAndPassword(String password, String email) {
-		return userRepository.deleteByIdAndPassword(password, email);
+	
+	public List<User> searchUsers(String keyword) {
+	    return userRepository.findByUsernameContaining(keyword); // username을 포함한 사용자 찾기
 	}
 
+	public User getCurrentUser() {
+		return null;
+	}
+
+	// 내가 차단한 사용자 목록	
+    public List<User> getBlockedUsers(Long currentUserId) {
+        return blockRepository.findBlockedUsersByBlockerId(currentUserId);
+    }	
+	
 }

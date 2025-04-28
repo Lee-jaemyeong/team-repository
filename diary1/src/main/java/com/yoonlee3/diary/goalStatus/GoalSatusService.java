@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,8 @@ public class GoalSatusService {
 	@Autowired GoalStatusRepository goalStatusRepository;
 	@Autowired GoalRepository goalRepository;
 	
-	//C
-	public GoalStatus insertGoalStatus(Goal goal, GoalStatus goalStatus) {
-		goalStatus.setGoal(goal);
+	// C
+	public GoalStatus insertGoalStatus(GoalStatus goalStatus, LocalDate today) {
 		return goalStatusRepository.save(goalStatus);
 	}
 	
@@ -30,28 +30,57 @@ public class GoalSatusService {
 	public List<GoalStatus> selectGoal(Goal goal) {
 		return goalStatusRepository.findByGoalId(goal.getId());
 	}
-	
-	// 오늘 성공한 목표의 수 구하기
-	public int findTodaySuccess(Goal goal) {
-		LocalDate currentDate = LocalDate.now();
-		return goalStatusRepository.findTodaySuccess(goal.getId(), currentDate );
+
+	// 해당목표의 상태들 가져오기
+	public List<GoalStatus> findByGoalId(Goal goal) {
+		return goalStatusRepository.findStatusByGoalId(goal.getId());
 	}
-	
+
+	// 오늘 성공한 목표의 수 구하기
+	public int findTodaySuccess(Goal goal, LocalDate today) {
+		System.out.println("여기는 GoalStatusService.....현재 날짜는.......................?" + today);
+		return goalStatusRepository.findTodaySuccess(goal.getId(), today);
+	}
+
 	// 현재 달의 목표 상태들 가져오기
-	public int countStatus(Goal goal) {
-		
+	public int countStatusMonth(Goal goal) {
+
 		LocalDate today = LocalDate.now();
-		LocalDateTime startOfMonth = LocalDateTime.of(today.withDayOfMonth(1), LocalTime.MIN);
-		LocalDateTime startOfNextMonth = startOfMonth.plusMonths(1);
-		
+		LocalDate startOfMonth = today.withDayOfMonth(1); // 4월 1일
+		LocalDate startOfNextMonth = startOfMonth.plusMonths(1); // 5월 1일
+
 		return goalStatusRepository.findMonthStatus(goal.getId(), startOfMonth, startOfNextMonth);
 	}
-	
-	//U
-	public int updateGoal(GoalStatus goalStatus, Goal goal) {
-		return goalStatusRepository.updateGoalStatus(goalStatus.getIs_success(), goal.getId());
+	// 기간 내의 목표 상태들 가져오기
+	public int countStatusDay(Goal goal, LocalDate start, LocalDate end) {
+		return goalStatusRepository.findStatusDay( goal.getId(), start, end );
 	}
-	
-	//D
-	
+
+	public Optional<GoalStatus> findStatusById(Goal goal) {
+		return goalStatusRepository.findById(goal.getId());
+	}
+
+	// 현재 날짜의 상태 찾아오기
+	public Optional<GoalStatus> findTodayGoalStatus(Goal goal, LocalDate today) {
+		return goalStatusRepository.findTodayGoalStatus(goal.getId(), today);
+	}
+
+	public List<GoalStatus> findTodayStatus(LocalDate today) {
+		return goalStatusRepository.findTodayStatus(today);
+	}
+
+	// U
+	public int updateGoalStatus(GoalStatus goalStatus, LocalDate date, Goal goal) {
+		return goalStatusRepository.updateGoalStatus(goalStatus.getIs_success(), date, goal.getId());
+	}
+
+	// D
+	public void deleteStatusByGoal(Goal goal) {
+		List<GoalStatus> goalStatuses = goalStatusRepository.findByGoalId(goal.getId());
+		goalStatusRepository.deleteAll(goalStatuses);
+	}
+
+	public GoalStatus findByGoalIdAndDate(Long goalId, LocalDate date) {
+		return goalStatusRepository.findByGoalIdAndDate(goalId, date);
+	}
 }
