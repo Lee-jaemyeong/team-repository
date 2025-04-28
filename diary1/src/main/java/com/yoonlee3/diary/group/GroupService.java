@@ -54,22 +54,23 @@ public class GroupService {
 	}
 
 	// delete
-		public int deleteGroup(YL3Group group) {
-			YL3Group findgroup = groupRepository.findById(group.getId()).orElseThrow(()-> new RuntimeException("여기는 GroupService............ 그룹이 존재하지 않아요 흑흑"));
-			System.out.println("그룹 삭제하기 서비스............ 찾은 그룹..............." + findgroup);
-			// 그룹안에 있는 유저들 가져오기
-			Set<User> users = group.getUsers();
-			System.out.println("그룹 삭제하기 서비스..................... 찾은 유저들..................." + users);
-			// 리더가 아닌 유저들 그룹 떠나게 하기 
-			if(!users.contains(group.getGroup_leader())) {
-				for(User u : users) {
-					System.out.println("그룹 삭제하기 서비스............. 삭제할 유저.............." + u);
-					joinToGroupService.leaveGroup(group, u);
-				}
+	public int deleteGroup(YL3Group group) {
+		YL3Group findgroup = groupRepository.findById(group.getId()).orElseThrow(()-> new RuntimeException("여기는 GroupService............ 그룹이 존재하지 않아요 흑흑"));
+		System.out.println("그룹 삭제하기 서비스............ 찾은 그룹..............." + findgroup);
+		// 그룹안에 있는 유저들 가져오기
+		Set<User> users = group.getUsers();
+		System.out.println("그룹 삭제하기 서비스..................... 찾은 유저들..................." + users);
+		// 리더가 아닌 유저들 그룹 떠나게 하기 
+		if(!users.contains(group.getGroup_leader())) {
+			for(User u : users) {
+				System.out.println("그룹 삭제하기 서비스............. 삭제할 유저.............." + u);
+				joinToGroupService.leaveGroup(group, u);
 			}
-			// 그룹안에 있는 다이어리 삭제하기
-			List<GroupDiary> groupDiarys = groupDiaryService.findByGroupId(findgroup);
-			return groupRepository.deleteGroup(findgroup.getId(), findgroup.getGroup_leader().getId());
 		}
+
+		// 그룹안에 있는 다이어리 삭제하기
+		List<GroupDiary> groupDiarys = groupDiaryService.findByGroupId(findgroup);		
+		return groupRepository.deleteGroup(findgroup.getId(), findgroup.getGroup_leader().getId());
+	}
 
 }

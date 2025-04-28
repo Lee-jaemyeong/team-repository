@@ -8,20 +8,21 @@
 	<!-- 그룹정보 -->
 	<div class="container p-2"
 		style="width: 100%; color: #000000; font-weight: bold; font-size: 20px; margin-left: 1em;"
-		th:text="group.group_title"></div>
+		th:text="${group.group_title}"></div>
 	<!-- 그룹정보 -->
 	<!-- 목표 -->
 	<div class="container-fluid mb-3">
 		<table class="table">
 			<caption>Group Success</caption>
 			<tbody>
-				<tr>
-					<td scope="row" style="padding-right: 2em;">목표명</td>
-					<td scope="row"
-						style="text-align: center; background-color: #f8b739;">날짜</td>
-					<td scope="row" style="text-align: center;">날짜</td>
-					<td scope="row" style="text-align: center;">날짜</td>
-					<!-- 고민사항:성공여부에 따라 자동으로 배경색이 변할 수 있나... 아니면 다른 식으로 표기를 해야하나... -->
+				<tr th:each="goal : ${goals}">
+					<td scope="row" style="padding-right: 2em;"
+						th:text="${goal.goal_content}">목표명</td>
+					<td>
+						<div th:each="date : ${dateList}" class="m-1 p-2 border rounded"
+							th:classappend="${goalStatusDateMap[goal.id.toString()][date.toString()]} == true ? 'bg-success text-white' : 'bg-light'"
+							th:text="${#temporals.format(date, 'MM/dd')}"></div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -29,7 +30,7 @@
 	<!-- 목표 -->
 	<!-- 글쓰기폼 -->
 	<div class="container-fluid">
-		<form th:action="@{|/group/${group.id}/diary/insert|}" method="post">
+		<form th:action="@{|/group/${group.id}/diary/insert|}" method="post" onsubmit="return validateForm()">
 			<div class="d-flex bd-highlight mb-4">
 				<div class="flex-grow-1 bd-highlight" style="margin-right: 0.6em;">
 					<input class="form-control form-control-lg" type="text"
@@ -122,6 +123,30 @@
 					} // E if
 				}
 			});
+		}
+		
+		function validateForm() {
+			let title = document.getElementById("diary_title").value.trim();
+			let content = document.getElementById("diary_content").value.trim();
+			let templateSelect = document.querySelector('select.form-select:nth-of-type(1)');
+			let openScopeSelect = document.getElementById("openScope_insert");
+
+			if (title === "" || content === "") {
+				alert("제목과 내용을 모두 입력해야 합니다.");
+				return false;
+			}
+
+			if (templateSelect.value === "템플릿") {
+				alert("템플릿을 선택해주세요.");
+				return false;
+			}
+
+			if (openScopeSelect.value === "공개범위") {
+				alert("공개범위를 선택해주세요.");
+				return false;
+			}
+
+			return true; // 모두 통과하면 제출
 		}
 	</script>
 </th:block>

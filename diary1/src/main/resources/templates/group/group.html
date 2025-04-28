@@ -4,34 +4,35 @@
 	layout:decorate="~{fragments/layout}">
 
 <th:block layout:fragment="content">
-
+	<div class="container-fluid p-3"
+		style="border-bottom: 1px solid #9d9d9d;">
+		<div th:each="user : ${users}">
+			<div th:text="${user.username}"></div>
+		</div>
+	</div>
 	<div class="container-fluid p-3"
 		style="border-bottom: 1px solid #9d9d9d;">
 		<!-- 프로필영역 -->
-		<div class="d-flex bd-highlight mb-3" th:each="d : ${groupDiaryList}">
+		<div class="d-flex bd-highlight mb-3">
 			<div class="container p-2 bd-highlight  align-self-center"
 				style="width: 100%;">
 				<ul class="list-unstyled">
-					<li>
-						<a href="#" class="link-underline link-underline-opacity-0"
-						style="color: #000000; font-weight: bold; font-size: 20px;" th:text="${d.diary.user.username}" ></a>
-					</li>
-					<li>
+					<li th:each="d : ${groupDiaryList}"><a href="#"
+						class="link-underline link-underline-opacity-0"
+						style="color: #000000; font-weight: bold; font-size: 20px;"
+						th:text="${d.diary.user.username}"></a>
 						<div class="ms-auto p-2 bd-highlight align-self-center"
-							style="width: 100%; text-align: end;" th:text="${d.diary.diary_emoji}">
-						</div>
-					</li>
-					<li>
+							style="width: 100%; text-align: end;"
+							th:text="${d.diary.diary_emoji}"></div>
 						<div class="container-fluid p-3" style="border: 0px solid gray;">
 							<a style="font-size: 1.3em; margin-left: 5px;"
-								th:text="${d.diary.diary_title}" th:href="@{|/group/groupDiaryDetail/${d.diary.id}|}"></a>
-						</div>
-					</li>
+								th:text="${d.diary.diary_title}"
+								th:href="@{|/group/groupDiaryDetail/${d.diary.id}|}"></a>
+						</div></li>
 				</ul>
 			</div>
 		</div>
 	</div>
-
 </th:block>
 
 

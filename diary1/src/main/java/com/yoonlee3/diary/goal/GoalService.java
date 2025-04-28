@@ -23,26 +23,30 @@ public class GoalService {
 		return goalRepository.save(goal);
 	}
 	
-	//R
+	//R goal id로 목표 가져오기
 	public Goal findByGoalId(Long goal_id) {
 		return goalRepository.findByGoalId(goal_id);
 	}
 	
+	// 유저의 goal리스트 가져오기
 	public List<Goal> findByUserId(User user){
 		return goalRepository.findByUserId(user.getId());
 	}
 	
-	public List<Goal> findTodayGoalByUserId(User user){
-		LocalDate today = LocalDate.now();
-		Date toDay = Date.valueOf(today);
-		return goalRepository.findTodayGoalByUserId( user.getId() , toDay );
+	// 유저의 오늘의 목표 리스트 가져오기
+	public List<Goal> findTodayGoalByUserId(User user, LocalDate today){
+		return goalRepository.findTodayGoalByUserId( user.getId() , today );
+	}
+	
+	// 유저의 기준일 이후의 목표들 가져오기
+	public List<Goal> findOverGoalByUserId(User user, LocalDate today){
+		return goalRepository.findOverGoalByUserId(user.getId(), today);
 	}
 	
 	//U
 	public int updateGoal(Goal goal) {
 		return goalRepository.updateByGoalId(goal.getDueDate(), goal.getGoal_content(), goal.getOpenScope().getId(),
 				goal.getId());
-		//int updateByGoalId(Date due_date, String goal_content, Long open_scope_id, Long goal_id);
 	}
 	
 	//D

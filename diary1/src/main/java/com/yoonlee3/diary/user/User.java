@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +18,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yoonlee3.diary.diary.Diary;
+import com.yoonlee3.diary.follow.Block;
+import com.yoonlee3.diary.follow.Follow;
 import com.yoonlee3.diary.group.YL3Group;
 import com.yoonlee3.diary.like.Likes;
 
@@ -49,27 +55,25 @@ public class User {
 	private LocalDateTime create_date = LocalDateTime.now();
 
 	@ManyToMany(mappedBy = "users")
+	@JsonBackReference
 	private Set<YL3Group> groups = new HashSet<>();
 	
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
     private List<Diary> diaries;
 	
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Likes> likes;
     
 	@OneToMany(mappedBy = "follower")
-    private List<User> follower = new ArrayList<>();
+    private List<Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "following")
-    private List<User> following  = new ArrayList<>();
+    private List<Follow> followings  = new ArrayList<>();
     
     // blockedUsers는 차단된 사용자의 리스트
     @OneToMany(mappedBy = "blocker") 
-    private Set<User> blockedUsers;
+    private Set<Block> blockedUsers;
 
-    // blocker는 차단하는 사용자
-    @ManyToOne
-    @JoinColumn(name = "blocker_id") 
-    private User blocker;
 
 }

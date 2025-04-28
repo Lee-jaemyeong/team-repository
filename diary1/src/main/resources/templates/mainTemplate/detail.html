@@ -39,7 +39,7 @@ style="padding: 3.5em 3em; border-radius: 10% 10% 0 0; background-color: #eee;">
 	<div class="d-flex bd-highlight mb-4">
 		<div class="p-2 bd-highlight"><button type="button" class="btn p-3" data-bs-toggle="modal" data-bs-target="#pageDeleteModal"
 		style="width: 100%;font-size: 18px; font-weight: bold; border: 2px solid #f8b739;">삭제하기</button></div>
-		<div class="p-2 flex-grow-1 bd-highlight"><a href="#" class="btn p-3" 
+		<div class="p-2 flex-grow-1 bd-highlight"><a th:href="@{|/diary/update/${dto.id}|}" class="btn p-3" 
 		style="width: 100%;font-size: 18px; font-weight: bold; background-color: #f8b739; border: 2px solid #f8b739;">수정하기</a></div>
 	</div>
 <!-- 수정삭제 -->

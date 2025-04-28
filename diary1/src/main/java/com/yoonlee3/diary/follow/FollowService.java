@@ -76,4 +76,9 @@ public class FollowService {
             followingsList   // followingsList 필드 추가
         );
     }
+    
+	public List<Long> getFollowingIds(Long currentUserId) {
+		return null;
+	}
+	
 }

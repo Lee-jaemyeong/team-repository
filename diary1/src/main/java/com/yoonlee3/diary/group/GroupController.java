@@ -1,8 +1,11 @@
 package com.yoonlee3.diary.group;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yoonlee3.diary.badge.Badge;
 import com.yoonlee3.diary.badge.BadgeService;
@@ -83,102 +88,143 @@ public class GroupController {
 	}
 	
 	// 그룹 가입하기 화면(post)
-	@PostMapping("/group/join/{id}")
-	public String groupJoin_post(Principal principal, @PathVariable("id") Long group_id ) {
+	@PostMapping("group/join/{id}")
+	public String groupJoin_post(Principal principal, @PathVariable("id") Long group_id, RedirectAttributes redirectAttributes)
+			throws IOException {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-		joinToGroupService.joinToGroup(group_id, user.getId());
-		return "redirect:/group/main";
-	}
-	
-	// 그룹 다이어리 쓰기
-	@GetMapping("/group/{id}/diary/insert")
-	public String insertGroupDiary_get(@PathVariable("id") Long group_id, Model model) {
-		YL3Group group = groupService.findById(group_id);
-		model.addAttribute("group", group);
-		return "group/group_write";
+		int result = joinToGroupService.joinToGroup(group_id, user.getId()); // 한 번만 호출
+
+		  if (result == 0) {
+		        redirectAttributes.addFlashAttribute("message", "가입 성공!");
+		    } else if (result == 1) {
+		        redirectAttributes.addFlashAttribute("message", "그룹은 8명을 초과할 수 없습니다.");
+		    } else if (result == 2) {
+		        redirectAttributes.addFlashAttribute("message", "이미 가입된 그룹입니다.");
+		    }
+
+		    return "redirect:/group/main";
 	}
 	
 	// 그룹 수정하기
-	@GetMapping("/gorup/update")
-	public String gorupUpdate_get(YL3Group group, Model model ) {
+	@GetMapping("gorup/update")
+	public String gorupUpdate_get(YL3Group group, Model model) {
 		YL3Group findGroup = groupService.findById(group.getId());
 		model.addAttribute("findGroup", findGroup);
-		return "/mypage";
-	}	
-		
+		return "user/mypage";
+	}
+
 	// 그룹 수정하기
-	@PostMapping("/gorup/update/{id}")
-	public String gorupUpdate_post(@PathVariable("id") Long group_id, Principal principal, @RequestParam String group_title, @RequestParam String group_content) {
-		String username = principal.getName();
-		User user = userService.findByEmail(username);
+	@PostMapping("group/update/{id}")
+	public String gorupUpdate_post(@PathVariable("id") Long group_id, Principal principal,
+			@RequestParam String group_title, @RequestParam String group_content) {
+		
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		
 		YL3Group group = groupService.findById(group_id);
 		group.setGroup_title(group_title);
 		group.setGroup_content(group_content);
+		
 		groupService.updateGroup(group, user);
-		return "redirect:/mypage";
+		return "redirect:/user/mypage";
 	}
-	
+
 	// 그룹 생성하기 화면(get)
 	public String groupInset_get() {
 		return "group/insert";
 	}
-	
+
 	// 그룹 생성하기 화면(post)
-	@PostMapping("/group/insert")
-	public String groupInsert_post(Principal principal, @RequestParam String group_title, @RequestParam String group_content) {
+	@PostMapping("group/insert")
+	public String groupInsert_post(Principal principal, @RequestParam String group_title,
+			@RequestParam String group_content) {
+		
 		String username = principal.getName();
 		User user = userService.findByEmail(username);
-		YL3Group group = new  YL3Group();
+		
+		YL3Group group = new YL3Group();
 		group.setGroup_title(group_title);
 		group.setGroup_content(group_content);
-		Badge badge = badgeService.findById(1L).orElseThrow();
+		Badge badge = badgeService.findById(1l).orElseThrow();
 		group.setBadge(badge);
 		group.setGroup_leader(user);
+		
 		groupService.insertGroup(group);
-		return "redirect:/mypage";
+		return "redirect:/user/mypage";
 	}
-	
+
 	// 그룹 탈퇴하기 화면(get)
-	@GetMapping("/group/leave")
+	@GetMapping("group/leave")
 	public String groupLeave_get() {
 		return "group/leave";
 	}
-	
+
 	// 그룹 탈퇴하기 화면(post)
-	@PostMapping("/group/leave/{id}")
-	public String groupLeave_Post(Principal principal, @PathVariable("id") Long group_id) {
+	@PostMapping("group/leave/{id}")
+	public String groupLeave_Post(Principal principal, @PathVariable("id") Long group_id, RedirectAttributes redirectAttributes) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-		
+
 		YL3Group group = groupService.findById(group_id);
+
+		int result = joinToGroupService.leaveGroup(group, user);
+		 if (result == 0) {
+		        redirectAttributes.addFlashAttribute("message", " 탈퇴되었습니다. ");
+		    } else if (result == 1) {
+		        redirectAttributes.addFlashAttribute("message", " 해당 그룹에 가입되어 있지 않습니다.");
+		    } else if (result == 2) {
+		        redirectAttributes.addFlashAttribute("message", " 그룹 리더는 그룹을 탈퇴할 수 없습니다.");
+		    }
 		
-		joinToGroupService.leaveGroup(group, user);
 		return "redirect:/group/main";
 	}
-	
+
 	// 그룹 삭제하기 화면(get)
-	@GetMapping("/group/delete")
+	@GetMapping("group/delete")
 	public String groupDelete_get() {
 		return "group/delete";
 	}
-	
+
 	// 그룹 삭제하기 화면(post)
-	@PostMapping("/group/delete/{id}")
+	@PostMapping("group/delete/{id}")
 	public String groupDelete_post(Principal principal, @PathVariable("id") Long group_id, Model model) {
-		System.out.println("그룹 삭제하기........................그룹 아이디......." + group_id );
+		
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-		System.out.println("그룹 삭제하기....................유저..........." + user);
 		YL3Group group = groupService.findById(group_id);
+		
 		// 그룹 - 다이어리 연결 삭제하기
 		List<GroupDiary> diaryList = groupDiaryService.findByGroupId(group);
-		for(GroupDiary diary : diaryList ) {
+		for (GroupDiary diary : diaryList) {
 			groupDiaryService.deleteGroupDiary(diary);
 		}
-		System.out.println("그룹 삭제하기.................그룹............." + group);
 		groupService.deleteGroup(group);
 		return "redirect:/main";
+	}
+	
+	// 그룹 검색
+	@GetMapping(value = "/search/group/{search}", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public Map<String, Object> searchGroup(@PathVariable String search) {
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        YL3Group groups = groupService.findByGroupTitle(search);
+	        
+	        if (groups != null) {
+	            result.put("groups", groups);
+	            result.put("status", "success");
+	        } else {
+	            result.put("status", "error");
+	            result.put("message", "해당 그룹을 찾을 수 없습니다.");
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("status", "error");
+	        result.put("message", e.getMessage());
+	    }
+	    return result;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.goal;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.yoonlee3.diary.goalStatus.GoalStatus;
 import com.yoonlee3.diary.openScope.OpenScope;
@@ -36,10 +39,11 @@ public class Goal {
 	private String goal_content;
 	
 	@Column(updatable = false)
-	private LocalDateTime startDate = LocalDateTime.now();
+	private LocalDate startDate = LocalDate.now();
 	
 	@Column(nullable=false)
-	private Date dueDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate dueDate;
 	
 	@OneToOne
 	@JoinColumn(name = "open_scope_id")
@@ -51,9 +55,6 @@ public class Goal {
 	
 	@OneToMany(mappedBy = "goal", cascade = CascadeType.REMOVE)
 	List<GoalStatus> goalStatuses = new ArrayList<>();
-	
-	@OneToOne
-	@JoinColumn(name = "template_id")
-	private Template template;
+
 	
 }

@@ -26,6 +26,10 @@ public class GroupDiaryService {
 		return groupDiaryRepository.save(groupDiary);
 	}
 	
+	public GroupDiary findByDiaryId(Diary diary) {
+		return groupDiaryRepository.findByDiaryId(diary.getId());
+	}
+	
 	public int deleteGroupDiary(GroupDiary groupDiary) {
 		return groupDiaryRepository.deleteGroupDiary(groupDiary.getId());
 	}

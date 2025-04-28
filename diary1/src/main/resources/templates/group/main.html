@@ -4,21 +4,21 @@
 	layout:decorate="~{fragments/layout}">
 
 <th:block layout:fragment="content">
-	<div class="container-fluid p-3"
-		style="border-bottom: 1px solid #9d9d9d;">
+	<div class="container-fluid p-3">
 		<div class="d-flex bd-highlight mb-3">
-			<div>
-				<img src="https://placehold.co/80x80" alt=""
-					class="rounded-circle p-2 bd-highlight" style="margin-right: 5px;">
-			</div>
 			<div class="container p-2 bd-highlight  align-self-center"
 				style="width: 100%;">
-				<ul class="list-unstyled">
-					<th:block th:each="group : ${groupList}">
-						<li style="color: #000000; font-weight: bold; font-size: 20px;"
-							th:text="${group.group_title}"></li>
-						<li style="font-size: 16px; color: #9d9d9d;"
-							th:text="${group.group_content}"></li>
+				<th:block th:each="group : ${groupList}">
+					<ul class="list-unstyled d-flex justify-content-between" 
+						style="border-bottom: 1px solid #ccc; padding: 10px 0 30px;">
+						<li>
+							<ul class="list-unstyled">							
+								<li style="color: #000000; font-weight: bold; font-size: 20px;"
+									th:text="${group.group_title}"></li>
+								<li style="font-size: 16px; color: #9d9d9d;"
+									th:text="${group.group_content}"></li>
+							</ul>
+						</li>
 						<li>
 							<div class="ms-auto p-2 bd-highlight align-self-center"
 								style="width: 100%; text-align: end;">
@@ -28,8 +28,8 @@
 									가입하기</button>
 							</div>
 						</li>
-					</th:block>
-				</ul>
+					</ul>
+				</th:block>
 			</div>
 		</div>
 	</div>
