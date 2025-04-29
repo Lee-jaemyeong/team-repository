@@ -47,7 +47,7 @@ public class GoalController {
 			if (user != null) {
 				model.addAttribute("nickname", user.getUsername());
 				model.addAttribute("user", user);
-				Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+				List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 				model.addAttribute("groups", groups);
 			} else {
 				model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
@@ -124,7 +124,7 @@ public class GoalController {
 		if (goal.getDueDate().isEqual(date)) {
 				userAchivService.insertOrUpdateUserAchiv(goal);
 		}
-		return "redirect:/user/mypage?selectedDate=" + date;
+		return "redirect:/mypage?selectedDate=" + date;
 	}
 
 	// 목표 삭제하기
@@ -135,6 +135,7 @@ public class GoalController {
 		User user = userService.findByEmail(email);
 		Goal goal = goalService.findByGoalId(goal_id);
 
+		userAchivService.deleteUserAchive(goal);
 		goalService.deleteGoal(goal, user.getId());
 		return "redirect:/mypage";
 	}
@@ -159,7 +160,7 @@ public class GoalController {
 		System.out.println("바뀐 날짜................." + selectedDate);
 		LocalDate date = LocalDate.parse(selectedDate);
 
-		return "redirect:/user/mypage?selectedDate=" + date;
+		return "redirect:/mypage?selectedDate=" + date;
 	}
 	
 }

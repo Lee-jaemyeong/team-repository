@@ -24,8 +24,8 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 	
 	@Modifying
 	@Transactional
-	@Query("update Diary d set d.diary_title= :diary_title, d.diary_content= :diary_content where d.id= :id")
-	int updateById(@Param("id") Long id, String diary_title, String diary_content);
+	@Query("update Diary d set d.diary_title= :diary_title, d.diary_content= :diary_content, d.diary_emoji= :diary_emoji where d.id= :id")
+	int updateById(@Param("id") Long id, String diary_title, String diary_content, String diary_emoji);
 
 	@Modifying
 	@Transactional
@@ -33,5 +33,12 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 	int deleteByDId(Long id);
 
 	long countByUser(User currentUser);
+	
+	@Query("select d ,  count(l)  as likeCount "
+		         + "from Diary d left join Likes l on d.id = l.diary.id  "
+		         + "group by d  "
+		         + "order by likeCount desc")
+		   List<Diary> findByDiaryOrderByLikes();
+
 	
 }

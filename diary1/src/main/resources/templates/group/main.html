@@ -12,7 +12,9 @@
 					<ul class="list-unstyled d-flex justify-content-between" 
 						style="border-bottom: 1px solid #ccc; padding: 10px 0 30px;">
 						<li>
-							<ul class="list-unstyled">							
+							<ul class="list-unstyled">
+								<li style="color: #000000; font-weight: bold; font-size: 20px;"
+									th:text="${group.badge.badge_title}"></li>
 								<li style="color: #000000; font-weight: bold; font-size: 20px;"
 									th:text="${group.group_title}"></li>
 								<li style="font-size: 16px; color: #9d9d9d;"
@@ -56,12 +58,16 @@
 		</div>
 	</div>
 	<!-- E 모달 -->
+	<script th:if="${message}" th:inline="javascript">
+    	alert([[${message}]]);
+	</script>
 	<script>
 		function openJoinGroupModal(id) {
 			document.getElementById("joinGroupForm").action = `/group/join/${id}`;
 			const modal = new bootstrap.Modal(document.getElementById('joinModal'));
 			modal.show();
 		}
+		
 	</script>
 </th:block>
 

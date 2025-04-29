@@ -29,8 +29,8 @@ public interface GroupRepository extends JpaRepository<YL3Group, Long> {
 	@Modifying
 	@Transactional
 	@Query("update YL3Group g set g.group_title = :group_title, group_content = :group_content"
-			+ " where g.id = :group_id and g.group_leader = :user_id")
-	int updateGroup(String group_title, String group_content, Long group_id, Long user_id);
+			+ " where g.id = :group_id")
+	int updateGroup(String group_title, String group_content, Long group_id);
 
 	// D
 	@Modifying

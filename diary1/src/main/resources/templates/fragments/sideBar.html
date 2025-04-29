@@ -23,6 +23,11 @@
 					style="width: 100%; font-weight: bold; color: #fff; font-size: 0.8em;"
 					data-bs-toggle="modal">프로필 수정</a>
 			</div>
+			<div class="container">
+				<a th:href="@{/block/list}" class="btn p-2 mb-2"
+					style="width: 100%; font-weight: bold; color: #fff; font-size: 0.8em;"
+					>차단</a>
+			</div>
 			<!-- 프로필 -->
 			<!-- 	<div th:text="${groups}"></div> -->
 			<ul class="list-unstyled components mb-5" style="height: 45%;">
@@ -104,10 +109,19 @@
 			<!-- 그룹 페이지 버튼 -->
 			<!-- 그룹 페이지 버튼 -->
 			<th:block th:if="${isGroupPage}">
-				<div class="container-fluide">
-					<a th:href="@{/group/{id}/diary/insert(id=${group?.id})}" class="btn p-3 mb-3"
-						style="width: 100%; font-weight: bold; color: #fff; background-color: #f8b739;">일기쓰기</a>
-				</div>
+				<th:block th:if="${group != null}">
+					<div class="container-fluide">
+						<a th:href="@{/group/{id}/diary/insert(id=${group.id})}"
+							class="btn p-3 mb-3"
+							style="width: 100%; font-weight: bold; color: #fff; background-color: #f8b739;">일기쓰기</a>
+					</div>
+					<div class="container-fluide">
+						<button th:attr="onclick=|openGroupLeaveModal('${group.id}')|"
+							class="btn p-3 mb-3"
+							style="width: 100%; font-weight: bold; color: #fff; background-color: #f8b739;">그룹
+							탈퇴하기</button>
+					</div>
+				</th:block>
 			</th:block>
 			<!-- 생성모달 -->
 			<div class="modal fade" id="insertGroupModal" tabindex="-1"
@@ -154,6 +168,8 @@
 					<div class="modal-content">
 						<div class="modal-body">
 							<form id="deleteGroupForm" method="post">
+								<p style="text-align: center; padding-top: 2em; color: #000;"
+									id="delete_group_title"></p>
 								<p style="text-align: center; padding-top: 2em; color: #000;">그룹을
 									삭제하시겠습니까?</p>
 								<div class="modal-footer justify-content-center">
@@ -163,6 +179,33 @@
 									</div>
 									<div>
 										<button type="submit" class="btn btn-primary p-2">삭제하기</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 그룹 탈퇴 모달 -->
+			<div class="modal fade" id="leaveGroupModal" tabindex="-1"
+				aria-labelledby="leaveModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<form id="leaveGroupForm" method="post">
+								<label for="group_title" class="col-form-label"></label>
+								<p th:if="${group != null}"
+									style="text-align: center; padding-top: 2em; color: #000;"
+									th:text="${group.group_title}"></p>
+								<p style="text-align: center; padding-top: 2em; color: #000;">그룹에서
+									탈퇴하시겠습니까?</p>
+								<div class="modal-footer justify-content-center">
+									<div>
+										<button type="reset" class="btn btn-secondary p-2"
+											data-bs-dismiss="modal">취소</button>
+									</div>
+									<div>
+										<button type="submit" class="btn btn-primary p-2">탈퇴하기</button>
 									</div>
 								</div>
 							</form>
@@ -298,12 +341,12 @@
 		}
 
 		/// group
-	/* 	function openGroupInsertModal(title, content){
-			document.getElementById("group_title_insert").value = title;
-			document.getElementById("group_content_insert").value = content;
-			// 동적으로 action 설정
-			document.getElementById("insertGroupForm").action = `/goal/insert`;
-		}
+		/* 	function openGroupInsertModal(title, content){
+				document.getElementById("group_title_insert").value = title;
+				document.getElementById("group_content_insert").value = content;
+				// 동적으로 action 설정
+				document.getElementById("insertGroupForm").action = `/goal/insert`;
+			}
 		 */
 		function openGroupUpdateModal(id, content, title) {
 			console.log("함수 호출 성공");
@@ -313,10 +356,17 @@
 			document.getElementById("updateGroupForm").action = `/group/update/${id}`;
 		}
 
-		function openGroupDeleteModal(id) {
+		function openGroupDeleteModal(id, title) {
+			document.getElementById("delete_group_title").textContent = title;
 			document.getElementById("deleteGroupForm").action = `/group/delete/${id}`;
 		}
-		
+		function openGroupLeaveModal(id) {
+			document.getElementById("leaveGroupForm").action = `/group/leave/${id}`;
+
+			const modal = new bootstrap.Modal(document
+					.getElementById('leaveGroupModal'));
+			modal.show();
+		}
 	</script>
 </th:block>
 </html>

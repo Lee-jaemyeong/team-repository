@@ -2,10 +2,21 @@ package com.yoonlee3.diary.user;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.yoonlee3.diary.diary.Diary;
+import com.yoonlee3.diary.diary.DiaryRepository;
+import com.yoonlee3.diary.follow.Block;
 import com.yoonlee3.diary.follow.BlockRepository;
+import com.yoonlee3.diary.follow.Follow;
+import com.yoonlee3.diary.follow.FollowRepository;
+import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.like.LikeRepository;
+import com.yoonlee3.diary.like.Likes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +27,9 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final BlockRepository blockRepository;
+	@Autowired FollowRepository followRepository;
+	@Autowired LikeRepository likeRepository;
+	@Autowired DiaryRepository diaryRepository;
 	
 	// insert
 	public User insertUser(User user) {
@@ -71,5 +85,5 @@ public class UserService {
     public List<User> getBlockedUsers(Long currentUserId) {
         return blockRepository.findBlockedUsersByBlockerId(currentUserId);
     }	
-	
+    
 }

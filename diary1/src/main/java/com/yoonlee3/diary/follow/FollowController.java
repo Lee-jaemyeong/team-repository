@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.yoonlee3.diary.user.User;
+import com.yoonlee3.diary.user.UserProfileDto;
 import com.yoonlee3.diary.user.UserRepository;
 
 @RestController
@@ -31,27 +32,26 @@ public class FollowController {
 
     // 내가 팔로우한 사람 목록
     @GetMapping("/following")
-    public ResponseEntity<List<String>> getFollowing(@RequestParam Long userId) {
+    public ResponseEntity<List<UserProfileDto>> getFollowing(@RequestParam Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
-        List<String> followings = followService.getFollowings(user)
+        List<UserProfileDto> followings = followService.getFollowings(user)
                 .stream()
-                .map(f -> f.getFollowing().getUsername())
+                .map(f -> new UserProfileDto(f.getFollowing().getId(), f.getFollowing().getUsername()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(followings);
     }
-
     // 나를 팔로우한 사람 목록
     @GetMapping("/followers")
-    public ResponseEntity<List<String>> getFollowers(@RequestParam Long userId) {
+    public ResponseEntity<List<UserProfileDto>> getFollowers(@RequestParam Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
-        List<String> followers = followService.getFollowers(user)
+        List<UserProfileDto> followers = followService.getFollowers(user)
                 .stream()
-                .map(f -> f.getFollower().getUsername())
+                .map(f -> new UserProfileDto(f.getFollower().getId(), f.getFollower().getUsername()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(followers);
