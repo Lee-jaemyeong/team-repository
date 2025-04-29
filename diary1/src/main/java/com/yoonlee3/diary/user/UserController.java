@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -55,6 +56,7 @@ import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.groupDiary.GroupDiaryRepository;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user_kakao.KakaoLogin;
+import com.yoonlee3.diary.user_navermail.NaverMail;
 
 @Controller
 public class UserController {
@@ -76,6 +78,7 @@ public class UserController {
 	@Autowired BlockRepository blockRepository;
 	@Autowired GroupRepository groupRepository;
 	@Autowired GroupDiaryRepository groupDiaryRepository;
+	@Autowired NaverMail naverMail;
 	
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -220,16 +223,54 @@ public class UserController {
 
 	@PostMapping("/user/find")
 	public String find_form(@RequestParam("email") String email, Model model) {
-		 try {
-			 	User user = userService.findByEmail(email);
+	    try {
+	        User user = userService.findByEmail(email);
+	        
+	        // 1. 비밀번호 재설정 토큰 생성
+	        String resetToken = UUID.randomUUID().toString();
+	        user.setResetToken(resetToken);
+	        userRepository.save(user);
+	        
+	        // 2. 이메일 전송
+	        String resetLink = "http://localhost:8080/user/reset?token=" + resetToken;
+	        sendPasswordResetEmail1(email, resetLink);
+	        
+	        model.addAttribute("msg", "비밀번호 재설정 이메일을 보냈습니다.");
+	        return "user/find";
+	    } catch (RuntimeException e) {
+	        model.addAttribute("msg", "가입되지 않은 이메일입니다.");
+	        return "user/find";
+	    }
+	}
+	
+	private void sendPasswordResetEmail1(String email, String resetLink) {
+	    String subject = "비밀번호 재설정 이메일";
+	    String content = "아래 버튼을 클릭하여 비밀번호를 재설정해 주세요:<br><br>"
+	                   + "<a href='" + resetLink + "' "
+	                   + "style='display:inline-block;padding:10px 20px;background-color:#007bff;"
+	                   + "color:white;text-decoration:none;border-radius:5px;'>비밀번호 재설정하기</a><br><br>"
+	                   + "이 링크는 1회용이며, 일정 시간 후 만료됩니다.";
 
-			 	model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
-			 	return "user/passchange";
+	    naverMail.sendMail(subject, content, email);  // content는 HTML 형식
+	}
 
-		    } catch (RuntimeException e) {
-		        model.addAttribute("msg", "이메일을 입력해주세요.");
-		        return "user/find";
-		    }
+	@GetMapping("/user/reset")
+	public String resetPassword(@RequestParam("token") String token, Model model) {
+	    Optional<User> userOpt = userRepository.findByResetToken(token);
+	    
+	    if (userOpt.isPresent()) {
+	        model.addAttribute("token", token);  // 토큰을 hidden field로 전달
+	        return "user/passchange";  // 비밀번호 변경 페이지로 이동
+	    } else {
+	        model.addAttribute("msg", "유효하지 않은 링크입니다.");
+	        return "user/find";  // 유효하지 않은 토큰일 경우 다시 이메일 입력 페이지로 돌아감
+	    }
+	}	
+	
+	private void sendPasswordResetEmail(String email, String resetLink) {
+	    String subject = "비밀번호 재설정 이메일";
+	    String content = "안녕하세요. 아래 링크를 클릭하여 비밀번호를 재설정하십시오:\n" + resetLink;
+	    naverMail.sendMail(subject, content, email);  // naverMail은 이전에 설정한 메일 클래스
 	}
 
 	@GetMapping("/user/passchange")
@@ -239,24 +280,26 @@ public class UserController {
 
 	@PostMapping("/user/passchange")
 	public String passchange_form(
-	    @RequestParam("email") String email,
+	    @RequestParam("token") String token,  // 토큰을 hidden field로 받음
 	    @RequestParam("password") String password, 
 	    Model model) {
-	    
-	    Optional<User> opuser = userRepository.findByEmail(email);
+
+	    Optional<User> opuser = userRepository.findByResetToken(token);  // 토큰을 통해 사용자 찾기
 	    
 	    if (opuser.isPresent()) {
 	        User user = opuser.get();
 	        
+	        // 비밀번호 암호화
 	        String encodedPassword = passwordEncoder.encode(password);
 	        user.setPassword(encodedPassword);
+	        user.setResetToken(null);  // 토큰 삭제
 	        userRepository.save(user);
-
+	        
 	        model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
-	        return "redirect:/user/login";
+	        return "redirect:/user/login";  // 로그인 페이지로 리다이렉트
 	    } else {
-	        model.addAttribute("msg", "비밀번호 변경에 실패했습니다.");
-	        return "user/passchange";
+	        model.addAttribute("msg", "유효하지 않은 링크입니다.");
+	        return "user/find";  // 유효하지 않은 링크일 경우 다시 이메일 입력 페이지로 돌아감
 	    }
 	}
 	

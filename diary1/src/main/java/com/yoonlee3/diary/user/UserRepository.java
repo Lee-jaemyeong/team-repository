@@ -13,7 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	// R
 	Optional<User> findByEmail(String email);
-
+	Optional<User> findByResetToken(String resetToken);
+	
 	@Query("select u from User u where u.username= :username")
 	User findByUsername(String username);
 	
