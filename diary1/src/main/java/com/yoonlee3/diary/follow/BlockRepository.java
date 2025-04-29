@@ -36,4 +36,9 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
     @Query("SELECT b.blocked FROM Block b WHERE b.blocker.id = :blockerId")
     List<User> findBlockedUsersByBlockerId(@Param("blockerId") Long blockerId);
 
+    // 특정 사용자가 blocker로 존재하는 모든 Block 삭제
+    void deleteByBlockerId(Long userId);
+    
+    // 특정 사용자가 blocked로 존재하는 모든 Block 삭제
+    void deleteByBlockedId(Long userId);
 }

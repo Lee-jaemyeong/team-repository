@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.follow.Block;
 import com.yoonlee3.diary.follow.Follow;
+import com.yoonlee3.diary.goal.Goal;
 import com.yoonlee3.diary.group.YL3Group;
 import com.yoonlee3.diary.like.Likes;
 
@@ -56,7 +57,7 @@ public class User {
 
 	@ManyToMany(mappedBy = "users")
 	@JsonBackReference
-	private Set<YL3Group> groups = new HashSet<>();
+	private List<YL3Group> groups = new ArrayList<>();
 	
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
@@ -65,14 +66,17 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Likes> likes;
     
-	@OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Goal> goals;
+    
+	@OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Follow> followers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "following")
+    @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Follow> followings  = new ArrayList<>();
     
     // blockedUsers는 차단된 사용자의 리스트
-    @OneToMany(mappedBy = "blocker") 
+    @OneToMany(mappedBy = "blocker", cascade = CascadeType.REMOVE, orphanRemoval = true) 
     private Set<Block> blockedUsers;
 
 

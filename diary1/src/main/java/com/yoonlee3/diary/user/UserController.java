@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.diary.DiaryService;
+import com.yoonlee3.diary.follow.Block;
+import com.yoonlee3.diary.follow.BlockRepository;
 import com.yoonlee3.diary.follow.Follow;
 import com.yoonlee3.diary.follow.FollowRepository;
 import com.yoonlee3.diary.goal.Goal;
@@ -45,8 +48,11 @@ import com.yoonlee3.diary.goal.GoalService;
 import com.yoonlee3.diary.goalStatus.GoalSatusService;
 import com.yoonlee3.diary.goalStatus.GoalStatus;
 import com.yoonlee3.diary.goalStatus.GoalStatusRepository;
+import com.yoonlee3.diary.group.GroupRepository;
 import com.yoonlee3.diary.group.GroupService;
 import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.groupDiary.GroupDiary;
+import com.yoonlee3.diary.groupDiary.GroupDiaryRepository;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user_kakao.KakaoLogin;
 
@@ -67,6 +73,9 @@ public class UserController {
 	@Autowired GroupService groupService;
 	@Autowired GoalSatusService goalSatusService;
 	@Autowired GoalStatusRepository goalStatusRepository;
+	@Autowired BlockRepository blockRepository;
+	@Autowired GroupRepository groupRepository;
+	@Autowired GroupDiaryRepository groupDiaryRepository;
 	
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -76,7 +85,7 @@ public class UserController {
 	        if (user != null) {
 	            model.addAttribute("nickname", user.getUsername());
 	            model.addAttribute("user", user);
-				Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+				List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 				model.addAttribute("groups", groups);
 	        } else {
 	            model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
@@ -95,50 +104,50 @@ public class UserController {
 		return "user/login";
 	}
 	
-	// 마이페이지
-	@GetMapping("/mypage")
-	public String myPage(
-			@RequestParam(value = "selectedDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-			Model model, Principal principal) {
-		model.addAttribute("isMyPage", true);
-		String email = principal.getName();
+	   // 마이페이지
+	   @GetMapping("/mypage")
+	   public String myPage(
+	         @RequestParam(value = "selectedDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+	         Model model, Principal principal) {
+	      model.addAttribute("isMyPage", true);
+	      String email = principal.getName();
 
-		User user = userService.findByEmail(email);
+	      User user = userService.findByEmail(email);
 
-		// 날짜 계산해서 오늘 할 목표 넘기기
-		LocalDate selectedDate = (date != null) ? date : LocalDate.now();
-		List<Goal> goals = goalService.findTodayGoalByUserId(user, selectedDate);
+	      // 날짜 계산해서 오늘 할 목표 넘기기
+	      LocalDate selectedDate = (date != null) ? date : LocalDate.now();
+	      List<Goal> goals = goalService.findTodayGoalByUserId(user, selectedDate);
 
-		Map<Long, GoalStatus> goalStatusMap = new HashMap<>();
-		for (Goal goal : goals) {
-			goalSatusService.findTodayGoalStatus(goal, selectedDate)
-					.ifPresent(status -> goalStatusMap.put(goal.getId(), status));
-		}
-		model.addAttribute("goalStatusMap", goalStatusMap);
+	      Map<Long, GoalStatus> goalStatusMap = new HashMap<>();
+	      for (Goal goal : goals) {
+	         goalSatusService.findTodayGoalStatus(goal, selectedDate)
+	               .ifPresent(status -> goalStatusMap.put(goal.getId(), status));
+	      }
+	      model.addAttribute("goalStatusMap", goalStatusMap);
 
-		model.addAttribute("selectedDate", selectedDate);
-		System.out.println(".......goal list........" + goals);
-		model.addAttribute("goal", goals);
+	      model.addAttribute("selectedDate", selectedDate);
+	      System.out.println(".......goal list........" + goals);
+	      model.addAttribute("goal", goals);
 
-		// 해당 사용자가 쓴 글만 가져오기
-		List<Diary> list = diaryService.findByUserId(user.getId());
-		model.addAttribute("list", list);
+	      // 해당 사용자가 쓴 글만 가져오기
+	      List<Diary> list = diaryService.findByUserId(user.getId());
+	      model.addAttribute("list", list);
 
-	    // 팔로워와 팔로잉 리스트를 가져옵니다.
-	    // 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
-	    List<Follow> followers = followRepository.findByFollowing(user);  // 나를 팔로우한 사람들
-	    List<Follow> followings = followRepository.findByFollower(user);   // 내가 팔로우한 사람들
-	    model.addAttribute("followers", followers);  // 팔로워 리스트
-	    model.addAttribute("followings", followings);  // 팔로잉 리스트
+	       // 팔로워와 팔로잉 리스트를 가져옵니다.
+	       // 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
+	       List<Follow> followers = followRepository.findByFollowing(user);  // 나를 팔로우한 사람들
+	       List<Follow> followings = followRepository.findByFollower(user);   // 내가 팔로우한 사람들
+	       model.addAttribute("followers", followers);  // 팔로워 리스트
+	       model.addAttribute("followings", followings);  // 팔로잉 리스트
 
-	    // 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
-	    long followerCount = followRepository.countByFollowing(user);
-	    long followingCount = followRepository.countByFollower(user);
-	    model.addAttribute("followerCount", followerCount);  // 팔로워 수
-	    model.addAttribute("followingCount", followingCount);  // 팔로잉 수
-		
-		return "user/mypage";
-	}
+	       // 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+	       long followerCount = followRepository.countByFollowing(user);
+	       long followingCount = followRepository.countByFollower(user);
+	       model.addAttribute("followerCount", followerCount);  // 팔로워 수
+	       model.addAttribute("followingCount", followingCount);  // 팔로잉 수
+	      
+	      return "user/mypage";
+	   }
 	
 	// 로그인	
 	@GetMapping("/user/login")
@@ -176,35 +185,32 @@ public class UserController {
 
 	@PostMapping("/user/join")
 	public String join(@Valid UserForm userForm, BindingResult bindingResult) {
-	    if (bindingResult.hasErrors()) {
-	        return "user/join";
-	    }
 
-	    if (!userForm.getPassword().equals(userForm.getPassword2())) {
-	        bindingResult.rejectValue("password2", "passwordInCorrect", "패스워드를 확인해주세요");
-	        return "user/join";
-	    }
+		if (bindingResult.hasErrors()) {
+			return "user/join";
+		}
 
-	    try {
-	        User user = new User();
-	        user.setUsername(userForm.getUsername());
-	        user.setEmail(userForm.getEmail());
-	        String encodedPassword = passwordEncoder.encode(userForm.getPassword());
-	        user.setPassword(encodedPassword);
+		if (!userForm.getPassword().equals(userForm.getPassword2())) {
+			bindingResult.rejectValue("password2", "pawordInCorrect", "패스워드를 확인해주세요");
+			return "user/join";
+		}
 
-	        userService.insertUser(user); 
-	        
-	    } catch (DataIntegrityViolationException e) {
-	        e.printStackTrace();
-	        bindingResult.reject("failed", "등록된 유저입니다.");
-	        return "user/join";
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        bindingResult.reject("failed", e.getMessage());
-	        return "user/join";
-	    }
-
-	    return "user/login"; 
+		try {
+			User user = new User();
+			user.setUsername(userForm.getUsername());
+			user.setEmail(userForm.getEmail());
+			user.setPassword(userForm.getPassword());
+			userService.insertUser(user);
+		} catch (DataIntegrityViolationException e) { // 무결성 - 중복키, 외래키제약, 데이터형식불일치
+			e.printStackTrace();
+			bindingResult.reject("failed", "등록된 유저입니다.");
+			return "user/join";
+		} catch (Exception e) {
+			e.printStackTrace();
+			bindingResult.reject("failed", e.getMessage());
+			return "user/join";
+		}
+		return "user/login";
 	}
 
 	@GetMapping("/user/find")
@@ -290,106 +296,144 @@ public class UserController {
 	}
 
 	@PostMapping("/user/delete")
+	@Transactional
 	public String userdelete_form(@RequestParam("password") String password,
-	                              Principal principal,
-	                              RedirectAttributes redirectAttributes) {
-		
-		String email = principal.getName();
+	                               Principal principal,
+	                               RedirectAttributes redirectAttributes) {
+
+	    String email = principal.getName();
 	    Optional<User> opUser = userRepository.findByEmail(email);
 
 	    if (opUser.isPresent()) {
 	        User user = opUser.get();
-	        
+
+	        // 비밀번호 확인
 	        if (passwordEncoder.matches(password, user.getPassword())) {
+
+	            // 1. 사용자가 blocker 또는 blocked로 존재하는 Block 레코드 삭제
+	            blockRepository.deleteByBlockerId(user.getId()); // blocker로 있는 레코드 삭제
+	            blockRepository.deleteByBlockedId(user.getId()); // blocked로 있는 레코드 삭제
+
+	            // 2. 유저가 속한 그룹에서 유저를 그룹장으로 설정되어 있는 경우 처리
+	            for (YL3Group group : user.getGroups()) {
+	                // 해당 그룹과 관련된 모든 일기 삭제
+	                List<GroupDiary> groupDiaries = groupDiaryRepository.findByGroupId(group.getId());
+	                groupDiaryRepository.deleteAll(groupDiaries); // 해당 그룹의 일기 삭제
+
+	                if (group.getGroup_leader().equals(user)) {
+	                    if (!group.getUsers().isEmpty()) {
+	                        // 새로운 그룹장 설정
+	                        User newLeader = group.getUsers().stream()
+	                                               .filter(u -> !u.equals(user))
+	                                               .findFirst()
+	                                               .orElse(null);
+	                        if (newLeader != null) {
+	                            group.setGroup_leader(newLeader);
+	                            groupRepository.save(group);
+	                        } else {
+	                            groupService.deleteGroup(group); // 그룹에서 유저가 유일한 멤버일 경우 그룹 삭제
+	                        }
+	                    } else {
+	                        groupService.deleteGroup(group); // 유저가 유일한 멤버일 경우 그룹 삭제
+	                    }
+	                }
+	                group.getUsers().remove(user);
+	                groupRepository.save(group); // 그룹 정보 업데이트
+	            }
+
+	            // 3. 유저 삭제
 	            userRepository.delete(user);
 	            SecurityContextHolder.clearContext();
 
+	            // 메시지 추가 후 리다이렉트
 	            redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
 	            return "redirect:/user/login";
 	        } else {
 	            redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-	            return "redirect:/mypage"; }
+	            return "redirect:/mypage";
+	        }
 	    } else {
 	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-	        return "redirect:/mypage"; }
+	        return "redirect:/mypage";
+	    }
 	}
 	
-	// 팔로우 화면	
-	@GetMapping("/user/follow")
-	public String showFollowPage(@RequestParam(value = "userId", required = false) Long userId,
-	                             Model model, Principal principal, HttpServletRequest request) {
-		
-		model.addAttribute("isFollow", true);
-	    if (principal == null) {
-	        return "redirect:/user/login"; // 로그인 안 한 경우
-	    }
+	// 팔로우 화면   
+	   @GetMapping("/user/follow")
+	   public String showFollowPage(@RequestParam(value = "userId", required = false) Long userId,
+	                                Model model, Principal principal, HttpServletRequest request) {
 
-	    User currentUser = userService.findByEmail(principal.getName());
-	    Long currentUserId = currentUser.getId();
-	    model.addAttribute("currentUserId", currentUserId);
+	      model.addAttribute("isMyPage", true);
+	       if (principal == null) {
+	           return "redirect:/user/login"; // 로그인 안 한 경우
+	       }
 
-	    if (userId == null || userId.equals(currentUserId)) {
-	        userId = currentUserId;
-	    }
+	       User currentUser = userService.findByEmail(principal.getName());
+	       Long currentUserId = currentUser.getId();
+	       model.addAttribute("currentUserId", currentUserId);
 
-	    Optional<User> targetUserOpt = userRepository.findById(userId);
-	    if (targetUserOpt.isEmpty()) return "error";
+	       if (userId == null || userId.equals(currentUserId)) {
+	           userId = currentUserId;
+	       }
 
-	    User targetUser = targetUserOpt.get();
+	       Optional<User> targetUserOpt = userRepository.findById(userId);
+	       if (targetUserOpt.isEmpty()) return "error";
 
-	    // 해당 사용자가 작성한 다이어리 수 추가
-	    List<Diary> diaries = diaryService.findByEmail(targetUser.getEmail());
-	    long diaryCount = diaries.size();
-	    model.addAttribute("diaryCount", diaryCount);  // 다이어리 수 추가
-	    
-	    Set<Long> followingIds = new HashSet<>();
-	    List<Follow> userFollowings = followRepository.findByFollower(currentUser);
-	    for (Follow f : userFollowings) {
-	        followingIds.add(f.getFollowing().getId());
-	    }
+	       User targetUser = targetUserOpt.get();
 
-	    List<Follow> followers = followRepository.findByFollowing(targetUser);
-	    List<Follow> followings = followRepository.findByFollower(targetUser);
+	       // 해당 사용자가 작성한 다이어리 수 추가
+	       List<Diary> diaries = diaryService.findByEmail(targetUser.getEmail());
+	       long diaryCount = diaries.size();
+	       model.addAttribute("diaryCount", diaryCount);  // 다이어리 수 추가
+	       
+	       Set<Long> followingIds = new HashSet<>();
+	       List<Follow> userFollowings = followRepository.findByFollower(currentUser);
+	       for (Follow f : userFollowings) {
+	           followingIds.add(f.getFollowing().getId());
+	       }
 
-	    // 차단된 유저 목록 가져오기
-	    List<User> blockedUserIds = userService.getBlockedUsers(currentUserId);
-	    Set<Long> blockedUserIdsSet = blockedUserIds.stream()
-	                                                .map(User::getId)
-	                                                .collect(Collectors.toSet());	    
-	    
-	    model.addAttribute("followers", followers != null ? followers : new ArrayList<>());
-	    model.addAttribute("followings", followings != null ? followings : new ArrayList<>());
-	    model.addAttribute("targetUserId", targetUser.getId());
-	    model.addAttribute("followingIds", followingIds != null ? followingIds : new HashSet<>());
-	    model.addAttribute("blockedUsers", blockedUserIdsSet);  
+	       List<Follow> followers = followRepository.findByFollowing(targetUser);
+	       List<Follow> followings = followRepository.findByFollower(targetUser);
 
-	    // CSRF 토큰 추가
-	    CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
-	    model.addAttribute("_csrf", csrfToken);
+	       // 차단된 유저 목록 가져오기
+	       List<User> blockedUserIds = userService.getBlockedUsers(currentUserId);
+	       Set<Long> blockedUserIdsSet = blockedUserIds.stream()
+	                                                   .map(User::getId)
+	                                                   .collect(Collectors.toSet());
 
-	    return "user/follow";
-	}
-	
-	@GetMapping("/search/users")
-	@ResponseBody
-	public List<UserProfileDto> searchUsers(@RequestParam("keyword") String keyword, @RequestParam("currentUserId") Long currentUserId) {
-	    // 차단된 유저 목록 가져오기
-	    List<User> blockedUsers = userService.getBlockedUsers(currentUserId);
-	    Set<Long> blockedUserIds = blockedUsers.stream()
-	                                           .map(User::getId)
-	                                           .collect(Collectors.toSet());
+	       model.addAttribute("followers", followers != null ? followers : new ArrayList<>());
+	       model.addAttribute("followings", followings != null ? followings : new ArrayList<>());
+	       model.addAttribute("targetUserId", targetUser.getId());
+	       model.addAttribute("followingIds", followingIds != null ? followingIds : new HashSet<>());
+	       model.addAttribute("blockedUsers", blockedUserIdsSet);  
+	       
+	       // CSRF 토큰 추가
+	       CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
+	       model.addAttribute("_csrf", csrfToken);
 
-	    // 검색된 유저 목록 가져오기 (이때는 사용자 이름을 포함하는 유저들만 가져옵니다)
-	    List<User> allUsers = userRepository.findByUsernameContainingIgnoreCase(keyword);
-	    
-	    // 차단된 유저를 제외한 목록 필터링
-	    List<User> filteredUsers = allUsers.stream()
-	                                       .filter(user -> !blockedUserIds.contains(user.getId()))
-	                                       .collect(Collectors.toList());
+	       return "user/follow";
+	   }
 
-	    // UserProfileDto로 변환하여 반환
-	    return filteredUsers.stream()
-	                        .map(user -> new UserProfileDto(user.getId(), user.getUsername()))
-	                        .collect(Collectors.toList());
-	}
+	   @GetMapping("/search/users")
+	   @ResponseBody
+	   public List<UserProfileDto> searchUsers(@RequestParam("keyword") String keyword, @RequestParam("currentUserId") Long currentUserId) {
+	       // 차단된 유저 목록 가져오기
+	       List<User> blockedUsers = userService.getBlockedUsers(currentUserId);
+	       Set<Long> blockedUserIds = blockedUsers.stream()
+	                                              .map(User::getId)
+	                                              .collect(Collectors.toSet());
+
+	       // 검색된 유저 목록 가져오기 (이때는 사용자 이름을 포함하는 유저들만 가져옵니다)
+	       List<User> allUsers = userRepository.findByUsernameContainingIgnoreCase(keyword);
+	       
+	       // 차단된 유저를 제외한 목록 필터링
+	       List<User> filteredUsers = allUsers.stream()
+	                                          .filter(user -> !blockedUserIds.contains(user.getId()))
+	                                          .collect(Collectors.toList());
+
+	       // UserProfileDto로 변환하여 반환
+	       return filteredUsers.stream()
+	                           .map(user -> new UserProfileDto(user.getId(), user.getUsername()))
+	                           .collect(Collectors.toList());
+	   }
 }

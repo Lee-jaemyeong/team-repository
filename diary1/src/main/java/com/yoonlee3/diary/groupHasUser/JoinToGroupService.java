@@ -1,5 +1,6 @@
 package com.yoonlee3.diary.groupHasUser;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ public class JoinToGroupService {
 	
 	// 유저가 속한 그룹 불러오기
 	@Transactional
-	public Set<YL3Group> findGroupById(Long user_id){
+	public List<YL3Group> findGroupById(Long user_id){
 		User user = userService.findById(user_id);
 		return user.getGroups();
 	}

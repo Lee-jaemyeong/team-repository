@@ -90,5 +90,9 @@ public class UserAchivService {
 			newAchiv.setCompletionRate(userAchivCalc);
 			userAchivRepository.save(newAchiv);
 		}
-	}	
+	}
+	
+	public void deleteUserAchive(Goal goal) {
+		userAchivRepository.deleteById(goal.getId());
+	}
 }
