@@ -10,24 +10,26 @@
 			<div th:text="${user.username}"></div>
 		</div>
 	</div>
-	<div class="container-fluid p-3">
+	<div class="container-fluid p-3" >
 		<!-- 프로필영역 -->
 		<div class="d-flex bd-highlight mb-3">
 			<div class="container p-2 bd-highlight  align-self-center"
 				style="width: 100%;">
-			<th:block th:each="d:${groupDiaryList}">
-				<ul class="list-unstyled d-flex justify-content-between" style="border-bottom: 1px solid #ccc; padding: 10px 0 30px;">
+				
+			<th:block th:each="d : ${groupDiaryList}">
+				<ul  class="list-unstyled d-flex justify-content-between" style="border-bottom: 1px solid #ccc; padding: 10px 0 30px;">
 					<li class="p-2 flex-grow-1 bd-highlight">
-						<ul class="list-unstyled">
-							<li style="color: #000000; font-weight: bold; font-size: 20px;" th:text="${d.diary.user.username}"></li>
+						<ul  class="list-unstyled">
+							<li style="color: #000000; font-weight: bold; font-size: 20px;"
+								th:text="${d.diary.user.username}"></li>
 							<li><a style="font-size: 22px; margin-left: 8px; color: #964b00;" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
-								th:text="${d.diary.diary_title}" th:href="@{|/group/groupDiaryDetail/${d.diary.id}|}"></a></li>
+							th:text="${d.diary.diary_title}" th:href="@{|/group/groupDiaryDetail/${d.diary.id}|}"></a></li>
 						</ul>
 					</li>
 					<li class="ms-auto p-2 align-self-center"  style="text-align: end;"
-						th:text="${d.diary.diary_emoji}"></li>
+							th:text="${d.diary.diary_emoji}"></li>
 				</ul>
-			</th:block>
+			</th:block>	
 			</div>
 		</div>
 	</div>

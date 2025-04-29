@@ -49,9 +49,8 @@ public class DiaryService {
 	public int delete(Diary diary) { 
 		return diaryRepository.deleteByDId(diary.getId());
 	}
-	
 	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	public List<Diary> getDiarySortedByLikes(){
 		return diaryRepository.findByDiaryOrderByLikes();
-	}
+	}	
 }

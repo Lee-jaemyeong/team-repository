@@ -124,7 +124,7 @@ public class GoalController {
 		if (goal.getDueDate().isEqual(date)) {
 				userAchivService.insertOrUpdateUserAchiv(goal);
 		}
-		return "redirect:/user/mypage?selectedDate=" + date;
+		return "redirect:/mypage?selectedDate=" + date;
 	}
 
 	// 목표 삭제하기
@@ -159,7 +159,7 @@ public class GoalController {
 		System.out.println("바뀐 날짜................." + selectedDate);
 		LocalDate date = LocalDate.parse(selectedDate);
 
-		return "redirect:/user/mypage?selectedDate=" + date;
+		return "redirect:/mypage?selectedDate=" + date;
 	}
 	
 }

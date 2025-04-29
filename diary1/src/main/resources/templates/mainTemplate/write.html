@@ -25,7 +25,7 @@
    
    <!-- 글쓰기폼 -->
     <div class="container-fluid">
-      <form th:action="@{/diary/insert}" method="post" onsubmit="return form()">
+      <form th:action="@{/diary/insert}" method="post" onsubmit="return validateForm()">
         <div class="d-flex bd-highlight mb-4">
           <div class="form-group">
 			<input type="hidden" name="nickname" id="nickname" class="form-control" th:value="${nickname}" readonly>
@@ -45,7 +45,6 @@
             <option value="" disabled selected>공개범위</option>
             <option value="1">나만보기</option>
             <option value="2">친구공개</option>
-            <option value="3">그룹공개</option>
             <option value="4">전체공개</option>
             <option value="5" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">관리자작성</option>
           </select>
@@ -66,9 +65,7 @@
         <!-- 이모티콘 -->
         <div class="d-flex bd-highlight mb-4">
           <div class="p-2 bd-highlight">
-	          <button type="submit" class="btn p-3" 
-	          style="width: 100%;font-size: 18px; font-weight: bold; border: 2px solid #f8b739;">취소
-	          </button>
+	          <button type="button" class="btn p-3" style="width: 100%;font-size: 18px; font-weight: bold; border: 2px solid #f8b739;" onclick="window.location.href='/main';">취소</button>
           </div>
           <div class="p-2 flex-grow-1 bd-highlight">
 	          <button type="submit" class="btn p-3"
@@ -80,7 +77,7 @@
     </div>
    <!-- 글쓰기폼 -->	
    		<script>
-			function form() {
+			function validateForm() {
 				let diary_title = document.querySelector("#diary_title");
 				let bcontent = document.querySelector("#diary_content");
 				let open_scope = document.querySelector("select[name='open_scope_id']");

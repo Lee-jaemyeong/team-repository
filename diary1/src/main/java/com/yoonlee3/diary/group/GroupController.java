@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yoonlee3.diary.badge.Badge;
 import com.yoonlee3.diary.badge.BadgeService;
+import com.yoonlee3.diary.follow.Follow;
+import com.yoonlee3.diary.follow.FollowRepository;
 import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.groupDiary.GroupDiaryService;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
@@ -35,6 +37,7 @@ public class GroupController {
 	@Autowired JoinToGroupService joinToGroupService;
 	@Autowired GroupDiaryService groupDiaryService;
 	@Autowired BadgeService badgeService;
+	@Autowired FollowRepository followRepository;
 	
 	// 로그인 된 유저 닉네임 설정
 	@ModelAttribute
@@ -59,6 +62,22 @@ public class GroupController {
 		List<YL3Group> groups =  groupService.findAll();
 		model.addAttribute("groupList", groups);
 		model.addAttribute("isGroupPage", true);
+		
+		String email = principal.getName();
+		User user = userService.findByEmail(email);		
+		
+		// 팔로워와 팔로잉 리스트를 가져옵니다.
+	    // 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
+	    List<Follow> followers = followRepository.findByFollowing(user);  // 나를 팔로우한 사람들
+	    List<Follow> followings = followRepository.findByFollower(user);   // 내가 팔로우한 사람들
+	    model.addAttribute("followers", followers);  // 팔로워 리스트
+	    model.addAttribute("followings", followings);  // 팔로잉 리스트
+
+	    // 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+	    long followerCount = followRepository.countByFollowing(user);
+	    long followingCount = followRepository.countByFollower(user);
+	    model.addAttribute("followerCount", followerCount);  // 팔로워 수
+	    model.addAttribute("followingCount", followingCount);  // 팔로잉 수
 		return "group/main";
 	}
 	

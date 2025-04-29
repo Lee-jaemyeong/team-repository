@@ -40,14 +40,14 @@
 				<select class="form-select p-2 bd-highlight"
 					aria-label="Default select example"
 					style="width: 19%; margin-right: 0.6em;">
-					<option selected>템플릿</option>
+					<option value="" disabled selected>템플릿</option>
 					<option value="1">템플릿1</option>
 					<option value="2">템플릿2</option>
 					<option value="3">템플릿3</option>
 				</select> <select class="form-select p-2 form-select" id="openScope_insert"
 					name="openScope.id" required aria-label="Default select example"
 					style="width: 19%;">
-					<option selected>공개범위</option>
+					<option value="" disabled selected>공개범위</option>
 					<option value="1">나만보기</option>
 					<option value="2">친구공개</option>
 					<option value="3">그룹공개</option>
@@ -62,30 +62,46 @@
 					id="diary_content" name="diary_content" rows="3"
 					style="width: 100%; height: 60vh; resize: none;"></textarea>
 			</div>
-			<button type="button" id="emojiBtn">요약받기</button>
-			<div class="form-group emoji">
-				<label for="diary_emoji">요약</label> <input type="text"
-					name="diary_emoji" id="diary_emoji" class="form-control">
-			</div>
+			<div class="container-fluid d-flex bd-highlight mb-3" >
+	        	<div class="bd-highlight"><button type="button" id="emojiBtn" class="btn p-2 mr-3" style="background-color: #eee;">이모티콘으로 일기 요약받기</button></div>
+	        	<div class="flex-grow-1 bd-highlight">
+	        	<label for="diary_emoji">요약</label>
+	        	<input type="text" id="diary_emoji" name="diary_emoji"
+	        		style="border: 1px solid #eee; padding: 0.5em; width: 100%;">
+	        	</div>
+       		</div>
 			<div class="d-flex bd-highlight mb-4">
-				<div class="p-2 bd-highlight">
-					<button type="reset" class="btn p-3"
-						style="width: 120%; font-size: 18px; font-weight: bold; border: 2px solid #f8b739;">취소
-					</button>
-				</div>
-				<div class="p-2 flex-grow-1 bd-highlight">
-					<button type="submit" class="btn p-3"
-						style="width: 100%; font-size: 18px; font-weight: bold; background-color: #f8b739; border: 2px solid #f8b739;">게시하기
-					</button>
-				</div>
-			</div>
+	          <div class="p-2 bd-highlight">
+		        <button type="button" class="btn p-3" style="width: 100%;font-size: 18px; font-weight: bold; border: 2px solid #f8b739;" onclick="window.location.href='/main';">취소</button>
+	          </div>
+          	<div class="p-2 flex-grow-1 bd-highlight">
+	          <button type="submit" class="btn p-3"
+	          style="width: 100%; font-size: 18px; font-weight: bold; background-color: #f8b739; border: 2px solid #f8b739;">게시하기
+	          </button>
+          	</div>
+        </div>
 		</form>
 	</div>
 	<!-- 글쓰기폼 -->
 
 </th:block>
-<th:block layout:fragment="jQuery">
-	<script type="text/javascript">
+   	<script>
+			function validateForm() {
+				let diary_title = document.querySelector("#diary_title");
+				let bcontent = document.querySelector("#diary_content");
+				let open_scope = document.querySelector("select[name='open_scope_id']");
+		        let template = document.querySelector("select[name='template_id']");
+				
+				if(diary_title.value == ""){ alert("제목을 입력해주세요"); diary_title.focus(); return false; }
+				if(diary_content.value == ""){ alert("내용을 입력해주세요"); diary_content.focus(); return false; }
+		        if(open_scope.value == "") { alert("공개 범위를 선택해주세요"); open_scope.focus(); return false; }
+		        if(template.value == "") { alert("템플릿을 선택해주세요"); template.focus(); return false; }
+
+		        return true
+			}
+	</script>
+	<th:block layout:fragment="jQuery">
+			<script type="text/javascript">
 		$(function() {
 			$(".emoji").hide();
 			$("#emojiBtn").on("click", function() {
@@ -118,31 +134,7 @@
 				}
 			});
 		}
-		
-		function validateForm() {
-			let title = document.getElementById("diary_title").value.trim();
-			let content = document.getElementById("diary_content").value.trim();
-			let templateSelect = document.querySelector('select.form-select:nth-of-type(1)');
-			let openScopeSelect = document.getElementById("openScope_insert");
-
-			if (title === "" || content === "") {
-				alert("제목과 내용을 모두 입력해야 합니다.");
-				return false;
-			}
-
-			if (templateSelect.value === "템플릿") {
-				alert("템플릿을 선택해주세요.");
-				return false;
-			}
-
-			if (openScopeSelect.value === "공개범위") {
-				alert("공개범위를 선택해주세요.");
-				return false;
-			}
-
-			return true; // 모두 통과하면 제출
-		}
-	</script>
-</th:block>
+		</script>
+	</th:block>
 
 </html>

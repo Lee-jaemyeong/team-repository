@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.yoonlee3.diary.follow.Follow;
+import com.yoonlee3.diary.follow.FollowRepository;
 import com.yoonlee3.diary.goal.Goal;
 import com.yoonlee3.diary.goal.GoalService;
 import com.yoonlee3.diary.goalStatus.GoalSatusService;
@@ -58,7 +60,8 @@ public class DiaryController {
 	@Autowired GroupDiaryService groupDiaryService;
 	@Autowired GoalService goalService;
 	@Autowired GoalSatusService goalSatusService;
-
+	@Autowired FollowRepository followRepository;
+	
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {
@@ -88,6 +91,19 @@ public class DiaryController {
 	        .filter(diary -> canViewDiary(diary, user))
 	        .collect(Collectors.toList());
 	    
+	    // 팔로워와 팔로잉 리스트를 가져옵니다.
+	    // 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
+	    List<Follow> followers = followRepository.findByFollowing(user);  // 나를 팔로우한 사람들
+	    List<Follow> followings = followRepository.findByFollower(user);   // 내가 팔로우한 사람들
+	    model.addAttribute("followers", followers);  // 팔로워 리스트
+	    model.addAttribute("followings", followings);  // 팔로잉 리스트
+
+	    // 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+	    long followerCount = followRepository.countByFollowing(user);
+	    long followingCount = followRepository.countByFollower(user);
+	    model.addAttribute("followerCount", followerCount);  // 팔로워 수
+	    model.addAttribute("followingCount", followingCount);  // 팔로잉 수	    
+	    
 		model.addAttribute("list", visibleDiaries);
 		model.addAttribute("isMainPage", true);
 	    return "mainTemplate/main";
@@ -101,15 +117,17 @@ public class DiaryController {
 	        return false;  // '나만보기'는 본인만 볼 수 있음
 	    }
 	    
-	    // '친구공개'는 친구와 본인만 볼 수 있음
+	 // '친구공개'는 친구와 본인만 볼 수 있음
 	    if (openScope.getOpenScope_value().equals("FRIENDS") && 
-	        (!user.getFollowings().contains(diary.getUser()) && !diary.getUser().equals(user))) {
+	        !(user.getFollowers().stream().anyMatch(follow -> follow.getFollowing().equals(diary.getUser())) || diary.getUser().equals(user))) {
 	        return false;  // 친구공개는 친구와 본인만 볼 수 있음
 	    }
 	    
-	    // '그룹공개'는 해당 그룹의 회원과 본인만 볼 수 있음
+	 // '그룹공개'는 해당 그룹의 회원과 본인만 볼 수 있음
 	    if (openScope.getOpenScope_value().equals("GROUP") && 
-	        (!user.getGroups().contains(diary.getGroupDiaries()) && !diary.getUser().equals(user))) {
+	        (!diary.getGroupDiaries().stream()
+	            .anyMatch(groupDiary -> user.getGroups().contains(groupDiary.getGroup())) && 
+	        !diary.getUser().equals(user))) {
 	        return false;  // 그룹공개는 해당 그룹의 회원과 본인만 볼 수 있음
 	    }
 	    
@@ -128,7 +146,7 @@ public class DiaryController {
 	@GetMapping("/mainTemplate/detail/{id}")
 	public String detail(@PathVariable Long id, Model model, Principal principal) {
 		model.addAttribute("dto", diaryService.findById(id));
-
+		
 		long likeCount = likeService.getLikeCount(id);
 		model.addAttribute("likeCount", likeCount);
 
@@ -140,6 +158,13 @@ public class DiaryController {
 		} else {
 			model.addAttribute("isLiked", false); // 비로그인 시 좋아요 상태는 false
 		}
+		
+		//+++//
+		Diary diary=diaryService.findById(id);
+		Template template = diary.getTemplate();
+		String theme=template.getTemplate_title();
+		model.addAttribute("theme",theme);
+		//+++//
 		return "mainTemplate/detail";
 	}
 
@@ -166,7 +191,9 @@ public class DiaryController {
 		return "mainTemplate/write";
 	}
 	@PostMapping("/diary/insert")
-	public String insert_post(Diary diary, @RequestParam(required = false) Long open_scope_id, @RequestParam(required = false) Long template_id, Principal principal, Model model) {
+	public String insert_post(Diary diary, @RequestParam(required = false) Long open_scope_id, 	
+											@RequestParam(required = false) Long template_id, 
+											Principal principal, Model model) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 		
@@ -174,6 +201,7 @@ public class DiaryController {
 		
 		OpenScope openScope = openScopeService.findOpenScopeById(open_scope_id);
 		diary.setOpenScope(openScope);
+		
 		Template template = templateService.findTempalteById(template_id);
 		diary.setTemplate(template);
 		
@@ -352,7 +380,6 @@ public class DiaryController {
 			groupDiaryService.deleteGroupDiary(findGroupDiary);
 			return "redirect:/main";
 		}
-		
 		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 		@GetMapping("/main/likes")
 		public String getDiarySortedByLikes(Model model) {
@@ -360,4 +387,6 @@ public class DiaryController {
 			model.addAttribute("isMainPage",true);
 			return "mainTemplate/main";
 		}
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+		
 }

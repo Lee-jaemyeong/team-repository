@@ -55,46 +55,57 @@ public class UserController {
 
 	@PersistenceContext
 	private EntityManager em;
-	
-	@Autowired UserService userService;
-	@Autowired UserRepository userRepository;
-	@Autowired private PasswordEncoder passwordEncoder;
-	@Autowired KakaoLogin api;
-	@Autowired DiaryService diaryService;
-	@Autowired FollowRepository followRepository;
-	@Autowired private GoalService goalService;
-	@Autowired JoinToGroupService joinToGroupService;
-	@Autowired GroupService groupService;
-	@Autowired GoalSatusService goalSatusService;
-	@Autowired GoalStatusRepository goalStatusRepository;
-	
+
+	@Autowired
+	UserService userService;
+	@Autowired
+	UserRepository userRepository;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	KakaoLogin api;
+	@Autowired
+	DiaryService diaryService;
+	@Autowired
+	FollowRepository followRepository;
+	@Autowired
+	private GoalService goalService;
+	@Autowired
+	JoinToGroupService joinToGroupService;
+	@Autowired
+	GroupService groupService;
+	@Autowired
+	GoalSatusService goalSatusService;
+	@Autowired
+	GoalStatusRepository goalStatusRepository;
+
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
-	    if (principal != null) {
-	        String email = principal.getName();
-	        User user = userService.findByEmail(email);
-	        if (user != null) {
-	            model.addAttribute("nickname", user.getUsername());
-	            model.addAttribute("user", user);
+		if (principal != null) {
+			String email = principal.getName();
+			User user = userService.findByEmail(email);
+			if (user != null) {
+				model.addAttribute("nickname", user.getUsername());
+				model.addAttribute("user", user);
 				Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 				model.addAttribute("groups", groups);
-	        } else {
-	            model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
-	            model.addAttribute("groups", Collections.emptySet());
-	        }
-	    } else {
-	        model.addAttribute("nickname", "Guest"); // 로그인되지 않으면 Guest로 처리
-	    }
+			} else {
+				model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
+				model.addAttribute("groups", Collections.emptySet());
+			}
+		} else {
+			model.addAttribute("nickname", "Guest"); // 로그인되지 않으면 Guest로 처리
+		}
 	}
-	
-	// 처음 화면	
+
+	// 처음 화면
 	@GetMapping("/")
 	public String main(Model model) {
 		em.clear();
 		model.addAttribute("url", api.step1());
 		return "user/login";
 	}
-	
+
 	// 마이페이지
 	@GetMapping("/mypage")
 	public String myPage(
@@ -124,49 +135,50 @@ public class UserController {
 		List<Diary> list = diaryService.findByUserId(user.getId());
 		model.addAttribute("list", list);
 
-	    // 팔로워와 팔로잉 리스트를 가져옵니다.
-	    // 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
-	    List<Follow> followers = followRepository.findByFollowing(user);  // 나를 팔로우한 사람들
-	    List<Follow> followings = followRepository.findByFollower(user);   // 내가 팔로우한 사람들
-	    model.addAttribute("followers", followers);  // 팔로워 리스트
-	    model.addAttribute("followings", followings);  // 팔로잉 리스트
+		// 팔로워와 팔로잉 리스트를 가져옵니다.
+		// 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
+		List<Follow> followers = followRepository.findByFollowing(user); // 나를 팔로우한 사람들
+		List<Follow> followings = followRepository.findByFollower(user); // 내가 팔로우한 사람들
+		model.addAttribute("followers", followers); // 팔로워 리스트
+		model.addAttribute("followings", followings); // 팔로잉 리스트
 
-	    // 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
-	    long followerCount = followRepository.countByFollowing(user);
-	    long followingCount = followRepository.countByFollower(user);
-	    model.addAttribute("followerCount", followerCount);  // 팔로워 수
-	    model.addAttribute("followingCount", followingCount);  // 팔로잉 수
-		
+		// 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+		long followerCount = followRepository.countByFollowing(user);
+		long followingCount = followRepository.countByFollower(user);
+		model.addAttribute("followerCount", followerCount); // 팔로워 수
+		model.addAttribute("followingCount", followingCount); // 팔로잉 수
+
 		return "user/mypage";
 	}
-	
-	// 로그인	
+
+	// 로그인
 	@GetMapping("/user/login")
-	public String login(Model model) {  
-		model.addAttribute("url" , api.step1());
-		return "user/login"; 
+	public String login(Model model) {
+		model.addAttribute("url", api.step1());
+		return "user/login";
 	}
 
 	@PostMapping("/user/login")
-	public String login_form(@RequestParam("email") String email, @RequestParam("password") String password, Model model) {
-	    // 이메일로 유저를 찾기
-	    Optional<User> opUser = userRepository.findByEmail(email);
+	public String login_form(@RequestParam("email") String email, @RequestParam("password") String password,
+			Model model) {
+		// 이메일로 유저를 찾기
+		Optional<User> opUser = userRepository.findByEmail(email);
 
-	    if (opUser.isPresent()) {
-	        User user = opUser.get();
-	        
-	        // 입력된 비밀번호와 저장된 암호화된 비밀번호 비교
-	        if (passwordEncoder.matches(password, user.getPassword())) {
-	            // 비밀번호가 맞다면 로그인 성공
-	            return "redirect:/mypage"; // 또는 메인 페이지로 리디렉션
-	        } else {
-	            model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
-	            return "user/login"; // 비밀번호 불일치시 로그인 페이지로
-	        }
-	    } else {
-	        model.addAttribute("msg", "이메일을 찾을 수 없습니다.");
-	        return "user/login"; // 이메일을 찾을 수 없을 경우 로그인 페이지로
-	    }
+		if (opUser.isPresent()) {
+			User user = opUser.get();
+
+			// 입력된 비밀번호와 저장된 암호화된 비밀번호 비교
+			if (passwordEncoder.matches(password, user.getPassword())) {
+				// 비밀번호가 맞다면 로그인 성공
+				return "redirect:/mypage"; // 또는 메인 페이지로 리디렉션
+			} else {
+				model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
+				return "user/login"; // 비밀번호 불일치시 로그인 페이지로
+			}
+		} else {
+			model.addAttribute("msg", "이메일을 찾을 수 없습니다.");
+			return "user/login"; // 이메일을 찾을 수 없을 경우 로그인 페이지로
+		}
 	}
 
 	@GetMapping("/user/join")
@@ -176,35 +188,32 @@ public class UserController {
 
 	@PostMapping("/user/join")
 	public String join(@Valid UserForm userForm, BindingResult bindingResult) {
-	    if (bindingResult.hasErrors()) {
-	        return "user/join";
-	    }
 
-	    if (!userForm.getPassword().equals(userForm.getPassword2())) {
-	        bindingResult.rejectValue("password2", "passwordInCorrect", "패스워드를 확인해주세요");
-	        return "user/join";
-	    }
+		if (bindingResult.hasErrors()) {
+			return "user/join";
+		}
 
-	    try {
-	        User user = new User();
-	        user.setUsername(userForm.getUsername());
-	        user.setEmail(userForm.getEmail());
-	        String encodedPassword = passwordEncoder.encode(userForm.getPassword());
-	        user.setPassword(encodedPassword);
+		if (!userForm.getPassword().equals(userForm.getPassword2())) {
+			bindingResult.rejectValue("password2", "pawordInCorrect", "패스워드를 확인해주세요");
+			return "user/join";
+		}
 
-	        userService.insertUser(user); 
-	        
-	    } catch (DataIntegrityViolationException e) {
-	        e.printStackTrace();
-	        bindingResult.reject("failed", "등록된 유저입니다.");
-	        return "user/join";
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        bindingResult.reject("failed", e.getMessage());
-	        return "user/join";
-	    }
-
-	    return "user/login"; 
+		try {
+			User user = new User();
+			user.setUsername(userForm.getUsername());
+			user.setEmail(userForm.getEmail());
+			user.setPassword(userForm.getPassword());
+			userService.insertUser(user);
+		} catch (DataIntegrityViolationException e) { // 무결성 - 중복키, 외래키제약, 데이터형식불일치
+			e.printStackTrace();
+			bindingResult.reject("failed", "등록된 유저입니다.");
+			return "user/join";
+		} catch (Exception e) {
+			e.printStackTrace();
+			bindingResult.reject("failed", e.getMessage());
+			return "user/join";
+		}
+		return "user/login";
 	}
 
 	@GetMapping("/user/find")
@@ -214,16 +223,16 @@ public class UserController {
 
 	@PostMapping("/user/find")
 	public String find_form(@RequestParam("email") String email, Model model) {
-		 try {
-			 	User user = userService.findByEmail(email);
+		try {
+			User user = userService.findByEmail(email);
 
-			 	model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
-			 	return "user/passchange";
+			model.addAttribute("msg", "비밀번호 재설정 페이지로 이동합니다.");
+			return "user/passchange";
 
-		    } catch (RuntimeException e) {
-		        model.addAttribute("msg", "이메일을 입력해주세요.");
-		        return "user/find";
-		    }
+		} catch (RuntimeException e) {
+			model.addAttribute("msg", "이메일을 입력해주세요.");
+			return "user/find";
+		}
 	}
 
 	@GetMapping("/user/passchange")
@@ -232,28 +241,26 @@ public class UserController {
 	}
 
 	@PostMapping("/user/passchange")
-	public String passchange_form(
-	    @RequestParam("email") String email,
-	    @RequestParam("password") String password, 
-	    Model model) {
-	    
-	    Optional<User> opuser = userRepository.findByEmail(email);
-	    
-	    if (opuser.isPresent()) {
-	        User user = opuser.get();
-	        
-	        String encodedPassword = passwordEncoder.encode(password);
-	        user.setPassword(encodedPassword);
-	        userRepository.save(user);
+	public String passchange_form(@RequestParam("email") String email, @RequestParam("password") String password,
+			Model model) {
 
-	        model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
-	        return "redirect:/user/login";
-	    } else {
-	        model.addAttribute("msg", "비밀번호 변경에 실패했습니다.");
-	        return "user/passchange";
-	    }
+		Optional<User> opuser = userRepository.findByEmail(email);
+
+		if (opuser.isPresent()) {
+			User user = opuser.get();
+
+			String encodedPassword = passwordEncoder.encode(password);
+			user.setPassword(encodedPassword);
+			userRepository.save(user);
+
+			model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
+			return "redirect:/user/login";
+		} else {
+			model.addAttribute("msg", "비밀번호 변경에 실패했습니다.");
+			return "user/passchange";
+		}
 	}
-	
+
 	@GetMapping("/fragments/sidebar/nickname")
 	public String userChange() {
 		return "fragments/sideBar";
@@ -268,11 +275,11 @@ public class UserController {
 
 		if (user != null) {
 
-	        if (userService.SameUsername(username)) {
-	            redirectAttributes.addFlashAttribute("msg", "이미 존재하는 닉네임입니다.");
-	            return "redirect:/mypage";
-	        }
-			
+			if (userService.SameUsername(username)) {
+				redirectAttributes.addFlashAttribute("msg", "이미 존재하는 닉네임입니다.");
+				return "redirect:/mypage";
+			}
+
 			user.setUsername(username);
 			userService.insertUser(user);
 
@@ -290,106 +297,103 @@ public class UserController {
 	}
 
 	@PostMapping("/user/delete")
-	public String userdelete_form(@RequestParam("password") String password,
-	                              Principal principal,
-	                              RedirectAttributes redirectAttributes) {
-		
+	public String userdelete_form(@RequestParam("password") String password, Principal principal,
+			RedirectAttributes redirectAttributes) {
+
 		String email = principal.getName();
-	    Optional<User> opUser = userRepository.findByEmail(email);
+		Optional<User> opUser = userRepository.findByEmail(email);
 
-	    if (opUser.isPresent()) {
-	        User user = opUser.get();
-	        
-	        if (passwordEncoder.matches(password, user.getPassword())) {
-	            userRepository.delete(user);
-	            SecurityContextHolder.clearContext();
+		if (opUser.isPresent()) {
+			User user = opUser.get();
 
-	            redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
-	            return "redirect:/user/login";
-	        } else {
-	            redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
-	            return "redirect:/mypage"; }
-	    } else {
-	        redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
-	        return "redirect:/mypage"; }
+			if (passwordEncoder.matches(password, user.getPassword())) {
+				userRepository.delete(user);
+				SecurityContextHolder.clearContext();
+
+				redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
+				return "redirect:/user/login";
+			} else {
+				redirectAttributes.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
+				return "redirect:/mypage";
+			}
+		} else {
+			redirectAttributes.addFlashAttribute("msg", "사용자 정보를 찾을 수 없습니다.");
+			return "redirect:/mypage";
+		}
 	}
-	
-	// 팔로우 화면	
+
+	// 팔로우 화면
 	@GetMapping("/user/follow")
-	public String showFollowPage(@RequestParam(value = "userId", required = false) Long userId,
-	                             Model model, Principal principal, HttpServletRequest request) {
-		
+	public String showFollowPage(@RequestParam(value = "userId", required = false) Long userId, Model model,
+			Principal principal, HttpServletRequest request) {
+
 		model.addAttribute("isFollow", true);
-	    if (principal == null) {
-	        return "redirect:/user/login"; // 로그인 안 한 경우
-	    }
+		if (principal == null) {
+			return "redirect:/user/login"; // 로그인 안 한 경우
+		}
 
-	    User currentUser = userService.findByEmail(principal.getName());
-	    Long currentUserId = currentUser.getId();
-	    model.addAttribute("currentUserId", currentUserId);
+		User currentUser = userService.findByEmail(principal.getName());
+		Long currentUserId = currentUser.getId();
+		model.addAttribute("currentUserId", currentUserId);
 
-	    if (userId == null || userId.equals(currentUserId)) {
-	        userId = currentUserId;
-	    }
+		if (userId == null || userId.equals(currentUserId)) {
+			userId = currentUserId;
+		}
 
-	    Optional<User> targetUserOpt = userRepository.findById(userId);
-	    if (targetUserOpt.isEmpty()) return "error";
+		Optional<User> targetUserOpt = userRepository.findById(userId);
+		if (targetUserOpt.isEmpty())
+			return "error";
 
-	    User targetUser = targetUserOpt.get();
+		User targetUser = targetUserOpt.get();
 
-	    // 해당 사용자가 작성한 다이어리 수 추가
-	    List<Diary> diaries = diaryService.findByEmail(targetUser.getEmail());
-	    long diaryCount = diaries.size();
-	    model.addAttribute("diaryCount", diaryCount);  // 다이어리 수 추가
-	    
-	    Set<Long> followingIds = new HashSet<>();
-	    List<Follow> userFollowings = followRepository.findByFollower(currentUser);
-	    for (Follow f : userFollowings) {
-	        followingIds.add(f.getFollowing().getId());
-	    }
+		// 해당 사용자가 작성한 다이어리 수 추가
+		List<Diary> diaries = diaryService.findByEmail(targetUser.getEmail());
+		long diaryCount = diaries.size();
+		model.addAttribute("diaryCount", diaryCount); // 다이어리 수 추가
 
-	    List<Follow> followers = followRepository.findByFollowing(targetUser);
-	    List<Follow> followings = followRepository.findByFollower(targetUser);
+		Set<Long> followingIds = new HashSet<>();
+		List<Follow> userFollowings = followRepository.findByFollower(currentUser);
+		for (Follow f : userFollowings) {
+			followingIds.add(f.getFollowing().getId());
+		}
 
-	    // 차단된 유저 목록 가져오기
-	    List<User> blockedUserIds = userService.getBlockedUsers(currentUserId);
-	    Set<Long> blockedUserIdsSet = blockedUserIds.stream()
-	                                                .map(User::getId)
-	                                                .collect(Collectors.toSet());	    
-	    
-	    model.addAttribute("followers", followers != null ? followers : new ArrayList<>());
-	    model.addAttribute("followings", followings != null ? followings : new ArrayList<>());
-	    model.addAttribute("targetUserId", targetUser.getId());
-	    model.addAttribute("followingIds", followingIds != null ? followingIds : new HashSet<>());
-	    model.addAttribute("blockedUsers", blockedUserIdsSet);  
+		List<Follow> followers = followRepository.findByFollowing(targetUser);
+		List<Follow> followings = followRepository.findByFollower(targetUser);
 
-	    // CSRF 토큰 추가
-	    CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
-	    model.addAttribute("_csrf", csrfToken);
+		// 차단된 유저 목록 가져오기
+		List<User> blockedUserIds = userService.getBlockedUsers(currentUserId);
+		Set<Long> blockedUserIdsSet = blockedUserIds.stream().map(User::getId).collect(Collectors.toSet());
 
-	    return "user/follow";
+		model.addAttribute("followers", followers != null ? followers : new ArrayList<>());
+		model.addAttribute("followings", followings != null ? followings : new ArrayList<>());
+		model.addAttribute("targetUserId", targetUser.getId());
+		model.addAttribute("followingIds", followingIds != null ? followingIds : new HashSet<>());
+		model.addAttribute("blockedUsers", blockedUserIdsSet);
+
+		// CSRF 토큰 추가
+		CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
+		model.addAttribute("_csrf", csrfToken);
+
+		return "user/follow";
 	}
-	
+
 	@GetMapping("/search/users")
 	@ResponseBody
-	public List<UserProfileDto> searchUsers(@RequestParam("keyword") String keyword, @RequestParam("currentUserId") Long currentUserId) {
-	    // 차단된 유저 목록 가져오기
-	    List<User> blockedUsers = userService.getBlockedUsers(currentUserId);
-	    Set<Long> blockedUserIds = blockedUsers.stream()
-	                                           .map(User::getId)
-	                                           .collect(Collectors.toSet());
+	public List<UserProfileDto> searchUsers(@RequestParam("keyword") String keyword,
+			@RequestParam("currentUserId") Long currentUserId) {
+		// 차단된 유저 목록 가져오기
+		List<User> blockedUsers = userService.getBlockedUsers(currentUserId);
+		Set<Long> blockedUserIds = blockedUsers.stream().map(User::getId).collect(Collectors.toSet());
 
-	    // 검색된 유저 목록 가져오기 (이때는 사용자 이름을 포함하는 유저들만 가져옵니다)
-	    List<User> allUsers = userRepository.findByUsernameContainingIgnoreCase(keyword);
-	    
-	    // 차단된 유저를 제외한 목록 필터링
-	    List<User> filteredUsers = allUsers.stream()
-	                                       .filter(user -> !blockedUserIds.contains(user.getId()))
-	                                       .collect(Collectors.toList());
+		// 검색된 유저 목록 가져오기 (이때는 사용자 이름을 포함하는 유저들만 가져옵니다)
+		List<User> allUsers = userRepository.findByUsernameContainingIgnoreCase(keyword);
 
-	    // UserProfileDto로 변환하여 반환
-	    return filteredUsers.stream()
-	                        .map(user -> new UserProfileDto(user.getId(), user.getUsername()))
-	                        .collect(Collectors.toList());
+		// 차단된 유저를 제외한 목록 필터링
+		List<User> filteredUsers = allUsers.stream().filter(user -> !blockedUserIds.contains(user.getId()))
+				.collect(Collectors.toList());
+
+		// UserProfileDto로 변환하여 반환
+		return filteredUsers.stream().map(user -> new UserProfileDto(user.getId(), user.getUsername()))
+				.collect(Collectors.toList());
 	}
 }

@@ -33,12 +33,11 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 	int deleteByDId(Long id);
 
 	long countByUser(User currentUser);
-	
 	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	@Query("select d ,  count(l)  as likeCount "
 			+ "from Diary d left join Likes l on d.id = l.diary.id  "
 			+ "group by d  "
 			+ "order by likeCount desc")
-	List<Diary> findByDiaryOrderByLikes();
+	List<Diary> findByDiaryOrderByLikes();	
 	
 }
