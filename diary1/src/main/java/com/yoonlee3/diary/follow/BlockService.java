@@ -1,5 +1,7 @@
 package com.yoonlee3.diary.follow;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,4 +34,10 @@ public class BlockService {
     public boolean isBlocked(User blocker, User blocked) {
         return blockRepository.existsByBlockerAndBlocked(blocker, blocked);
     }
+    
+    // 내가 차단한 사용자 목록	
+    public List<User> getBlockedUsers(Long currentUserId) {
+        return blockRepository.findBlockedUsersByBlockerId(currentUserId);
+    }
+    
 }

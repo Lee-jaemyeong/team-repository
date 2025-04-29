@@ -88,6 +88,19 @@
 						data-bs-whatever="@fat">탈퇴하기</a>
 				</div>
 			</th:block>
+			<th:block th:if="${isFollow}">
+				<div class="container-fluide">
+					<a th:href="@{/user/logout}" class="btn mb-3 p-3"
+						style="width: 100%; font-weight: bold; color: #f8b739; border: 3px solid #f8b739;"
+						sec:authorize="isAuthenticated()">로그아웃</a>
+				</div>
+				<div class="container-fluide">
+					<a th:href="@{/fragments/sidebar/delete}" class="btn mb-3 p-3"
+						style="width: 100%; font-weight: bold; color: #d10e00; border: 3px solid #d10e00;"
+						data-bs-toggle="modal" data-bs-target="#leaveModal"
+						data-bs-whatever="@fat">탈퇴하기</a>
+				</div>
+			</th:block>
 			<!-- 그룹 페이지 버튼 -->
 			<!-- 그룹 페이지 버튼 -->
 			<th:block th:if="${isGroupPage}">

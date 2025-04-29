@@ -27,6 +27,11 @@ public class DiaryService {
 		return diary;
 	}
 	
+	@Transactional
+	public List<Diary> findByUserId(Long user_id) {
+		return diaryRepository.findByUserId(user_id);
+	}
+	
 	public Diary insert(Diary diary) {
 		return diaryRepository.save(diary);
 	}
@@ -49,6 +54,4 @@ public class DiaryService {
 	public List<Diary> getDiarySortedByLikes(){
 		return diaryRepository.findByDiaryOrderByLikes();
 	}
-
-	
 }

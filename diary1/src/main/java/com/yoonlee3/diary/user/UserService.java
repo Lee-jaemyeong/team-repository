@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.yoonlee3.diary.follow.BlockRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -13,7 +15,8 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
-
+	private final BlockRepository blockRepository;
+	
 	// insert
 	public User insertUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -55,6 +58,18 @@ public class UserService {
 	public int updateByUsername(Long user_id, User user) {
 		return userRepository.updateById(user.getId(), user.getUsername());
 	}
+	
+	public List<User> searchUsers(String keyword) {
+	    return userRepository.findByUsernameContaining(keyword); // username을 포함한 사용자 찾기
+	}
 
+	public User getCurrentUser() {
+		return null;
+	}
 
+	// 내가 차단한 사용자 목록	
+    public List<User> getBlockedUsers(Long currentUserId) {
+        return blockRepository.findBlockedUsersByBlockerId(currentUserId);
+    }	
+	
 }

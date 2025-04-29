@@ -20,7 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("select u from User u where u.username= :username")
 	List<User> findUsersByUsername(String username);
 	
-	
     @Query("select case when count(u) > 0 then true else false end from User u where u.username = :username")
     boolean existsByUsername(String username);
 
@@ -35,5 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("update User u set u.password= :password where u.email= :email ")
 	int updateByIdAndPassword(String password, String email);
 
+	List<User> findByUsernameContaining(String keyword);
 	
+	List<User> findByUsernameContainingIgnoreCase(String keyword);
 }

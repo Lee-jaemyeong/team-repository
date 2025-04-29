@@ -19,16 +19,11 @@ import com.yoonlee3.diary.user.User;
 @Service
 public class GroupAchivService {
 
-	@Autowired
-	GroupAchivRepository groupAchivRepository;
-	@Autowired
-	GoalSatusService goalSatusService;
-	@Autowired
-	GoalService goalService;
-	@Autowired
-	GroupService groupService;
-	@Autowired
-	GroupBadgeHistoryService historyService;
+	@Autowired GroupAchivRepository groupAchivRepository;
+	@Autowired GoalSatusService goalSatusService;
+	@Autowired GoalService goalService;
+	@Autowired GroupService groupService;
+	@Autowired GroupBadgeHistoryService historyService;
 
 	public GroupAchiv insertGroupAchiv(YL3Group group) {
 
@@ -39,13 +34,14 @@ public class GroupAchivService {
 		int successGroup = 0;
 
 		LocalDate currentDate = LocalDate.now();
+		
 		for (User user : users) {
 			int goalSize = groupAchivRepository.findNowGoalSize(user.getId(), currentDate);
 			// 해당 유저의 목표 리스트 가져오기
 			List<Goal> goals = goalService.findByUserId(user);
 			// 해당 유저의 성공한 목표 수
 			for (Goal goal : goals) {
-				successGoal = goalSatusService.findTodaySuccess(goal);
+				successGoal = goalSatusService.findTodaySuccess(goal, currentDate );
 			}
 			if (successGoal / goalSize >= 0.5) {
 				successUser++;

@@ -2,6 +2,8 @@ package com.yoonlee3.diary.follow;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.yoonlee3.diary.user.User;
@@ -29,5 +31,9 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
 
     // 나를 차단한 사람들 수 카운트
     long countByBlocked(User blocked);
+    
+    // 차단한 사용자 목록
+    @Query("SELECT b.blocked FROM Block b WHERE b.blocker.id = :blockerId")
+    List<User> findBlockedUsersByBlockerId(@Param("blockerId") Long blockerId);
 
 }

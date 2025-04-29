@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yoonlee3.diary.badge.Badge;
 import com.yoonlee3.diary.groupAchiv.GroupAchiv;
 import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistory;
@@ -60,6 +61,7 @@ public class YL3Group {
 			joinColumns = @JoinColumn(name = "group_id"), // 현재 엔티티(PK)
 			inverseJoinColumns = @JoinColumn(name = "user_id") // 상대 엔티티(PK)
 	)
+	@JsonManagedReference
 	private Set<User> users = new HashSet<>();
 
 	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)

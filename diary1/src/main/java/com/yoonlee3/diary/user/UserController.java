@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.user;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,15 +10,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +42,9 @@ import com.yoonlee3.diary.follow.Follow;
 import com.yoonlee3.diary.follow.FollowRepository;
 import com.yoonlee3.diary.goal.Goal;
 import com.yoonlee3.diary.goal.GoalService;
+import com.yoonlee3.diary.goalStatus.GoalSatusService;
+import com.yoonlee3.diary.goalStatus.GoalStatus;
+import com.yoonlee3.diary.goalStatus.GoalStatusRepository;
 import com.yoonlee3.diary.group.GroupService;
 import com.yoonlee3.diary.group.YL3Group;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
@@ -43,6 +53,9 @@ import com.yoonlee3.diary.user_kakao.KakaoLogin;
 @Controller
 public class UserController {
 
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Autowired UserService userService;
 	@Autowired UserRepository userRepository;
 	@Autowired private PasswordEncoder passwordEncoder;
@@ -52,7 +65,9 @@ public class UserController {
 	@Autowired private GoalService goalService;
 	@Autowired JoinToGroupService joinToGroupService;
 	@Autowired GroupService groupService;
-
+	@Autowired GoalSatusService goalSatusService;
+	@Autowired GoalStatusRepository goalStatusRepository;
+	
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 	    if (principal != null) {
@@ -72,34 +87,64 @@ public class UserController {
 	    }
 	}
 	
+	// 처음 화면	
 	@GetMapping("/")
 	public String main(Model model) {
+		em.clear();
 		model.addAttribute("url", api.step1());
 		return "user/login";
 	}
 	
-	@GetMapping("/user/login")
-	public String login(Model model) {  
-		model.addAttribute("url" , api.step1());
-		return "user/login"; 
-	}
-
+	// 마이페이지
 	@GetMapping("/mypage")
-	public String myPage(Model model, Principal principal) {
+	public String myPage(
+			@RequestParam(value = "selectedDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+			Model model, Principal principal) {
 		model.addAttribute("isMyPage", true);
 		String email = principal.getName();
 
 		User user = userService.findByEmail(email);
-		model.addAttribute("nickname", user.getUsername());
+
+		// 날짜 계산해서 오늘 할 목표 넘기기
+		LocalDate selectedDate = (date != null) ? date : LocalDate.now();
+		List<Goal> goals = goalService.findTodayGoalByUserId(user, selectedDate);
+
+		Map<Long, GoalStatus> goalStatusMap = new HashMap<>();
+		for (Goal goal : goals) {
+			goalSatusService.findTodayGoalStatus(goal, selectedDate)
+					.ifPresent(status -> goalStatusMap.put(goal.getId(), status));
+		}
+		model.addAttribute("goalStatusMap", goalStatusMap);
+
+		model.addAttribute("selectedDate", selectedDate);
+		System.out.println(".......goal list........" + goals);
+		model.addAttribute("goal", goals);
+
+		// 해당 사용자가 쓴 글만 가져오기
+		List<Diary> list = diaryService.findByUserId(user.getId());
+		model.addAttribute("list", list);
+
+	    // 팔로워와 팔로잉 리스트를 가져옵니다.
+	    // 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
+	    List<Follow> followers = followRepository.findByFollowing(user);  // 나를 팔로우한 사람들
+	    List<Follow> followings = followRepository.findByFollower(user);   // 내가 팔로우한 사람들
+	    model.addAttribute("followers", followers);  // 팔로워 리스트
+	    model.addAttribute("followings", followings);  // 팔로잉 리스트
+
+	    // 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+	    long followerCount = followRepository.countByFollowing(user);
+	    long followingCount = followRepository.countByFollower(user);
+	    model.addAttribute("followerCount", followerCount);  // 팔로워 수
+	    model.addAttribute("followingCount", followingCount);  // 팔로잉 수
 		
-		List<Goal> goal = goalService.findTodayGoalByUserId(user);
-		model.addAttribute("goal", goal);
-	    
-	    // 해당 사용자가 쓴 글만 가져오기
-	    List<Diary> diaries = diaryService.findByEmail(email);
-	    model.addAttribute("list", diaries);
-	    
 		return "user/mypage";
+	}
+	
+	// 로그인	
+	@GetMapping("/user/login")
+	public String login(Model model) {  
+		model.addAttribute("url" , api.step1());
+		return "user/login"; 
 	}
 
 	@PostMapping("/user/login")
@@ -144,11 +189,11 @@ public class UserController {
 	        User user = new User();
 	        user.setUsername(userForm.getUsername());
 	        user.setEmail(userForm.getEmail());
-
 	        String encodedPassword = passwordEncoder.encode(userForm.getPassword());
 	        user.setPassword(encodedPassword);
 
 	        userService.insertUser(user); 
+	        
 	    } catch (DataIntegrityViolationException e) {
 	        e.printStackTrace();
 	        bindingResult.reject("failed", "등록된 유저입니다.");
@@ -269,31 +314,12 @@ public class UserController {
 	        return "redirect:/mypage"; }
 	}
 	
-	// 그룹, 유저 찾기
-	@GetMapping(value = "/search/{search}", produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public Map<String, Object> search(@PathVariable String search) {
-		Map<String, Object> result = new HashMap<>();
-		try {
-			YL3Group group = groupService.findByGroupTitle(search);
-			User user = userService.findByUsername(search);
-
-			result.put("groups", group);
-			result.put("users", user);
-			result.put("status", "success");
-				
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("status", "error");
-		       result.put("message", e.getMessage());
-		}
-		return result;
-	}
-	
+	// 팔로우 화면	
 	@GetMapping("/user/follow")
 	public String showFollowPage(@RequestParam(value = "userId", required = false) Long userId,
-	                              Model model, Principal principal) {
-
+	                             Model model, Principal principal, HttpServletRequest request) {
+		
+		model.addAttribute("isFollow", true);
 	    if (principal == null) {
 	        return "redirect:/user/login"; // 로그인 안 한 경우
 	    }
@@ -302,7 +328,6 @@ public class UserController {
 	    Long currentUserId = currentUser.getId();
 	    model.addAttribute("currentUserId", currentUserId);
 
-	    // 본인의 페이지를 볼 경우
 	    if (userId == null || userId.equals(currentUserId)) {
 	        userId = currentUserId;
 	    }
@@ -312,7 +337,11 @@ public class UserController {
 
 	    User targetUser = targetUserOpt.get();
 
-	    // 현재 로그인한 사용자가 팔로우 중인 유저 목록
+	    // 해당 사용자가 작성한 다이어리 수 추가
+	    List<Diary> diaries = diaryService.findByEmail(targetUser.getEmail());
+	    long diaryCount = diaries.size();
+	    model.addAttribute("diaryCount", diaryCount);  // 다이어리 수 추가
+	    
 	    Set<Long> followingIds = new HashSet<>();
 	    List<Follow> userFollowings = followRepository.findByFollower(currentUser);
 	    for (Follow f : userFollowings) {
@@ -322,11 +351,45 @@ public class UserController {
 	    List<Follow> followers = followRepository.findByFollowing(targetUser);
 	    List<Follow> followings = followRepository.findByFollower(targetUser);
 
+	    // 차단된 유저 목록 가져오기
+	    List<User> blockedUserIds = userService.getBlockedUsers(currentUserId);
+	    Set<Long> blockedUserIdsSet = blockedUserIds.stream()
+	                                                .map(User::getId)
+	                                                .collect(Collectors.toSet());	    
+	    
 	    model.addAttribute("followers", followers != null ? followers : new ArrayList<>());
 	    model.addAttribute("followings", followings != null ? followings : new ArrayList<>());
 	    model.addAttribute("targetUserId", targetUser.getId());
 	    model.addAttribute("followingIds", followingIds != null ? followingIds : new HashSet<>());
+	    model.addAttribute("blockedUsers", blockedUserIdsSet);  
+
+	    // CSRF 토큰 추가
+	    CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
+	    model.addAttribute("_csrf", csrfToken);
 
 	    return "user/follow";
+	}
+	
+	@GetMapping("/search/users")
+	@ResponseBody
+	public List<UserProfileDto> searchUsers(@RequestParam("keyword") String keyword, @RequestParam("currentUserId") Long currentUserId) {
+	    // 차단된 유저 목록 가져오기
+	    List<User> blockedUsers = userService.getBlockedUsers(currentUserId);
+	    Set<Long> blockedUserIds = blockedUsers.stream()
+	                                           .map(User::getId)
+	                                           .collect(Collectors.toSet());
+
+	    // 검색된 유저 목록 가져오기 (이때는 사용자 이름을 포함하는 유저들만 가져옵니다)
+	    List<User> allUsers = userRepository.findByUsernameContainingIgnoreCase(keyword);
+	    
+	    // 차단된 유저를 제외한 목록 필터링
+	    List<User> filteredUsers = allUsers.stream()
+	                                       .filter(user -> !blockedUserIds.contains(user.getId()))
+	                                       .collect(Collectors.toList());
+
+	    // UserProfileDto로 변환하여 반환
+	    return filteredUsers.stream()
+	                        .map(user -> new UserProfileDto(user.getId(), user.getUsername()))
+	                        .collect(Collectors.toList());
 	}
 }
