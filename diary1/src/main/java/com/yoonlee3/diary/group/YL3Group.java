@@ -63,9 +63,9 @@ public class YL3Group {
 	@JsonManagedReference
 	private List<User> users = new ArrayList<>();
 
-	@OneToMany(mappedBy = "group")
+	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
 	private List<GroupDiary> groupDiaries;
-	
+
 	// 교환일기 순서 정하기
 	@Column(name = "current_turn")
 	private int currentTurn;

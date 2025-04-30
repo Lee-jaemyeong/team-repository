@@ -15,18 +15,22 @@ import com.yoonlee3.diary.user.UserService;
 @Service
 public class GroupService {
 
-	@Autowired GroupRepository groupRepository;
-	@Autowired JoinToGroupService joinToGroupService;
-	@Autowired UserService userService;
-	@Autowired GroupDiaryService groupDiaryService;
-	
+	@Autowired
+	GroupRepository groupRepository;
+	@Autowired
+	JoinToGroupService joinToGroupService;
+	@Autowired
+	UserService userService;
+	@Autowired
+	GroupDiaryService groupDiaryService;
+
 	// insert
 	public void insertGroup(YL3Group group) {
 		YL3Group save = groupRepository.save(group);
 		User user = save.getGroup_leader();
 		joinToGroupService.joinToGroup(save.getId(), user.getId());
 	}
-	
+
 	// read
 	public List<YL3Group> findAll() {
 		return groupRepository.findAll();
@@ -51,18 +55,17 @@ public class GroupService {
 
 	// delete
 	public int deleteGroup(YL3Group group) {
-		YL3Group findgroup = groupRepository.findById(group.getId()).orElseThrow(()-> new RuntimeException("여기는 GroupService............ 그룹이 존재하지 않아요 흑흑"));
+		YL3Group findgroup = groupRepository.findById(group.getId())
+				.orElseThrow(() -> new RuntimeException("여기는 GroupService............ 그룹이 존재하지 않아요 흑흑"));
 		// 그룹안에 있는 유저들 가져오기
 		List<User> users = group.getUsers();
-		// 리더가 아닌 유저들 그룹 떠나게 하기 
-		if(!users.contains(group.getGroup_leader())) {
-			for(User u : users) {
+		// 리더가 아닌 유저들 그룹 떠나게 하기
+		if (!users.contains(group.getGroup_leader())) {
+			for (User u : users) {
 				joinToGroupService.leaveGroup(group, u);
 			}
 		}
 
-		// 그룹안에 있는 다이어리 삭제하기
-		List<GroupDiary> groupDiarys = groupDiaryService.findByGroupId(findgroup);		
 		return groupRepository.deleteGroup(findgroup.getId(), findgroup.getGroup_leader().getId());
 	}
 

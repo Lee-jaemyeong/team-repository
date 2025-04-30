@@ -7,7 +7,9 @@
 	<div class="container-fluid p-3"
 		style="border-bottom: 1px solid #9d9d9d;">
 		<div th:each="user : ${users}">
-			<div th:text="${user.username}"></div>
+			<div th:text="${user.username}" class="user-item"
+				th:attr="data-user-id=${user.id}, data-username=${user.username}"
+				style="cursor: pointer;"></div>
 		</div>
 	</div>
 	<div class="container-fluid p-3">
@@ -34,6 +36,28 @@
 							th:text="${d.diary.diary_emoji}"></li>
 					</ul>
 				</th:block>
+				<div class="modal fade" id="userActionModal" tabindex="-1"
+					aria-labelledby="userActionModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="userActionModalLabel"></h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="닫기"></button>
+							</div>
+							<div class="modal-body text-center">
+								<p id="selectedUsername"
+									style="font-size: 20px; font-weight: bold;"></p>
+								<button id="followBtn" class="btn btn-primary m-2">팔로우하기</button>
+
+								<!-- 방장만 보이는 탈퇴 버튼 -->
+								<button id="kickBtn" class="btn btn-danger m-2"
+									style="display: none;">강퇴하기</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--  E modal -->
 			</div>
 		</div>
 	</div>
@@ -42,6 +66,52 @@
 	    alert([[${turnMessage}]]);
 	</script>
 	</th:block>
+	<script th:inline="javascript">
+	document.addEventListener("DOMContentLoaded", function() {
+	    const userItems = document.querySelectorAll('.user-item');
+	    const group_id = [[${group.id}]];
+	    const isLeader = [[${isLeader}]];
+	    
+	    userItems.forEach(item => {
+	        item.addEventListener('click', function() {
+	            const user_id = this.getAttribute('data-user-id');
+	            const username = this.getAttribute('data-username');
+	
+	            // 모달에 사용자 이름 표시
+	            document.getElementById('selectedUsername').innerText = username;
+	
+	            // 팔로우 버튼에 user_id 저장
+	            document.getElementById('followBtn').setAttribute('data-user-id', user_id);
+	
+	            // 강퇴 버튼에도 user_id 저장
+	            document.getElementById('kickBtn').setAttribute('data-user-id', user_id);
+				
+	            if (isLeader) {
+	                document.getElementById('kickBtn').style.display = 'inline-block';
+	            } else {
+	                document.getElementById('kickBtn').style.display = 'none';
+	            }
+	            
+	            var userModal = new bootstrap.Modal(document.getElementById('userActionModal'));
+	            userModal.show();
+	        });
+	    });
+	
+	    // 팔로우 버튼 클릭
+	    document.getElementById('followBtn').addEventListener('click', function() {
+	        const user_id = this.getAttribute('data-user-id');
+	        location.href = '/group/'+ group_id +'/follow/' + user_id;
+	    });
+	
+	    // 강퇴 버튼 클릭
+	    document.getElementById('kickBtn').addEventListener('click', function() {
+	        const user_id = this.getAttribute('data-user-id');
+	        if (confirm('정말 이 사용자를 그룹에서 탈퇴시키겠습니까?')) {
+	            location.href = '/group/' + group_id + '/kick/' + user_id;
+	        }
+	    });
+	});
+	</script>
 </th:block>
 
 

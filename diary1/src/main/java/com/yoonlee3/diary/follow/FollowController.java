@@ -69,6 +69,12 @@ public class FollowController {
         return ResponseEntity.ok("언팔로우 성공");
     }
 
+    // 내가 팔로우한 사람들의 ID 목록
+    @GetMapping("/following/ids")
+    public ResponseEntity<List<Long>> getFollowingIds(@RequestParam Long userId) {
+        List<Long> followingIds = followService.getFollowingIds(userId);
+        return ResponseEntity.ok(followingIds);
+    }
    
     
 }

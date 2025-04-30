@@ -22,8 +22,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yoonlee3.diary.badge.Badge;
 import com.yoonlee3.diary.badge.BadgeService;
+import com.yoonlee3.diary.diary.DiaryRepository;
 import com.yoonlee3.diary.follow.Follow;
 import com.yoonlee3.diary.follow.FollowRepository;
+import com.yoonlee3.diary.follow.FollowService;
 import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.groupDiary.GroupDiaryService;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
@@ -33,13 +35,23 @@ import com.yoonlee3.diary.user.UserService;
 @Controller
 public class GroupController {
 
-	@Autowired GroupService groupService;
-	@Autowired UserService userService;
-	@Autowired JoinToGroupService joinToGroupService;
-	@Autowired GroupDiaryService groupDiaryService;
-	@Autowired BadgeService badgeService;
-	@Autowired FollowRepository followRepository;
-	
+	@Autowired
+	GroupService groupService;
+	@Autowired
+	UserService userService;
+	@Autowired
+	JoinToGroupService joinToGroupService;
+	@Autowired
+	GroupDiaryService groupDiaryService;
+	@Autowired
+	BadgeService badgeService;
+	@Autowired
+	FollowRepository followRepository;
+	@Autowired
+	FollowService followService;
+	@Autowired
+	DiaryRepository diaryRepository;
+
 	// 로그인 된 유저 닉네임 설정
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -56,46 +68,60 @@ public class GroupController {
 			model.addAttribute("groups", Collections.emptySet());
 		}
 	}
-	
+
 	// 그룹 홈 화면
 	@GetMapping("/group/main")
 	public String groupHome(Model model, Principal principal) {
-		List<YL3Group> groups =  groupService.findAll();
+		List<YL3Group> groups = groupService.findAll();
 		model.addAttribute("groupList", groups);
 		model.addAttribute("isGroupPage", true);
-		
-		String email = principal.getName();
-		User user = userService.findByEmail(email);		
-		
-		//그룹 뱃지 계산하기
-		for(YL3Group group : groups ) {
-			int badgeLevel = badgeService.calculateBadgeLevel(group.getCreate_date().toLocalDate());    
-			Badge badge = badgeService.findById((long)badgeLevel).orElseThrow(()-> new RuntimeException("뱃지를 찾을 수 없습니다."));
-			group.setBadge(badge);
-		}		
-		
-		// 팔로워와 팔로잉 리스트를 가져옵니다.
-	    // 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
-	    List<Follow> followers = followRepository.findByFollowing(user);  // 나를 팔로우한 사람들
-	    List<Follow> followings = followRepository.findByFollower(user);   // 내가 팔로우한 사람들
-	    model.addAttribute("followers", followers);  // 팔로워 리스트
-	    model.addAttribute("followings", followings);  // 팔로잉 리스트
 
-	    // 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
-	    long followerCount = followRepository.countByFollowing(user);
-	    long followingCount = followRepository.countByFollower(user);
-	    model.addAttribute("followerCount", followerCount);  // 팔로워 수
-	    model.addAttribute("followingCount", followingCount);  // 팔로잉 수
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+
+		// 작성한 일기 수 가져오기
+		long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
+		model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+
+		// 그룹 뱃지 계산하기
+		for (YL3Group group : groups) {
+			int badgeLevel = badgeService.calculateBadgeLevel(group.getCreate_date().toLocalDate());
+			Badge badge = badgeService.findById((long) badgeLevel)
+					.orElseThrow(() -> new RuntimeException("뱃지를 찾을 수 없습니다."));
+			group.setBadge(badge);
+		}
+
+		// 팔로워와 팔로잉 리스트를 가져옵니다.
+		// 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
+		List<Follow> followers = followRepository.findByFollowing(user); // 나를 팔로우한 사람들
+		List<Follow> followings = followRepository.findByFollower(user); // 내가 팔로우한 사람들
+		model.addAttribute("followers", followers); // 팔로워 리스트
+		model.addAttribute("followings", followings); // 팔로잉 리스트
+
+		// 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+		long followerCount = followRepository.countByFollowing(user);
+		long followingCount = followRepository.countByFollower(user);
+		model.addAttribute("followerCount", followerCount); // 팔로워 수
+		model.addAttribute("followingCount", followingCount); // 팔로잉 수
 		return "group/main";
 	}
-	
+
 	// 그룹 화면
 	@GetMapping("group/group/{id}")
 	public String groupPage(Principal principal, @PathVariable("id") Long group_id, Model model,
 			@ModelAttribute("turnMessage") String turnMessage) {
+
 		model.addAttribute("isGroupPage", true);
+
 		YL3Group group = groupService.findById(group_id);
 
+		// 그룹 리더인지 확인하기
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		boolean isLeader = group.getGroup_leader().getId().equals(user.getId());
+		model.addAttribute("isLeader", isLeader);
+
+		// 그룹에 속한 유저들
 		List<User> users = group.getUsers();
 
 		// turn 자동 넘기기
@@ -121,6 +147,19 @@ public class GroupController {
 			model.addAttribute("turnMessage", turnMessage);
 		}
 
+		// 팔로워와 팔로잉 리스트를 가져옵니다.
+		// 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
+		List<Follow> followers = followRepository.findByFollowing(user); // 나를 팔로우한 사람들
+		List<Follow> followings = followRepository.findByFollower(user); // 내가 팔로우한 사람들
+		model.addAttribute("followers", followers); // 팔로워 리스트
+		model.addAttribute("followings", followings); // 팔로잉 리스트
+
+		// 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+		long followerCount = followRepository.countByFollowing(user);
+		long followingCount = followRepository.countByFollower(user);
+		model.addAttribute("followerCount", followerCount); // 팔로워 수
+		model.addAttribute("followingCount", followingCount); // 팔로잉 수
+
 		return "group/group";
 	}
 
@@ -142,7 +181,7 @@ public class GroupController {
 
 		return "redirect:/group/main";
 	}
-	
+
 	// 그룹 수정하기(post)
 	@PostMapping("group/update/{id}")
 	public String groupUpdate_post(@PathVariable("id") Long group_id, Principal principal,
@@ -236,5 +275,38 @@ public class GroupController {
 		}
 		return result;
 	}
-	
+
+	// +++++++++++++++++++++++++++++++++++++++++
+	@GetMapping("group/{g_id}/follow/{u_id}")
+	public String follow(@PathVariable("g_id") Long group_id, @PathVariable("u_id") Long user_id, Principal principal) {
+		System.out.println("step 1......................................................");
+		User findfollower = userService.findByEmail(principal.getName());
+		User follower = userService.findById(findfollower.getId());
+		User following = userService.findById(user_id);
+		System.out.println("step 2..................................");
+		followService.follow(follower, following);
+		return "redirect:/group/group/" + group_id;
+	}
+	// +++++++++++++++++++++++++++++++++++++++++++
+
+	// 그룹 강퇴시키기
+	@GetMapping("/group/{g_id}/kick/{u_id}")
+	public String kickUser(@PathVariable("u_id") Long user_id, @PathVariable("g_id") Long group_id,
+			RedirectAttributes redirectAttributes) {
+
+		YL3Group group = groupService.findById(group_id);
+		User user = userService.findById(user_id);
+
+		int result = joinToGroupService.leaveGroup(group, user);
+		if (result == 0) {
+			redirectAttributes.addFlashAttribute("message", " 탈퇴되었습니다. ");
+		} else if (result == 1) {
+			redirectAttributes.addFlashAttribute("message", " 해당 그룹에 가입되어 있지 않습니다.");
+		} else if (result == 2) {
+			redirectAttributes.addFlashAttribute("message", " 그룹 리더는 그룹을 탈퇴할 수 없습니다.");
+		}
+
+		return "redirect:/group/group/" + group_id;
+	}
+
 }
