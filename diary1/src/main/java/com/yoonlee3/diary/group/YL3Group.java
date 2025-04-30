@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yoonlee3.diary.badge.Badge;
 import com.yoonlee3.diary.groupDiary.GroupDiary;
@@ -64,6 +65,7 @@ public class YL3Group {
 	private List<User> users = new ArrayList<>();
 
 	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+	@JsonIgnore
 	private List<GroupDiary> groupDiaries;
 
 	// 교환일기 순서 정하기

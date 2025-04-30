@@ -3,6 +3,7 @@ package com.yoonlee3.diary.like;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.yoonlee3.diary.diary.Diary;
@@ -16,7 +17,8 @@ public class LikeService {
 	@Autowired
 	LikeRepository likeRepository;
 	@Autowired
-	DiaryService diaryService;
+	@Lazy
+	DiaryService diaryService; // 수정
 	@Autowired
 	UserService userService;
 
@@ -46,4 +48,8 @@ public class LikeService {
 	public long getLikeCount(Long diaryId) {
 		return likeRepository.countByDiaryId(diaryId);
 	}
+	
+	public void deleteAllByDiaryId(Long diaryId) {
+	    likeRepository.deleteByDiaryId(diaryId);
+	} // 수정
 }

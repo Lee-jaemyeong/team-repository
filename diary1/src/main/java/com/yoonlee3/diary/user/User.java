@@ -48,7 +48,7 @@ public class User {
 	private String nickname;
 	private String profileImageUrl;
 	private String resetToken;
-	
+
 	@Column(unique = true, nullable = false)
 	private String email;
 

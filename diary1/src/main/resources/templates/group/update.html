@@ -7,7 +7,7 @@
 
    <!-- 글쓰기폼 -->
     <div class="container-fluid">
-      <form th:action="@{/diary/update}" method="post" onsubmit="return form()">
+      <form th:action="@{/group/update}" method="post" onsubmit="return form()">
        <input type="hidden" th:name="id" th:value="${dto.id}" />
         <div class="d-flex bd-highlight mb-4">
           <div class="form-group">
@@ -20,14 +20,14 @@
           </div>
           <select class="form-select p-2 bd-highlight" aria-label="Template" name="template_id" style="width: 19%; margin-right: 0.6em;">
             <option value="" disabled selected>템플릿</option>
-            <option value="1">템플릿1</option>
-            <option value="2">템플릿2</option>
-            <option value="3">템플릿3</option>
+            <option value="1">기본</option>
+            <option value="2">주황</option>
+            <option value="3">하늘</option>
           </select>
           <select class="form-select p-2 bd-highlight" aria-label="openScope"  name="open_scope_id" style="width: 19%;">
             <option value="" disabled selected>공개범위</option>
             <option value="1">나만보기</option>
-            <option value="2">친구공개</option>
+            <option value="3">그룹공개</option>
             <option value="4">전체공개</option>
             <option value="5" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">관리자작성</option>
           </select>

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,6 +64,26 @@ public class GroupController {
 
 			List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 			model.addAttribute("groups", groups);
+			
+			// 나를 차단한 유저들
+			List<User> usersWhoBlockedMe = userService.getUsersWhoBlocked(user.getId());
+			Set<Long> usersWhoBlockedMeIds = usersWhoBlockedMe.stream()
+			        .map(User::getId)
+			        .collect(Collectors.toSet());
+			model.addAttribute("usersWhoBlockedMeIds", usersWhoBlockedMeIds);
+			
+			// 내가 차단한 유저들
+			Set<Long> blockedUserIds = userService.getBlockedUsers(user.getId())
+				    .stream()
+				    .map(User::getId)
+				    .collect(Collectors.toSet());
+			model.addAttribute("blockedUserIds", blockedUserIds);
+			
+			
+			// 작성한 일기 수 가져오기
+			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
+			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+
 		} else {
 			model.addAttribute("nickname", "Guest");
 			model.addAttribute("groups", Collections.emptySet());
@@ -120,9 +141,33 @@ public class GroupController {
 		User user = userService.findByEmail(email);
 		boolean isLeader = group.getGroup_leader().getId().equals(user.getId());
 		model.addAttribute("isLeader", isLeader);
+		
+		// 내가 그룹에 속해있는지 확인하기
+		List<User> groupUsers = group.getUsers();
+		if(groupUsers.contains(user)) {
+			model.addAttribute("isMyGroup", true);
+		}
+
+		// 내 아이디 보내기
+		model.addAttribute("myId", user.getId());
 
 		// 그룹에 속한 유저들
 		List<User> users = group.getUsers();
+		List<GroupDiary> groupDiaryList1 = groupDiaryService.findByGroupId(group);
+
+		List<GroupDiary> visibleDiaries = groupDiaryList1.stream()
+		    .filter(d -> {
+		        if (d.getDiary() == null || d.getDiary().getOpenScope() == null) return false;
+
+		        String scope = d.getDiary().getOpenScope().getOpenScope_value();
+		        if ("GROUP".equals(scope)) {
+		            return user.getGroups().contains(d.getGroup()) || d.getDiary().getUser().equals(user);
+		        }
+		        return true;
+		    })
+		    .collect(Collectors.toList());
+
+		model.addAttribute("groupDiaryList", visibleDiaries);
 
 		// turn 자동 넘기기
 		LocalDate today = LocalDate.now();
@@ -139,9 +184,6 @@ public class GroupController {
 		model.addAttribute("group", group);
 		// 그룹 소속 유저들 보내기
 		model.addAttribute("users", users);
-		// 그룹의 다이어리 보내기
-		List<GroupDiary> groupDiaryList = groupDiaryService.findByGroupId(group);
-		model.addAttribute("groupDiaryList", groupDiaryList);
 
 		if (turnMessage != null && !turnMessage.isEmpty()) {
 			model.addAttribute("turnMessage", turnMessage);
@@ -252,22 +294,25 @@ public class GroupController {
 		return "redirect:/main";
 	}
 
-	// 그룹 검색
+	// 그룹 검색+++++++++++++++++++++++++++++
 	@GetMapping(value = "/search/group/{search}", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public Map<String, Object> searchGroup(@PathVariable String search) {
 		Map<String, Object> result = new HashMap<>();
 		try {
-			YL3Group groups = groupService.findByGroupTitle(search);
+			YL3Group group = groupService.findByGroupTitle(search); // 하나의 그룹을 반환
 
-			if (groups != null) {
-				result.put("groups", groups);
+			if (group != null) {
+				Map<String, Object> groupDetails = new HashMap<>();
+				groupDetails.put("group_title", group.getGroup_title());
+				groupDetails.put("badge_title", group.getBadge() != null ? group.getBadge().getBadge_title() : "없음");
+
+				result.put("groups", groupDetails);
 				result.put("status", "success");
 			} else {
 				result.put("status", "error");
 				result.put("message", "해당 그룹을 찾을 수 없습니다.");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("status", "error");
@@ -275,6 +320,7 @@ public class GroupController {
 		}
 		return result;
 	}
+	// +++++++++++++++++++++++++++++++++++++++++++++ 수정0430
 
 	// +++++++++++++++++++++++++++++++++++++++++
 	@GetMapping("group/{g_id}/follow/{u_id}")

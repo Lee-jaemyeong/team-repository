@@ -21,6 +21,4 @@ public class Template {
 
 	private String template_title;
 
-	private String template_content;
-
 }

@@ -1,6 +1,7 @@
 package com.yoonlee3.diary.user;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -101,5 +102,15 @@ public class UserService {
 			return 0;
 		return (int) followRepository.countByFollower(user); // 팔로잉 수
 	}
+	
+	///////////////////////// 0430
+	public List<User> getUsersWhoBlocked(Long userId) {
+	       User currentUser = userRepository.findById(userId)
+	                                        .orElseThrow(() -> new RuntimeException("사용자 없음"));
+	       return blockRepository.findByBlocked(currentUser)
+	                             .stream()
+	                             .map(Block::getBlocker)
+	                             .collect(Collectors.toList());
+	   }
 
 }

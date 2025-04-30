@@ -39,7 +39,7 @@ public class LikeController {
         }
         return "redirect:user/login"; // 비로그인 시 리다이렉트
     }
-
+    
     // 좋아요 상태 확인 (GET 요청)
     @GetMapping("/status")
     @ResponseBody

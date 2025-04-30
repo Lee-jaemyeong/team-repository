@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserProfileDto {
-	private Long Id;
+	private Long id;
     private String username;
     private String profileImageUrl; 
     private long followers;
@@ -27,9 +27,10 @@ public class UserProfileDto {
         return this.profileImageUrl;
     }
 
-    public UserProfileDto(Long userId, String username) {
-        this.Id = userId;
+    public UserProfileDto(Long id, String username, String profileImageUrl) {
+        this.id = id;
         this.username = username;
+        this.profileImageUrl = profileImageUrl;
         this.followers = 0;
         this.followings = 0;
         this.isFollowing = false;
