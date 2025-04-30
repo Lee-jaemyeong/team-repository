@@ -5,11 +5,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -87,6 +90,11 @@ public class DiaryController {
 
 			List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 			model.addAttribute("groups", groups);
+
+			// 작성한 일기 수 가져오기
+			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
+			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+
 		} else {
 			model.addAttribute("nickname", "Guest");
 			model.addAttribute("groups", Collections.emptySet());
@@ -101,9 +109,11 @@ public class DiaryController {
 		// 모든 게시글을 가져옵니다.
 		List<Diary> allDiaries = diaryService.findAll();
 
-		// 공개범위에 따라 필터링
-		List<Diary> visibleDiaries = allDiaries.stream().filter(diary -> canViewDiary(diary, user))
-				.collect(Collectors.toList());
+		// 공개범위에 따라 필터링_수정
+		List<Diary> visibleDiaries = allDiaries.stream()
+				.filter(diary -> !diary.getOpenScope().getOpenScope_value().equals("GROUP"))
+				.filter(diary -> canViewDiary(diary, user)).collect(Collectors.toList());
+		///////////////////////////////////// 0430수정
 
 		// 작성한 일기 수 가져오기
 		long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
@@ -151,14 +161,30 @@ public class DiaryController {
 
 		return true; // '전체공개'는 누구나 볼 수 있음
 	}
+	
+	private boolean canViewGoal(Goal goal, User user) {
+		if (goal == null || goal.getOpenScope() == null || goal.getUser() == null) {
+			return false;
+		}
 
-	/*
-	 * @GetMapping("/diary/list")
-	 * 
-	 * @ResponseBody public List<Diary> getDiaryList() { List<Diary> diaryList =
-	 * diaryService.findAll(); return diaryList; }
-	 */
+		OpenScope openScope = goal.getOpenScope();
 
+		// '나만보기'
+		if (openScope.getOpenScope_value().equals("PRIVATE") && !goal.getUser().equals(user)) {
+			return false;
+		}
+
+		// '친구공개'
+		if (openScope.getOpenScope_value().equals("FRIENDS") &&
+				!(user.getFollowers().stream().anyMatch(f -> f.getFollowing().equals(goal.getUser()))
+				  || goal.getUser().equals(user))) {
+			return false;
+		}
+
+		return true; // 전체공개
+	}
+
+	// 상세보기
 	@GetMapping("/mainTemplate/detail/{id}")
 	public String detail(@PathVariable Long id, Model model, Principal principal) {
 		model.addAttribute("dto", diaryService.findById(id));
@@ -240,19 +266,54 @@ public class DiaryController {
 			return "mainTemplate/update";
 		} else {
 			rttr.addFlashAttribute("msg", "본인이 작성한 글만 수정할 수 있습니다.");
-			return "redirect:/mainTemplate/detail";
+			return "redirect:/main";
 		}
 	}
 
+	// ++++++++++++++++++++++ 수정 0430
 	@PostMapping("/diary/update")
-	public String update_post(Diary diary, RedirectAttributes rttr) {
-		String msg = "fail";
-		if (diaryService.update(diary) > 0) {
-			msg = "글수정완료!";
-		}
-		rttr.addFlashAttribute("msg", msg);
-		return "redirect:/mainTemplate/detail/" + diary.getId(); // ## 글수정기능
+	public String update_post(Diary diary, RedirectAttributes rttr,
+	                          @RequestParam(required = false) Long open_scope_id,
+	                          @RequestParam(required = false) Long template_id,
+	                          Principal principal) {
+	    String msg = "fail";
+
+	    Diary existingDiary = diaryService.update_view(diary.getId());
+
+	    //본인 확인
+	    if (!existingDiary.getUser().getEmail().equals(principal.getName())) {
+	        rttr.addFlashAttribute("msg", "본인이 작성한 글만 수정할 수 있습니다.");
+	        return "redirect:/main";
+	    }
+
+	    // 수정 내용 반영
+	    existingDiary.setDiary_title(diary.getDiary_title());
+	    existingDiary.setDiary_content(diary.getDiary_content());
+	    existingDiary.setDiary_emoji(diary.getDiary_emoji());
+
+	    if (open_scope_id != null) {
+	        OpenScope openScope = openScopeService.findOpenScopeById(open_scope_id);
+	        if (openScope != null) {
+	            existingDiary.setOpenScope(openScope);
+	        }
+	    }
+
+	    if (template_id != null) {
+	        Template template = templateService.findTempalteById(template_id);
+	        if (template != null) {
+	            existingDiary.setTemplate(template);
+	        }
+	    }
+
+	    if (diaryService.update(existingDiary) > 0) {
+	        msg = "글수정완료!";
+	    }
+
+	    rttr.addFlashAttribute("msg", msg);
+	    return "redirect:/mainTemplate/detail/" + existingDiary.getId();
 	}
+
+	// ++++++++++++++++++++++ 수정
 
 	// 글 삭제하기
 	@GetMapping("/diary/delete/{id}")
@@ -275,29 +336,33 @@ public class DiaryController {
 		}
 	}
 
+	// ++++++++++++++++++++ 수정
+	@Transactional
 	@PostMapping("/diary/delete/{id}")
 	public String delete_post(@PathVariable Long id, Principal principal, RedirectAttributes rttr) {
 		Diary diary = diaryService.findById(id);
 
-		// 다이어리 존재 여부와 로그인한 사용자가 작성자인지 확인
 		if (diary == null) {
 			rttr.addFlashAttribute("msg", "다이어리를 찾을 수 없습니다.");
 			return "redirect:/main";
 		}
 
-		if (diary.getUser().getEmail().equals(principal.getName())) {
-			// 삭제 처리
-			if (diaryService.delete(diary) > 0) {
-				rttr.addFlashAttribute("msg", "글삭제 성공!");
-			} else {
-				rttr.addFlashAttribute("msg", "글삭제 실패!");
-			}
-		} else {
+		if (!diary.getUser().getEmail().equals(principal.getName())) {
 			rttr.addFlashAttribute("msg", "본인이 작성한 글만 삭제할 수 있습니다.");
+			return "redirect:/main";
+		}
+
+		try {
+			groupDiaryService.deleteByDiary(diary); // 그룹 다이어리 연관 제거
+			diaryService.delete(diary); // 다이어리 + 연관 좋아요 삭제
+			rttr.addFlashAttribute("msg", "글삭제 성공!");
+		} catch (Exception e) {
+			rttr.addFlashAttribute("msg", "글삭제 실패: " + e.getMessage());
 		}
 
 		return "redirect:/main";
 	}
+	// ++++++++++++++++++++ 수정
 
 	/// Group
 	// 그룹 다이어리 쓸 때 목표 그룹 수 만큼 가져오기
@@ -321,7 +386,15 @@ public class DiaryController {
 		User user = userService.findByEmail(email);
 
 		// 오늘 쓰는 날인지 계산
-		User currentUser = group.getUsers().get(group.getCurrentTurn());
+		int currentTurn = group.getCurrentTurn();
+
+		if (currentTurn >= groupSize) {
+			// 턴 리셋
+			currentTurn = 0;
+			group.setCurrentTurn(0);
+			groupService.insertGroup(group); // 저장
+		}
+		User currentUser = group.getUsers().get(currentTurn);
 
 		if (!user.getId().equals(currentUser.getId())) {
 			redirectAttributes.addAttribute("turnMessage", "지금은 차례가 아닙니다.");
@@ -360,11 +433,12 @@ public class DiaryController {
 
 	/// 그룹 다이어리 쓰기(post)
 	@PostMapping("group/{id}/diary/insert")
-	public String insertGroupDiary_post(Diary diary, Principal principal, @PathVariable("id") Long group_id) {
+	public String insertGroupDiary_post(Diary diary, Principal principal,
+			@RequestParam(required = false) Long template_id, @PathVariable("id") Long group_id) {
 		// 유저찾기
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-
+		
 		// 다이어리 저장
 		Diary newDiary = new Diary();
 		newDiary.setDiary_title(diary.getDiary_title());
@@ -373,7 +447,9 @@ public class DiaryController {
 		newDiary.setUser(user);
 		newDiary.setDiary_emoji(diary.getDiary_emoji());
 		newDiary.setOpenScope(diary.getOpenScope());
-		newDiary.setTemplate(diary.getTemplate());
+		
+		Template template = templateService.findTempalteById(template_id);
+		newDiary.setTemplate(template);
 
 		Diary savedDiary = diaryService.insert(newDiary);
 
@@ -394,8 +470,10 @@ public class DiaryController {
 	// 상세보기
 	@GetMapping("group/groupDiaryDetail/{id}")
 	public String groupDiaryDetail_get(@PathVariable("id") Long diary_id, Model model, Principal principal) {
+		
 		// 일기 찾기
 		Diary diary = diaryService.findById(diary_id);
+		
 		if (diary == null) {
 			System.out.println(">>>>> Diary not found: " + diary_id);
 		} else {
@@ -409,18 +487,28 @@ public class DiaryController {
 
 		// 그룹 사이즈 계산
 		int groupSize = group.getUsers().size();
-
-		// 유저의 목표 가져오기(지난 일기 쓴 이후의 목표들 가져오기)
+		
+		//0430
+		//로그인 한 나
+		String email = principal.getName();
+		final User user = userService.findByEmail(email);
+		
+		// 글쓴 유저의 목표 가져오기(지난 일기 쓴 이후의 목표들 가져오기)
 		List<LocalDate> dateList = new ArrayList<>();
 		LocalDate today = diary.getCreate_date().toLocalDate();
 
-		String email = principal.getName();
-		User user = userService.findByEmail(email);
-
+		User diaryUser = diary.getUser();
+		
 		LocalDate startDate = today.minusDays(groupSize - 1);
-		List<Goal> goals = goalService.findOverGoalByUserId(user, startDate);
-		model.addAttribute("goals", goals);
+		List<Goal> goals = goalService.findOverGoalByUserId(diaryUser, startDate);
+		
+		// 목표 공개범위 필터링
+		List<Goal> visibleGoals = goals.stream()
+		    .filter(g -> canViewGoal(g, user))
+		    .collect(Collectors.toList());
+		model.addAttribute("goals", visibleGoals);
 
+		
 		// 그룹 사이즈 만큼의 목표 상태 가져오기
 		model.addAttribute("group", group);
 
@@ -431,7 +519,7 @@ public class DiaryController {
 		model.addAttribute("dateList", dateList);
 
 		Map<String, Map<String, Boolean>> goalStatusDateMap = new HashMap<>();
-		for (Goal g : goals) {
+		for (Goal g : visibleGoals) {
 			Map<String, Boolean> dateSuccessMap = new HashMap<>();
 			for (LocalDate date : dateList) {
 				GoalStatus status = goalSatusService.findByGoalIdAndDate(g.getId(), date);
@@ -450,33 +538,92 @@ public class DiaryController {
 		model.addAttribute("likeCount", likeCount);
 
 		if (principal != null) {
-			email = principal.getName();
-			user = userService.findByEmail(email);
 			boolean isLiked = likeService.isLiked(diary_id, user.getId());
 			model.addAttribute("isLiked", isLiked); // 좋아요 여부 추가
-		} else {
-			model.addAttribute("isLiked", false); // 비로그인 시 좋아요 상태는 false
 		}
+
+		Template template = diary.getTemplate();
+		String theme = template.getTemplate_title();
+		model.addAttribute("theme", theme);
+
 		return "group/groupDiaryDetail";
 	}
 
+	/////////////////////// 0430
+	// 그룹 다이어리 수정
+	@GetMapping("/group/diary/update/{id}")
+	public String updateGroupDiary_get(@PathVariable Long id, Principal principal, Model model,
+			RedirectAttributes rttr) {
+		Diary diary = diaryService.update_view(id); // ## 수정할 글 가져오기
+		if (diary.getUser().getEmail().equals(principal.getName())) {
+			model.addAttribute("dto", diary); // 수정할 일기 가져오기
+			return "group/group_update";
+		} else {
+			rttr.addFlashAttribute("msg", "본인이 작성한 글만 수정할 수 있습니다.");
+			return "redirect:/group/groupDiaryDetail/" + diary.getId();
+		}
+	}
+
+	@PostMapping("/group/diary/update")
+	public String updateGroupDiary_post(Diary diary, RedirectAttributes rttr) {
+		String msg = "fail";
+		if (diaryService.update(diary) > 0) {
+			msg = "글수정완료!";
+		}
+		rttr.addFlashAttribute("msg", msg);
+		return "redirect:/group/groupDiaryDetail/" + diary.getId(); // ## 글수정기능
+	}
+
+	////////////////////////////
 	// 그룹 다이어리 삭제
 	@PostMapping("/group/diary/delete/{id}")
 	public String deleteGroupDiary_post(@PathVariable("id") Long diary_id, Principal principal,
 			RedirectAttributes rttr) {
 		Diary diary = diaryService.findById(diary_id);
 		GroupDiary findGroupDiary = groupDiaryService.findByDiaryId(diary);
+		YL3Group group = findGroupDiary.getGroup();
 
-		groupDiaryService.deleteGroupDiary(findGroupDiary);
-		return "redirect:/main";
+		if (diary.getUser().getEmail().equals(principal.getName())) {
+			// 삭제 처리
+			if (groupDiaryService.deleteGroupDiary(findGroupDiary) > 0) {
+				rttr.addFlashAttribute("msg", "글삭제 성공!");
+			} else {
+				rttr.addFlashAttribute("msg", "글삭제 실패!");
+			}
+		} else {
+			rttr.addFlashAttribute("msg", "본인이 작성한 글만 삭제할 수 있습니다.");
+		}
+
+		return "redirect:/group/group/" + group.getId();
 	}
 
 	// 좋아요 기능
 	@GetMapping("/main/likes")
-	public String getDiarySortedByLikes(Model model) {
-		model.addAttribute("list", diaryService.getDiarySortedByLikes());
-		model.addAttribute("isMainPage", true);
-		return "mainTemplate/main";
+	public String getDiarySortedByLikes(Principal principal, Model model) {
+	    String email = principal.getName();
+	    User user = userService.findByEmail(email);
+
+	    List<Diary> allDiaries = diaryService.findAll();
+
+	    // 공개 범위 필터링 + 좋아요 수 캐싱
+	    Map<Long, Long> likeCountMap = allDiaries.stream()
+	        .filter(diary -> canViewDiary(diary, user))
+	        .collect(Collectors.toMap(
+	            Diary::getId,
+	            diary -> likeService.getLikeCount(diary.getId())
+	        ));
+
+	    // 정렬
+	    List<Diary> sortedVisibleDiaries = allDiaries.stream()
+	        .filter(diary -> canViewDiary(diary, user))
+	        .sorted(Comparator.comparingLong((Diary diary) ->
+	        	likeCountMap.getOrDefault(diary.getId(), 0L)
+	        		).reversed())
+	        .collect(Collectors.toList());
+
+	    model.addAttribute("list", sortedVisibleDiaries);
+	    model.addAttribute("isMainPage", true);
+	    return "mainTemplate/main";
 	}
 
 }

@@ -39,7 +39,7 @@ public class Goal {
 	private String goal_content;
 	
 	@Column(updatable = false)
-	private LocalDate startDate = LocalDate.now();
+	private LocalDate startDate;
 	
 	@Column(nullable=false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

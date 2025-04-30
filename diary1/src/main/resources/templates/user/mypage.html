@@ -82,6 +82,7 @@
 					</a></td>
 					<td scope="row" th:text="${g.goal_content}"
 						style="font-size: 1.1em;"></td>
+					<td scope="row" th:text="${g.startDate}" style="color: #9b9b9b;"></td>
 					<td scope="row" th:text="${g.dueDate}" style="color: #9b9b9b;"></td>
 					<td scope="row" style="text-align: right; padding-right: 1.5em;">
 						<form th:action="@{|/goal/success/${g.id}|}" method="post">
@@ -97,7 +98,7 @@
 		</table>
 
 	</div>
-	<!-- 생성모달 -->
+	<!-- 목표 생성모달 -->
 	<div class="modal fade" id="createGoalModal" tabindex="-1"
 		aria-labelledby="createGoalModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="color: #000;">
@@ -125,7 +126,12 @@
 						</select>
 						<div class="mb-3 d-flex justify-content-around">
 							<div>
-								<label for="dueDate_insert" class="col-form-label">종료일</label> <input
+								<label for="startDate" class="col-form-label">시작일</label> <input
+									type="date" id="startDate_insert" name="startDate" value=""
+									required>
+							</div>
+							<div>
+								<label for="dueDate" class="col-form-label">종료일</label> <input
 									type="date" id="dueDate_insert" name="dueDate" value=""
 									required>
 							</div>
@@ -162,6 +168,10 @@
 								name="goal_content">
 						</div>
 						<div class="mb-3 d-flex justify-content-around">
+							<div>
+								<label for="startDate" class="col-form-label mr-3">시작일</label> <input
+									type="date" id="startDate_update" name="startDate" required>
+							</div>
 							<div>
 								<label for="dueDate" class="col-form-label mr-3">종료일</label> <input
 									type="date" id="dueDate_update" name="dueDate" required>
@@ -251,6 +261,7 @@
 	function validateGoalInsertForm() {
 	    const content = document.getElementById('goal_content_insert').value.trim();
 	    const scope = document.getElementById('openScope_insert').value;
+	    const start = document.getElementById('startDate_insert').value;
 	    const due = document.getElementById('dueDate_insert').value;
 
 	    if (!content) {
@@ -259,6 +270,10 @@
 	    }
 	    if (!scope) {
 	        alert("공개범위를 선택하세요.");
+	        return false;
+	    }
+	    if (!start) {
+	        alert("시작일을 입력하세요.");
 	        return false;
 	    }
 	    if (!due) {
@@ -271,14 +286,19 @@
 	function validateGoalUpdateForm() {
 	    const content = document.getElementById('goal_content_update').value.trim();
 	    const scope = document.getElementById('openScope_update').value;
+	    const start = document.getElementById('startDate_update').value;
 	    const due = document.getElementById('dueDate_update').value;
-	
+
 	    if (!content) {
 	        alert("목표명을 입력하세요.");
 	        return false;
 	    }
 	    if (!scope) {
 	        alert("공개범위를 선택하세요.");
+	        return false;
+	    }
+	    if (!start) {
+	        alert("시작일을 입력하세요.");
 	        return false;
 	    }
 	    if (!due) {

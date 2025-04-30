@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.group.YL3Group;
 
@@ -24,10 +25,12 @@ public class GroupDiary {
 	
 	@ManyToOne
 	@JoinColumn(name = "group_id")
+	@JsonIgnore
 	private YL3Group group;
 	
 	@ManyToOne
 	@JoinColumn(name = "diary_id")
+	@JsonIgnore
 	private Diary diary;
 
 }

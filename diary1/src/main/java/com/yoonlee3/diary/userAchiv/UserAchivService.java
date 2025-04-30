@@ -73,8 +73,11 @@ public class UserAchivService {
 		LocalDate end = goal.getDueDate();
 
 		long totalDays = ChronoUnit.DAYS.between(start, end) + 1;
+		System.out.println("totalDays............" + totalDays);
 		int countTrue = goalSatusService.countStatusDay(goal, start, end);
+		System.out.println("counTrue......." + countTrue);
 		double userAchivCalc = totalDays > 0 ? countTrue / (double) totalDays : 0;
+		System.out.println("userAchivCalc.............." + userAchivCalc);
 
 		UserAchiv existing = userAchivRepository.findByGoalId(goal.getId());
 

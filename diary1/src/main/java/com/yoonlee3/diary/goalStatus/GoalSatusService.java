@@ -53,7 +53,7 @@ public class GoalSatusService {
 	}
 	// 기간 내의 목표 상태들 가져오기
 	public int countStatusDay(Goal goal, LocalDate start, LocalDate end) {
-		return goalStatusRepository.findStatusDay( goal.getId(), start, end );
+		return goalStatusRepository.countStatusDay( goal.getId(), start, end );
 	}
 
 	public Optional<GoalStatus> findStatusById(Goal goal) {

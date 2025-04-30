@@ -38,7 +38,7 @@ public class FollowController {
 
         List<UserProfileDto> followings = followService.getFollowings(user)
                 .stream()
-                .map(f -> new UserProfileDto(f.getFollowing().getId(), f.getFollowing().getUsername()))
+                .map(f -> new UserProfileDto(f.getFollowing().getId(), f.getFollowing().getUsername(), f.getFollowing().getProfileImageUrl()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(followings);
@@ -51,7 +51,7 @@ public class FollowController {
 
         List<UserProfileDto> followers = followService.getFollowers(user)
                 .stream()
-                .map(f -> new UserProfileDto(f.getFollower().getId(), f.getFollower().getUsername()))
+                .map(f -> new UserProfileDto(f.getFollower().getId(), f.getFollower().getUsername(),f.getFollower().getProfileImageUrl()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(followers);

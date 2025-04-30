@@ -17,11 +17,18 @@ public class TemplateService {
 	
     @PostConstruct
     public void initializeOpenScopes() {
-        Template privateTemplate = new Template();
-        privateTemplate.setTemplate_title("흰색");
-        privateTemplate.setTemplate_content("white");
+        Template privateTemplate1 = new Template();
+        privateTemplate1.setTemplate_title("theme1");
         
-        templateRepositroy.save(privateTemplate);
+        Template privateTemplate2 = new Template();
+        privateTemplate2.setTemplate_title("theme2");
+        
+        Template privateTemplate3 = new Template();
+        privateTemplate3.setTemplate_title("theme3");
+        
+        templateRepositroy.save(privateTemplate1);
+        templateRepositroy.save(privateTemplate2);
+        templateRepositroy.save(privateTemplate3);
     }
 	
 	public Template findTempalteById(Long template_id ) {

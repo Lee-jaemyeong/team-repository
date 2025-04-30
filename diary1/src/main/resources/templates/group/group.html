@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-   layout:decorate="~{fragments/layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}">
 
 <th:block layout:fragment="content">
 	<div class="container-fluid p-3"
 		style="border-bottom: 1px solid #9d9d9d;">
-		<div th:each="user : ${users}">
-			<div th:text="${user.username}" class="user-item"
-				th:attr="data-user-id=${user.id}, data-username=${user.username}"
-				style="cursor: pointer;"></div>
+		<div style="display: flex; flex-wrap: wrap;">
+			<div th:each="user : ${users}">
+				<div th:text="${user.username}" class="user-item"
+					th:attr="data-user-id=${user.id}, data-username=${user.username}"
+					style="cursor: pointer; width: 60px; height: 60px; border-radius: 50%; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin: 5px;"></div>
+			</div>
 		</div>
 	</div>
 	<div class="container-fluid p-3">
@@ -29,7 +31,10 @@
 									style="font-size: 22px; margin-left: 8px; color: #964b00;"
 									class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
 									th:text="${d.diary.diary_title}"
-									th:href="@{|/group/groupDiaryDetail/${d.diary.id}|}"></a></li>
+									th:href="@{|/group/groupDiaryDetail/${d.diary.id}|}"></a><a
+									style="font-size: 15px; margin-left: 8px; color: #964b00;"
+									class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+									th:text="${#temporals.format(d.diary.create_date, 'yyyy-MM-dd')}"></a></li>
 							</ul>
 						</li>
 						<li class="ms-auto p-2 align-self-center" style="text-align: end;"
@@ -48,6 +53,9 @@
 							<div class="modal-body text-center">
 								<p id="selectedUsername"
 									style="font-size: 20px; font-weight: bold;"></p>
+								<p class="text-danger small" id="blockNotice"
+									style="display: none;">※ 유저를 차단하거나 유저가 나를 차단한 경우 팔로우를 할 수
+									없습니다.</p>
 								<button id="followBtn" class="btn btn-primary m-2">팔로우하기</button>
 
 								<!-- 방장만 보이는 탈퇴 버튼 -->
@@ -67,6 +75,10 @@
 	</script>
 	</th:block>
 	<script th:inline="javascript">
+		const blockedUserIds = [[${blockedUserIds}]];
+  		const usersWhoBlockedMe = [[${usersWhoBlockedMeIds}]]; // List<Long> 또는 Set<Long>
+	</script>
+	<script th:inline="javascript">
 	document.addEventListener("DOMContentLoaded", function() {
 	    const userItems = document.querySelectorAll('.user-item');
 	    const group_id = [[${group.id}]];
@@ -76,6 +88,7 @@
 	        item.addEventListener('click', function() {
 	            const user_id = this.getAttribute('data-user-id');
 	            const username = this.getAttribute('data-username');
+			    const myId = [[${myId}]];
 	
 	            // 모달에 사용자 이름 표시
 	            document.getElementById('selectedUsername').innerText = username;
@@ -86,11 +99,31 @@
 	            // 강퇴 버튼에도 user_id 저장
 	            document.getElementById('kickBtn').setAttribute('data-user-id', user_id);
 				
-	            if (isLeader) {
+	            // 유저가 나면 버튼 안보이게 하기
+	           if (user_id === String(myId)) {
+    				kickBtn.style.display = 'none';
+   				 	followBtn.style.display = 'none';
+				} else {
+    				followBtn.style.display = 'inline-block'; 
+				}
+	            
+	            if (user_id != String(myId) && isLeader) {
 	                document.getElementById('kickBtn').style.display = 'inline-block';
 	            } else {
 	                document.getElementById('kickBtn').style.display = 'none';
 	            }
+	            
+	            // 나를 차단한 유저면 팔로우 버튼 안보이게 하기
+	            if (Array.isArray(usersWhoBlockedMe) && usersWhoBlockedMe.includes(Number(user_id))) {
+	            	document.getElementById("blockNotice").style.display = "block";
+					followBtn.style.display = 'none';
+				}
+	            
+	            // 내가 차단한 유저면 팔로우 버튼 안보이게 하기
+	            if ( Array.isArray(blockedUserIds) && blockedUserIds.includes(Number(user_id))) {
+	        		document.getElementById("blockNotice").style.display = "block";
+					followBtn.style.display = 'none';
+				}
 	            
 	            var userModal = new bootstrap.Modal(document.getElementById('userActionModal'));
 	            userModal.show();

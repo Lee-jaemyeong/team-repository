@@ -12,7 +12,9 @@ import org.springframework.data.repository.query.Param;
 import com.yoonlee3.diary.user.User;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
+	// C
 	
+	//R
 	@Query("select d from Diary d order by d.id desc")
 	List<Diary> findAllByOrderByDesc();
 
@@ -22,18 +24,21 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     @Query("SELECT d FROM Diary d WHERE d.user.email = :email ORDER BY d.create_date DESC")
     List<Diary> findByUserEmail(@Param("email") String email);
 	
+    // U
 	@Modifying
 	@Transactional
 	@Query("update Diary d set d.diary_title= :diary_title, d.diary_content= :diary_content, d.diary_emoji= :diary_emoji where d.id= :id")
 	int updateById(@Param("id") Long id, String diary_title, String diary_content, String diary_emoji);
-
+	
+	//D
 	@Modifying
 	@Transactional
 	@Query("delete from Diary d where d.id= :id")
 	int deleteByDId(Long id);
-
+	
 	long countByUser(User currentUser);
 	
+	// 종아요
 	@Query("select d ,  count(l)  as likeCount "
 		         + "from Diary d left join Likes l on d.id = l.diary.id  "
 		         + "group by d  "

@@ -20,84 +20,57 @@
     <div id="searchResult" class="mt-3"></div>
 
     <script>
-        document.getElementById("searchBtn").addEventListener("click", function () {
-            const keyword = document.getElementById("searchInput").value.trim();
-            const searchType = "group";  // 그룹만 검색하도록 고정
-            
-            if (!keyword) {
-                alert("검색어를 입력해주세요.");
-                return;
-            }
+	    document.getElementById("searchBtn").addEventListener("click", function () {
+	        const keyword = document.getElementById("searchInput").value.trim();
+	        const searchType = "group";  // 그룹만 검색하도록 고정
+	        
+	        if (!keyword) {
+	            alert("검색어를 입력해주세요.");
+	            return;
+	        }
 
-            console.log("검색어:", keyword);  // 검색어 확인
+	        console.log("검색어:", keyword);  // 검색어 확인
 
-            fetch(`/search/${searchType}/${encodeURIComponent(keyword)}`)  // URL에 검색 유형 추가
-            .then(response => response.json())
-            .then(data => {
-                console.log("서버 응답 데이터:", data);  // 서버 응답 데이터 확인
-                const resultDiv = document.getElementById("searchResult");
+	        fetch(`/search/${searchType}/${encodeURIComponent(keyword)}`)  // URL에 검색 유형 추가
+	            .then(response => {
+	                console.log("응답 상태:", response);
+	                if (!response.ok) {
+	                    throw new Error("서버 응답 오류");
+	                }
+	                return response.json();  // 응답을 JSON으로 변환
+	            })
+	            .then(data => {
+	                console.log("서버 응답 데이터:", data);  // 서버 응답 데이터 확인
+	                const resultDiv = document.getElementById("searchResult");
 
-                if (data.status === "success") {
-                    let html = "<h5>🔍 검색 결과</h5><ul>";
+	                if (data.status === "success") {
+	                    let html = "<h5>🔍 검색 결과</h5><ul>";
 
-                    if (data.groups && data.groups.id) {
-                        // groups는 객체 형태로 반환되므로 그룹을 객체로 처리
-                        const group = data.groups;  // 단일 그룹 객체
-                        html += `
-                            <li>
-                                <strong>그룹 이름:</strong> ${group.group_title}
-                                <div class="ms-auto p-2 bd-highlight align-self-center" style="width: 100%; text-align: end;">
-                                    <button type="button" class="btn"
-                                        style="background-color: #f8b739; color: white; font-weight: bold;"
-                                        onclick="joinGroup('${group.id}')">
-                                        가입하기
-                                    </button>
-                                </div>
-                            </li>
-                        `;
-                    } else {
-                        html += "<li>🔹 해당하는 그룹이 없습니다.</li>";
-                    }
+	                    if (data.groups) {
+	                        // groups가 있을 때
+	                        html += `
+	                            <li>
+	                                <strong>그룹 이름:</strong> ${data.groups.group_title} <br>
+	                                <strong>배지:</strong> ${data.groups.badge_title}
+	                            </li>
+	                        `;
+	                    } else {
+	                        html += "<li>🔹 해당하는 그룹이 없습니다.</li>";
+	                    }
 
-                    html += "</ul>";
-                    resultDiv.innerHTML = html;
+	                    html += "</ul>";
+	                    resultDiv.innerHTML = html;
 
-                } else {
-                    resultDiv.innerHTML = "<p class='text-danger'>검색 결과가 없습니다.</p>";
-                }
-            })
-            .catch(error => {
-                console.error("에러 발생:", error);
-                document.getElementById("searchResult").innerHTML =
-                    "<p class='text-danger'>검색 중 오류가 발생했습니다.</p>";
-            });
-        });
-
-        // 그룹 가입 로직 추가
-        function joinGroup(groupId) {
-            console.log("그룹 가입하기 버튼 클릭, 그룹 ID:", groupId);
-            
-            fetch(`/groups/join/${groupId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('authToken')  // 인증 토큰이 필요한 경우
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-			    if (data.status === "success") {
-			        alert(data.message);
-			        // 예: 버튼 비활성화하거나 "가입 완료"로 바꾸기
-			    } else {
-			        alert(data.message);
-			    }
-			})
-            .catch(error => {
-                console.error("가입 오류 발생:", error);
-                alert("그룹 가입 중 오류가 발생했습니다.");
-            });
-        }
+	                } else {
+	                    resultDiv.innerHTML = "<p class='text-danger'>검색 결과가 없습니다.</p>";
+	                }
+	            })
+	            .catch(error => {
+	                console.error("에러 발생:", error);
+	                document.getElementById("searchResult").innerHTML =
+	                    "<p class='text-danger'>검색 중 오류가 발생했습니다.</p>";
+	            });
+	    });
     </script>
 </th:block>
 </html>

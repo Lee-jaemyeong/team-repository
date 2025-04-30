@@ -42,7 +42,7 @@ public class DiaryService {
 	
 	public int update(Diary diary) {
 		return diaryRepository.updateById(
-			diary.getId(),diary.getDiary_title(),diary.getDiary_content(),diary.getDiary_emoji()
+			diary.getId(),diary.getDiary_title(),diary.getDiary_content(), diary.getDiary_emoji()
 		);
 	}
 	

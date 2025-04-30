@@ -65,24 +65,42 @@ import com.yoonlee3.diary.user_navermail.NaverMail;
 @Controller
 public class UserController {
 
-	@Autowired UserService userService;
-	@Autowired UserRepository userRepository;
-	@Autowired private PasswordEncoder passwordEncoder;
-	@Autowired KakaoLogin api;
-	@Autowired DiaryService diaryService;
-	@Autowired DiaryRepository diaryRepository;
-	@Autowired FollowRepository followRepository;
-	@Autowired private GoalService goalService;
-	@Autowired JoinToGroupService joinToGroupService;
-	@Autowired GroupService groupService;
-	@Autowired GoalSatusService goalSatusService;
-	@Autowired GoalStatusRepository goalStatusRepository;
-	@Autowired BlockRepository blockRepository;
-	@Autowired FollowService followService;
-	@Autowired GroupDiaryRepository groupDiaryRepository;
-	@Autowired GroupRepository groupRepository;
-	@Autowired UserAchivService userAchivService;
-	@Autowired NaverMail naverMail;
+	@Autowired
+	UserService userService;
+	@Autowired
+	UserRepository userRepository;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	KakaoLogin api;
+	@Autowired
+	DiaryService diaryService;
+	@Autowired
+	DiaryRepository diaryRepository;
+	@Autowired
+	FollowRepository followRepository;
+	@Autowired
+	private GoalService goalService;
+	@Autowired
+	JoinToGroupService joinToGroupService;
+	@Autowired
+	GroupService groupService;
+	@Autowired
+	GoalSatusService goalSatusService;
+	@Autowired
+	GoalStatusRepository goalStatusRepository;
+	@Autowired
+	BlockRepository blockRepository;
+	@Autowired
+	FollowService followService;
+	@Autowired
+	GroupDiaryRepository groupDiaryRepository;
+	@Autowired
+	GroupRepository groupRepository;
+	@Autowired
+	UserAchivService userAchivService;
+	@Autowired
+	NaverMail naverMail;
 
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -94,6 +112,11 @@ public class UserController {
 				model.addAttribute("user", user);
 				List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 				model.addAttribute("groups", groups);
+
+				// 작성한 일기 수 가져오기
+				long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
+				model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+
 			} else {
 				model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
 				model.addAttribute("groups", Collections.emptySet());
@@ -232,78 +255,75 @@ public class UserController {
 
 	@PostMapping("/user/find")
 	public String find_form(@RequestParam("email") String email, Model model) {
-	    try {
-	        User user = userService.findByEmail(email);
-	        
-	        // 1. 비밀번호 재설정 토큰 생성
-	        String resetToken = UUID.randomUUID().toString();
-	        user.setResetToken(resetToken);
-	        userRepository.save(user);
-	        
-	        // 2. 이메일 전송
-	        String resetLink = "http://localhost:8080/user/reset?token=" + resetToken;
-	        sendPasswordResetEmail(email, resetLink);
-	        
-	        model.addAttribute("msg", "비밀번호 재설정 이메일을 보냈습니다.");
-	        return "user/find";
-	    } catch (RuntimeException e) {
-	        model.addAttribute("msg", "가입되지 않은 이메일입니다.");
-	        return "user/find";
-	    }
+		try {
+			User user = userService.findByEmail(email);
+
+			// 1. 비밀번호 재설정 토큰 생성
+			String resetToken = UUID.randomUUID().toString();
+			user.setResetToken(resetToken);
+			userRepository.save(user);
+
+			// 2. 이메일 전송
+			String resetLink = "http://localhost:8080/user/reset?token=" + resetToken;
+			sendPasswordResetEmail(email, resetLink);
+
+			model.addAttribute("msg", "비밀번호 재설정 이메일을 보냈습니다.");
+			return "user/find";
+		} catch (RuntimeException e) {
+			model.addAttribute("msg", "가입되지 않은 이메일입니다.");
+			return "user/find";
+		}
 	}
 
 	private void sendPasswordResetEmail(String email, String resetLink) {
-	    String subject = "비밀번호 재설정 이메일";
-	    String content = "아래 버튼을 클릭하여 비밀번호를 재설정해 주세요:<br><br>"
-	                   + "<a href='" + resetLink + "' "
-	                   + "style='display:inline-block;padding:10px 20px;background-color:#007bff;"
-	                   + "color:white;text-decoration:none;border-radius:5px;'>비밀번호 재설정하기</a><br><br>"
-	                   + "이 링크는 1회용이며, 일정 시간 후 만료됩니다.";
+		String subject = "비밀번호 재설정 이메일";
+		String content = "아래 버튼을 클릭하여 비밀번호를 재설정해 주세요:<br><br>" + "<a href='" + resetLink + "' "
+				+ "style='display:inline-block;padding:10px 20px;background-color:#007bff;"
+				+ "color:white;text-decoration:none;border-radius:5px;'>비밀번호 재설정하기</a><br><br>"
+				+ "이 링크는 1회용이며, 일정 시간 후 만료됩니다.";
 
-	    naverMail.sendMail(subject, content, email);  // content는 HTML 형식
+		naverMail.sendMail(subject, content, email); // content는 HTML 형식
 	}
 
 	@GetMapping("/user/reset")
 	public String resetPassword(@RequestParam("token") String token, Model model) {
-	    Optional<User> userOpt = userRepository.findByResetToken(token);
-	    
-	    if (userOpt.isPresent()) {
-	        model.addAttribute("token", token);  // 토큰을 hidden field로 전달
-	        return "user/passchange";  // 비밀번호 변경 페이지로 이동
-	    } else {
-	        model.addAttribute("msg", "유효하지 않은 링크입니다.");
-	        return "user/find";  // 유효하지 않은 토큰일 경우 다시 이메일 입력 페이지로 돌아감
-	    }
-	}	
-	
+		Optional<User> userOpt = userRepository.findByResetToken(token);
+
+		if (userOpt.isPresent()) {
+			model.addAttribute("token", token); // 토큰을 hidden field로 전달
+			return "user/passchange"; // 비밀번호 변경 페이지로 이동
+		} else {
+			model.addAttribute("msg", "유효하지 않은 링크입니다.");
+			return "user/find"; // 유효하지 않은 토큰일 경우 다시 이메일 입력 페이지로 돌아감
+		}
+	}
+
 	@GetMapping("/user/passchange")
 	public String passchange() {
 		return "user/passchange";
 	}
 
 	@PostMapping("/user/passchange")
-	public String passchange_form(
-	    @RequestParam("token") String token,  // 토큰을 hidden field로 받음
-	    @RequestParam("password") String password, 
-	    Model model) {
+	public String passchange_form(@RequestParam("token") String token, // 토큰을 hidden field로 받음
+			@RequestParam("password") String password, Model model) {
 
-	    Optional<User> opuser = userRepository.findByResetToken(token);  // 토큰을 통해 사용자 찾기
-	    
-	    if (opuser.isPresent()) {
-	        User user = opuser.get();
-	        
-	        // 비밀번호 암호화
-	        String encodedPassword = passwordEncoder.encode(password);
-	        user.setPassword(encodedPassword);
-	        user.setResetToken(null);  // 토큰 삭제
-	        userRepository.save(user);
-	        
-	        model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
-	        return "redirect:/user/login";  // 로그인 페이지로 리다이렉트
-	    } else {
-	        model.addAttribute("msg", "유효하지 않은 링크입니다.");
-	        return "user/find";  // 유효하지 않은 링크일 경우 다시 이메일 입력 페이지로 돌아감
-	    }
+		Optional<User> opuser = userRepository.findByResetToken(token); // 토큰을 통해 사용자 찾기
+
+		if (opuser.isPresent()) {
+			User user = opuser.get();
+
+			// 비밀번호 암호화
+			String encodedPassword = passwordEncoder.encode(password);
+			user.setPassword(encodedPassword);
+			user.setResetToken(null); // 토큰 삭제
+			userRepository.save(user);
+
+			model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
+			return "redirect:/user/login"; // 로그인 페이지로 리다이렉트
+		} else {
+			model.addAttribute("msg", "유효하지 않은 링크입니다.");
+			return "user/find"; // 유효하지 않은 링크일 경우 다시 이메일 입력 페이지로 돌아감
+		}
 	}
 
 	// 프로필 수정
@@ -363,21 +383,7 @@ public class UserController {
 
 				// 2. 유저가 속한 그룹에서 유저를 그룹장으로 설정되어 있는 경우 처리
 				for (YL3Group group : user.getGroups()) {
-					// 유저가 쓴 일기를 가져오고, 그 일기를 그룹 - 다이어리 연결 끊고, 다이어리 삭제 후 탈퇴
-					// 1. 유저가 쓴 일기 가져오기
-					List<Diary> diares = diaryService.findByUserId(user.getId());
-					// 2. 그 일기들 그룹 - 다이어리 연결 끊기
-					for( Diary d : diares) {
-						GroupDiary groupDiary = groupDiaryRepository.findByDiaryId(d.getId());
-						if (groupDiary != null) {
-						    groupDiaryRepository.deleteGroupDiary(groupDiary.getId());
-						}
-					}
-					// 3. 다이어리 삭제하기
-					for(Diary d : diares) {
-						diaryService.delete(d);
-					}
-					
+
 					if (group.getGroup_leader().equals(user)) {
 						if (!group.getUsers().isEmpty()) {
 							// 새로운 그룹장 설정
@@ -393,15 +399,34 @@ public class UserController {
 							groupService.deleteGroup(group); // 유저가 유일한 멤버일 경우 그룹 삭제
 						}
 					}
-					
+
 					group.getUsers().remove(user);
 					groupRepository.save(group); // 그룹 정보 업데이트
 				}
+
+				// 유저가 쓴 다이어리 삭제하기
+				// 유저가 쓴 일기를 가져오고, 그 일기를 그룹 - 다이어리 연결 끊고, 다이어리 삭제 후 탈퇴
+				// 1. 유저가 쓴 일기 가져오기
+				List<Diary> diares = diaryService.findByUserId(user.getId());
+				// 2. 그 일기들 그룹 - 다이어리 연결 끊기
+				for (Diary d : diares) {
+					GroupDiary groupDiary = groupDiaryRepository.findByDiaryId(d.getId());
+					if (groupDiary != null) {
+						System.out.println("그룹 다이어리 아이디........" + groupDiary.getId());
+						groupDiaryRepository.deleteGroupDiary(groupDiary.getId());
+						groupDiaryRepository.flush();
+					}
+				}
+				// 3. 다이어리 삭제하기
+				for (Diary d : diares) {
+					diaryService.delete(d);
+				}
+
 				// 3. 유저의 목표 삭제
 				List<Goal> goals = goalService.findByUserId(user);
-				for(Goal goal : goals) {
+				for (Goal goal : goals) {
 					// achiv 삭제
-					if(userAchivService.selectById(goal).isPresent()) {
+					if (userAchivService.selectById(goal).isPresent()) {
 						userAchivService.deleteUserAchive(goal);
 					}
 					goalService.deleteGoal(goal, user.getId());
@@ -487,25 +512,37 @@ public class UserController {
 		return "user/follow";
 	}
 
-	// 유저 검색하기
+	// 유저 검색하기 ////////////0430
 	@GetMapping("/search/users")
 	@ResponseBody
 	public List<UserProfileDto> searchUsers(@RequestParam("keyword") String keyword,
 			@RequestParam("currentUserId") Long currentUserId) {
-		// 차단된 유저 목록 가져오기
+
+		// 내가 차단한 유저들
 		List<User> blockedUsers = userService.getBlockedUsers(currentUserId);
 		Set<Long> blockedUserIds = blockedUsers.stream().map(User::getId).collect(Collectors.toSet());
 
-		// 검색된 유저 목록 가져오기 (이때는 사용자 이름을 포함하는 유저들만 가져옵니다)
+		// 나를 차단한 유저들
+		List<User> usersWhoBlockedMe = userService.getUsersWhoBlocked(currentUserId);
+		Set<Long> usersWhoBlockedMeIds = usersWhoBlockedMe.stream().map(User::getId).collect(Collectors.toSet());
+
+		// 전체 제외 대상
+		Set<Long> excludedIds = new HashSet<>();
+		excludedIds.addAll(blockedUserIds);
+		excludedIds.addAll(usersWhoBlockedMeIds);
+		excludedIds.add(currentUserId); // 자기 자신도 제외
+
+		// 검색 결과 가져오기
 		List<User> allUsers = userRepository.findByUsernameContainingIgnoreCase(keyword);
 
-		// 차단된 유저를 제외한 목록 필터링
-		List<User> filteredUsers = allUsers.stream().filter(user -> !blockedUserIds.contains(user.getId()))
+		// 제외 대상 필터링
+		List<User> filteredUsers = allUsers.stream().filter(user -> !excludedIds.contains(user.getId()))
 				.collect(Collectors.toList());
 
-		// UserProfileDto로 변환하여 반환
-		return filteredUsers.stream().map(user -> new UserProfileDto(user.getId(), user.getUsername()))
+		return filteredUsers.stream()
+				.map(user -> new UserProfileDto(user.getId(), user.getUsername(), user.getProfileImageUrl()))
 				.collect(Collectors.toList());
+
 	}
 
 	@GetMapping("/user/follow/counts")
