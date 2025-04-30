@@ -1,16 +1,20 @@
 package com.yoonlee3.diary.follow;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.yoonlee3.diary.diary.DiaryRepository;
+import com.yoonlee3.diary.group.YL3Group;
+import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserRepository;
 import com.yoonlee3.diary.user.UserService;
@@ -25,6 +29,8 @@ public class BlockController {
 	private final FollowService followService;
 	private final FollowRepository followRepository;
 	private final DiaryRepository diaryRepository;
+	@Autowired
+	JoinToGroupService joinToGroupService;
 
 	public BlockController(BlockService blockService, UserService userService, UserRepository userRepository,
 			FollowService followService, FollowRepository followRepository, DiaryRepository diaryRepository) {
@@ -35,7 +41,43 @@ public class BlockController {
 		this.followRepository = followRepository; 
 		this.diaryRepository = diaryRepository; 
 	}
+	
+	@ModelAttribute
+	public void NicknameToModel(Model model, Principal principal) {
+		if (principal != null) {
+			String email = principal.getName();
+			User user = userService.findByEmail(email);
+			model.addAttribute("nickname", user.getUsername());
+			model.addAttribute("user", user);
 
+			List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+			model.addAttribute("groups", groups);
+			
+			// 나를 차단한 유저들
+			List<User> usersWhoBlockedMe = userService.getUsersWhoBlocked(user.getId());
+			Set<Long> usersWhoBlockedMeIds = usersWhoBlockedMe.stream()
+			        .map(User::getId)
+			        .collect(Collectors.toSet());
+			model.addAttribute("usersWhoBlockedMeIds", usersWhoBlockedMeIds);
+			
+			// 내가 차단한 유저들
+			Set<Long> blockedUserIds = userService.getBlockedUsers(user.getId())
+				    .stream()
+				    .map(User::getId)
+				    .collect(Collectors.toSet());
+			model.addAttribute("blockedUserIds", blockedUserIds);
+			
+			
+			// 작성한 일기 수 가져오기
+			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
+			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+
+		} else {
+			model.addAttribute("nickname", "Guest");
+			model.addAttribute("groups", Collections.emptySet());
+		}
+	}
+	
 	// 차단
     @PostMapping
     public ResponseEntity<String> block(@RequestParam Long blockerId, @RequestParam Long blockedId) {
@@ -61,11 +103,8 @@ public class BlockController {
                 .orElseThrow(() -> new RuntimeException("차단된 사용자 없음"));
 
         blockService.unblockUser(blocker, blocked);
-
-        // 차단 해제 시 팔로우 복원
-        followService.follow(blocker, blocked);  // 팔로우 다시 하기
         
-        return ResponseEntity.ok("차단 해제 및 팔로우 복원 성공");
+        return ResponseEntity.ok("차단 해제 성공");
     }
 
     // 차단 여부 확인
@@ -124,10 +163,13 @@ public class BlockController {
         model.addAttribute("followings", followings);  // 팔로잉
         model.addAttribute("followerCount", followerCount);  // 팔로워 수
         model.addAttribute("followingCount", followingCount);  // 팔로잉 수
+        model.addAttribute("diaryCount", diaryCount);  // 작성한 일기 수
         model.addAttribute("currentUserId", currentUserId);  // 현재 사용자 ID
         model.addAttribute("blockedUsers", blockedUsers);  // 차단된 사용자 목록
         model.addAttribute("blockedUserIds", blockedUserIds);  // 차단된 사용자 ID 목록
 
         return "block/list"; // block/list.html 페이지로 리턴
     }
+    
+  
 }

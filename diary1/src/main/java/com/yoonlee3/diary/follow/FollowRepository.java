@@ -1,6 +1,8 @@
 package com.yoonlee3.diary.follow;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.yoonlee3.diary.user.User;
@@ -18,12 +20,13 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 	void deleteByFollowerAndFollowing(User follower, User following);
 	
 	// 팔로우 관계를 찾기 위한 메소드
-	Follow findByFollowerAndFollowing(User follower, User following); 
+	Optional<Follow> findByFollowerAndFollowing(User follower, User following);
 
 	// 팔로워 수
     long countByFollowing(User user);
 
     // 팔로잉 수
     long countByFollower(User user);
+    
 
 }

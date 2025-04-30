@@ -5,21 +5,70 @@
 
 <th:block layout:fragment="content">
 	<div class="container-fluid p-3">
-		<h1 class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.8em;">달성 완료!</h1>
+	
+    <canvas id="goalChart" width="400" height="200"></canvas>
+    
+    <script>
+        const ctx = document.getElementById('goalChart').getContext('2d');
+        
+        const goalData = [[${goalData}]];
+        /* const goalData = [{completionRate=1.0, getGoal_content=목표2}, {completionRate=1.0, getGoal_content=목표3}]; 
+        ㅠㅠ 왜 목표명이 자꾸 문자열로 변환이 안되냐고오오오*/
+
+        console.log("데이터 확인용:"+goalData);
+        
+        const labels = goalData.map(data => data.goal.goal_content); // 목표명 배열
+        const data = goalData.map(data => data.completionRate*100); // 달성률 배열
+
+        // Chart.js 설정
+        new Chart(ctx, {
+            type: 'bar', // 차트 타입 
+            data: {
+                labels: labels, // x축 (목표명)
+                datasets: [{
+                    label: '달성률',
+                    data: data, // y축 (달성률)
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                    	beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value*100 + '%'; // y축 값에 % 표시
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+	
+	
+	
+	
+		<h1 class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.8em;">달성
+			완료!</h1>
 		<table class="table table-hover">
 			<caption>나의 완료 목표</caption>
-			<thead  class="table-success">
+			<thead class="table-success">
 				<tr>
 					<th scope="col">목표명</th>
-					<th scope="col">기간</th>
+					<th scope="col">시작 날짜</th>
+					<th scope="col">끝난 날짜</th>
 					<th scope="col">달성률</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td scope="row">물 많이먹기</td>
-					<td scope="row" style="color: #9b9b9b;">2025.04.21~2025.05.21</td>
-					<td scope="row">nn%</td>
+				<tr th:each="a : ${achivs}">
+					<td th:text="${a.goal.goal_content}">목표명</td>
+					<td th:text="${a.goal.startDate}">시작일</td>
+					<td th:text="${a.goal.dueDate}">종료일</td>
+					<td th:text="${a.completionRate}">달성률</td>
 				</tr>
 			</tbody>
 		</table>

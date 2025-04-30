@@ -18,9 +18,9 @@
 		</script>
 			<div class="container-fluid p-3">
 			<ul class="nav nav-tavs  justify-content-center text-center">
-				<li class="nav-item w-50"><a th:href="@{/main}" class="btn w-100">기본 정렬</a></li>
-				<li class="nav-item w-50"><a th:href="@{/main/likes}" class="btn w-100">추천 순</a></li>
-			</ul>			
+            <li class="nav-item w-50"><a th:href="@{/main}" class="btn w-100">기본 정렬</a></li>
+            <li class="nav-item w-50"><a th:href="@{/main/likes}" class="btn w-100">추천 순</a></li>
+         	</ul>
 			<!-- <div> <img src="https://placehold.co/80x80" alt="" class="rounded-circle p-2 bd-highlight" style="margin-right: 5px;"> </div>-->
 			<p th:if="${#lists.isEmpty(list)}" >등록된 일기가 없습니다.</p>
 			<th:block  th:each="dto, state : ${list}">

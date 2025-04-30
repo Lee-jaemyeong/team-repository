@@ -1,5 +1,7 @@
 package com.yoonlee3.diary.badge;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -25,19 +27,19 @@ public class BadgeService {
         if (badgeRepository.count() == 0) {
 
             Badge firstBadge = new Badge();
-            firstBadge.setBadge_title("씨앗");
+            firstBadge.setBadge_title("🌱");
 
             Badge secondBadge = new Badge();
-            secondBadge.setBadge_title("새싹");
+            secondBadge.setBadge_title("☘️");
 
             Badge thirdBadge = new Badge();
-            thirdBadge.setBadge_title("줄기");
+            thirdBadge.setBadge_title("🌿");
 
             Badge fourthBadge = new Badge();
-            fourthBadge.setBadge_title("떡잎");
+            fourthBadge.setBadge_title("🌼");
 
             Badge fifthBadge = new Badge();
-            fifthBadge.setBadge_title("나무");
+            fifthBadge.setBadge_title("🌳");
             
             // 공개 범위 값을 데이터베이스에 저장
             badgeRepository.save(firstBadge);
@@ -49,4 +51,21 @@ public class BadgeService {
             System.out.println("초기 뱃지가 데이터베이스에 저장되었습니다.");
         }
     }
+	
+	public int calculateBadgeLevel(LocalDate createDate) {
+	    LocalDate today = LocalDate.now();
+	    long monthsBetween = ChronoUnit.MONTHS.between(createDate, today);
+
+	    int badgeLevel = (int) monthsBetween;
+
+	    if (badgeLevel < 1) {
+	    	badgeLevel = 1; // 5단계 이상은 고정
+	    }
+	    
+	    if (badgeLevel > 5) {
+	        badgeLevel = 5; // 5단계 이상은 고정
+	    }
+
+	    return badgeLevel;
+	}
 }

@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.template.Template;
@@ -63,6 +64,7 @@ public class Diary {
 	private Template template;
 	
 	@OneToMany(mappedBy = "diary")
+	@JsonIgnore
 	private List<GroupDiary> groupDiaries;
 	
 }

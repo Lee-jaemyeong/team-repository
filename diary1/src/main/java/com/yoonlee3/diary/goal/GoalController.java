@@ -3,8 +3,11 @@ package com.yoonlee3.diary.goal;
 import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.goalStatus.GoalSatusService;
 import com.yoonlee3.diary.goalStatus.GoalStatus;
 import com.yoonlee3.diary.group.YL3Group;
@@ -31,14 +35,20 @@ import com.yoonlee3.diary.userAchiv.UserAchivService;
 
 @Controller
 public class GoalController {
-	
-	@Autowired GoalService goalService;
-	@Autowired UserService userService;
-	@Autowired GoalSatusService goalSatusService;
-	@Autowired OpenScopeService openScopeService;
-	@Autowired UserAchivService userAchivService;
-	@Autowired JoinToGroupService joinToGroupService;
-	
+
+	@Autowired
+	GoalService goalService;
+	@Autowired
+	UserService userService;
+	@Autowired
+	GoalSatusService goalSatusService;
+	@Autowired
+	OpenScopeService openScopeService;
+	@Autowired
+	UserAchivService userAchivService;
+	@Autowired
+	JoinToGroupService joinToGroupService;
+
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
 		if (principal != null) {
@@ -47,7 +57,7 @@ public class GoalController {
 			if (user != null) {
 				model.addAttribute("nickname", user.getUsername());
 				model.addAttribute("user", user);
-				Set<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+				List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 				model.addAttribute("groups", groups);
 			} else {
 				model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
@@ -57,7 +67,7 @@ public class GoalController {
 			model.addAttribute("nickname", "Guest"); // 로그인되지 않으면 Guest로 처리
 		}
 	}
-	
+
 	// 목표 생성하기
 	@PostMapping("goal/insert")
 	public String goalInsert_post(Principal principal, Goal goal) {
@@ -66,7 +76,7 @@ public class GoalController {
 		goalService.insertGoal(goal, user);
 		return "redirect:/mypage";
 	}
-	
+
 	// 목표 수정하기
 	@GetMapping("goal/update/{id}")
 	public String goalUpdate_get(@PathVariable("id") Long goal_id, Model model) {
@@ -74,7 +84,7 @@ public class GoalController {
 		model.addAttribute("findGoal", findGoal);
 		return "/mypage";
 	}
-	
+
 	// 목표 수정하기
 	@PostMapping("goal/update/{id}")
 	public String goalUpdate_post(@PathVariable("id") Long goal_id, @RequestParam String goal_content,
@@ -90,13 +100,12 @@ public class GoalController {
 		goalService.updateGoal(goal);
 		return "redirect:/mypage";
 	}
-	
+
 	// 목표 성공
 	@PostMapping("goal/success/{id}")
 	public String goalIsSuccess_post(@PathVariable("id") Long goal_id,
 			@RequestParam(value = "is_success", required = false) Boolean is_success,
 			@RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-
 
 		// 날짜가 없으면 오늘 날짜로
 		if (date == null) {
@@ -122,7 +131,7 @@ public class GoalController {
 			goalSatusService.insertGoalStatus(goalStatus, date); // 상태 저장
 		}
 		if (goal.getDueDate().isEqual(date)) {
-				userAchivService.insertOrUpdateUserAchiv(goal);
+			userAchivService.insertOrUpdateUserAchiv(goal);
 		}
 		return "redirect:/mypage?selectedDate=" + date;
 	}
@@ -135,10 +144,13 @@ public class GoalController {
 		User user = userService.findByEmail(email);
 		Goal goal = goalService.findByGoalId(goal_id);
 
+		if (userAchivService.selectById(goal).isPresent()) {
+			userAchivService.deleteUserAchive(goal);
+		}
 		goalService.deleteGoal(goal, user.getId());
 		return "redirect:/mypage";
 	}
-	
+
 	// 완료된 목표 보러가기
 	@GetMapping("/user/goalComplate")
 	public String goalComplate(Model model, Principal principal) {
@@ -146,20 +158,31 @@ public class GoalController {
 		// 유저 찾기
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
+
 		// 목표 꺼내오기
-		
 		List<UserAchiv> achivs = userAchivService.findByUserId(user);
+		//+++차트용+++///
+		List<Map<String,Object>> goalData=new ArrayList<>();
+	    for (UserAchiv achiv : achivs) {
+	        Map<String, Object> data = new HashMap<>();
+	        String goalContent = achiv.getGoal().getGoal_content(); // 왜 목표명이 string으로 안오냐고
+	        data.put("getGoal_content", goalContent); 
+	        data.put("completionRate", achiv.getCompletionRate()); // 달성률
+	        goalData.add(data);
+	    }
+	    model.addAttribute("goalData",goalData);
+		//+++차트용+++///
+		
 		model.addAttribute("achivs", achivs);
-	    return "user/goalComplate";
+		return "user/goalComplate";
 	}
 
 	// 날짜 바꾸기
 	@PostMapping("/goal/byDate")
 	public String goalByDate(@RequestParam("selectedDate") String selectedDate, Model model) {
-		System.out.println("바뀐 날짜................." + selectedDate);
 		LocalDate date = LocalDate.parse(selectedDate);
 
 		return "redirect:/mypage?selectedDate=" + date;
 	}
-	
+
 }

@@ -1,5 +1,6 @@
 package com.yoonlee3.diary.group;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,10 +20,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yoonlee3.diary.badge.Badge;
-import com.yoonlee3.diary.groupAchiv.GroupAchiv;
-import com.yoonlee3.diary.groupBadgeHistory.GroupBadgeHistory;
 import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.user.User;
 
@@ -49,7 +49,7 @@ public class YL3Group {
 	private LocalDateTime create_date = LocalDateTime.now();
 
 	@ManyToOne
-	@JoinColumn(name = "group_leader")
+	@JoinColumn(name = "group_leader", nullable = true)
 	private User group_leader;
 
 	@OneToOne
@@ -62,14 +62,16 @@ public class YL3Group {
 			inverseJoinColumns = @JoinColumn(name = "user_id") // 상대 엔티티(PK)
 	)
 	@JsonManagedReference
-	private Set<User> users = new HashSet<>();
+	private List<User> users = new ArrayList<>();
 
 	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
-	private List<GroupBadgeHistory> badgeHistories = new ArrayList<>();
-
-	@OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
-	private List<GroupAchiv> groupAchiv = new ArrayList<>();
-
-	@OneToMany(mappedBy = "group")
+	@JsonIgnore
 	private List<GroupDiary> groupDiaries;
+
+	// 교환일기 순서 정하기
+	@Column(name = "current_turn")
+	private int currentTurn;
+
+	@Column
+	private LocalDate lastTurnDate;
 }

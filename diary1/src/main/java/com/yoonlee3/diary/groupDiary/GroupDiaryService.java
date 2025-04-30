@@ -34,4 +34,12 @@ public class GroupDiaryService {
 		return groupDiaryRepository.deleteGroupDiary(groupDiary.getId());
 	}
 	
+	// 수정 0430
+	public void deleteByDiary(Diary diary) {
+	    GroupDiary groupDiary = groupDiaryRepository.findByDiary(diary);
+	    if (groupDiary != null) {
+	        groupDiaryRepository.delete(groupDiary);
+	    }
+	}
+	
 }

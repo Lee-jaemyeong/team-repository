@@ -21,7 +21,8 @@
 		<div class="d-flex justify-content-between">
 			<div>
 				<a class="btn w-100" th:href="@{/user/goalComplate}"
-					style="font-weight: bold; color: #f8b739; padding: 12px 0;"><i class="bi bi-patch-check-fill"></i></a>
+					style="font-weight: bold; color: #f8b739; padding: 12px 0;"><i
+					class="bi bi-patch-check-fill"></i></a>
 			</div>
 			<h1 class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.8em;">Today
 				List</h1>
@@ -105,7 +106,8 @@
 					<h1 class="modal-title fs-5" id="createGoalModalLabel">목표 생성하기</h1>
 				</div>
 				<div class="modal-body">
-					<form th:action="@{/goal/insert}" method="post">
+					<form th:action="@{/goal/insert}" method="post"
+						onsubmit="return validateGoalInsertForm()">
 						<div class="mb-3">
 							<label for="goal_content" class="col-form-label">목표명</label> <input
 								type="text" class="form-control" id="goal_content_insert"
@@ -114,10 +116,9 @@
 						<select class="form-select p-2 form-select" id="openScope_insert"
 							name="openScope.id" required aria-label="Default select example"
 							style="width: 19%;">
-							<option selected>공개범위</option>
+							<option value="" selected disabled>공개범위 선택</option>
 							<option value="1">나만보기</option>
 							<option value="2">친구공개</option>
-							<option value="3">그룹공개</option>
 							<option value="4">전체공개</option>
 							<option value="5"
 								th:if="${#authorization.expression('hasRole(''ADMIN'')')}">관리자작성</option>
@@ -153,7 +154,8 @@
 					<h1 class="modal-title fs-5" id="updategoalModalLabel">목표 수정하기</h1>
 				</div>
 				<div class="modal-body">
-					<form id="updateGoalForm" method="post">
+					<form id="updateGoalForm" method="post"
+						onsubmit="return validateGoalUpdateForm()">
 						<div class="mb-3">
 							<label for="goal_content" class="col-form-label">목표명</label> <input
 								type="text" class="form-control" id="goal_content_update"
@@ -167,10 +169,9 @@
 							<select class="form-select p-2 form-select" id="openScope_update"
 								name="open_scope_id" required
 								aria-label="Default select example" style="width: 19%;">
-								<option selected>공개범위</option>
+								<option value="" selected disabled>공개범위 선택</option>
 								<option value="1">나만보기</option>
 								<option value="2">친구공개</option>
-								<option value="3">그룹공개</option>
 								<option value="4">전체공개</option>
 								<option value="5"
 									th:if="${#authorization.expression('hasRole(''ADMIN'')')}">관리자작성</option>
@@ -221,7 +222,6 @@
 	<div class="container-fluid p-3">
 		<div class="d-flex justify-content-between">
 			<h1 class="p-2 bd-highlight" style="font-size: 1.8em;">My Diary</h1>
-			<p class=" align-self-center">count</p>
 		</div>
 		<div class="container-fluid p-2">
 			<p th:if="${#lists.isEmpty(list)}">등록된 일기가 없습니다.</p>
@@ -247,6 +247,47 @@
 		</div>
 	</div>
 	<!-- 내 일기 리스트 -->
+	<script>
+	function validateGoalInsertForm() {
+	    const content = document.getElementById('goal_content_insert').value.trim();
+	    const scope = document.getElementById('openScope_insert').value;
+	    const due = document.getElementById('dueDate_insert').value;
+
+	    if (!content) {
+	        alert("목표명을 입력하세요.");
+	        return false;
+	    }
+	    if (!scope) {
+	        alert("공개범위를 선택하세요.");
+	        return false;
+	    }
+	    if (!due) {
+	        alert("종료일을 입력하세요.");
+	        return false;
+	    }
+	    return true;
+	}
+
+	function validateGoalUpdateForm() {
+	    const content = document.getElementById('goal_content_update').value.trim();
+	    const scope = document.getElementById('openScope_update').value;
+	    const due = document.getElementById('dueDate_update').value;
+	
+	    if (!content) {
+	        alert("목표명을 입력하세요.");
+	        return false;
+	    }
+	    if (!scope) {
+	        alert("공개범위를 선택하세요.");
+	        return false;
+	    }
+	    if (!due) {
+	        alert("종료일을 입력하세요.");
+	        return false;
+	    }
+	    return true;
+	}
+</script>
 
 </th:block>
 

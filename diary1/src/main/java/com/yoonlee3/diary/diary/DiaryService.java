@@ -42,15 +42,16 @@ public class DiaryService {
 	
 	public int update(Diary diary) {
 		return diaryRepository.updateById(
-			diary.getId(),diary.getDiary_title(),diary.getDiary_content()
+			diary.getId(),diary.getDiary_title(),diary.getDiary_content(), diary.getDiary_emoji()
 		);
 	}
 	
 	public int delete(Diary diary) { 
 		return diaryRepository.deleteByDId(diary.getId());
 	}
-	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
 	public List<Diary> getDiarySortedByLikes(){
 		return diaryRepository.findByDiaryOrderByLikes();
-	}	
+	}
+
 }
