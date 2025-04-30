@@ -10,19 +10,30 @@ import com.yoonlee3.diary.user.User;
 @Service
 public class BlockService {
 
-    private final BlockRepository blockRepository;
+	 private final BlockRepository blockRepository;
+	    private final FollowRepository followRepository; // FollowRepository 추가
 
-    public BlockService(BlockRepository blockRepository) {
-        this.blockRepository = blockRepository;
-    }
+	    public BlockService(BlockRepository blockRepository, FollowRepository followRepository) {
+	        this.blockRepository = blockRepository;
+	        this.followRepository = followRepository;
+	    }
 
-    // 차단 기능
-    @Transactional
-    public void blockUser(User blocker, User blocked) {
-        if (!blockRepository.existsByBlockerAndBlocked(blocker, blocked)) {
-            blockRepository.save(new Block(blocker, blocked));
-        }
-    }
+	    // 차단 기능 (차단 + 양방향 언팔로우)
+	    @Transactional
+	    public void blockUser(User blocker, User blocked) {
+	        // 이미 차단했는지 확인
+	        if (!blockRepository.existsByBlockerAndBlocked(blocker, blocked)) {
+	            blockRepository.save(new Block(blocker, blocked));
+	        }
+
+	        // 내가 그 사람을 팔로우 중이면 끊기
+	        followRepository.findByFollowerAndFollowing(blocker, blocked)
+	                .ifPresent(follow -> followRepository.delete(follow));
+
+	        // 그 사람이 나를 팔로우 중이면 끊기
+	        followRepository.findByFollowerAndFollowing(blocked, blocker)
+	                .ifPresent(follow -> followRepository.delete(follow));
+	    }
 
     // 차단 해제 기능
     @Transactional

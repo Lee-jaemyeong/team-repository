@@ -61,11 +61,8 @@ public class BlockController {
                 .orElseThrow(() -> new RuntimeException("차단된 사용자 없음"));
 
         blockService.unblockUser(blocker, blocked);
-
-        // 차단 해제 시 팔로우 복원
-        followService.follow(blocker, blocked);  // 팔로우 다시 하기
         
-        return ResponseEntity.ok("차단 해제 및 팔로우 복원 성공");
+        return ResponseEntity.ok("차단 해제 성공");
     }
 
     // 차단 여부 확인
@@ -124,10 +121,13 @@ public class BlockController {
         model.addAttribute("followings", followings);  // 팔로잉
         model.addAttribute("followerCount", followerCount);  // 팔로워 수
         model.addAttribute("followingCount", followingCount);  // 팔로잉 수
+        model.addAttribute("diaryCount", diaryCount);  // 작성한 일기 수
         model.addAttribute("currentUserId", currentUserId);  // 현재 사용자 ID
         model.addAttribute("blockedUsers", blockedUsers);  // 차단된 사용자 목록
         model.addAttribute("blockedUserIds", blockedUserIds);  // 차단된 사용자 ID 목록
 
         return "block/list"; // block/list.html 페이지로 리턴
     }
+    
+  
 }

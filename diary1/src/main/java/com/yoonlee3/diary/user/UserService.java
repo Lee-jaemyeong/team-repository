@@ -27,10 +27,13 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final BlockRepository blockRepository;
-	@Autowired FollowRepository followRepository;
-	@Autowired LikeRepository likeRepository;
-	@Autowired DiaryRepository diaryRepository;
-	
+	@Autowired
+	FollowRepository followRepository;
+	@Autowired
+	LikeRepository likeRepository;
+	@Autowired
+	DiaryRepository diaryRepository;
+
 	// insert
 	public User insertUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -43,26 +46,25 @@ public class UserService {
 	}
 
 	// select
-
 	public User findById(Long user_id) {
 		return userRepository.findById(user_id).get();
 	}
 
 	public User findByEmail(String email) {
-	    return userRepository.findByEmail(email).orElse(null);
+		return userRepository.findByEmail(email).orElse(null);
 	}
 
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
-	
+
 	public List<User> findUsersByUsername(String username) {
-	    return userRepository.findUsersByUsername(username);
+		return userRepository.findUsersByUsername(username);
 	}
-	
-    public boolean SameUsername(String username) {
-        return userRepository.existsByUsername(username);  // 닉네임 중복 확인
-    }
+
+	public boolean SameUsername(String username) {
+		return userRepository.existsByUsername(username); // 닉네임 중복 확인
+	}
 
 	// update
 	public int updateByPass(User user) {
@@ -72,18 +74,32 @@ public class UserService {
 	public int updateByUsername(Long user_id, User user) {
 		return userRepository.updateById(user.getId(), user.getUsername());
 	}
-	
+
 	public List<User> searchUsers(String keyword) {
-	    return userRepository.findByUsernameContaining(keyword); // username을 포함한 사용자 찾기
+		return userRepository.findByUsernameContaining(keyword); // username을 포함한 사용자 찾기
 	}
 
 	public User getCurrentUser() {
 		return null;
 	}
 
-	// 내가 차단한 사용자 목록	
-    public List<User> getBlockedUsers(Long currentUserId) {
-        return blockRepository.findBlockedUsersByBlockerId(currentUserId);
-    }	
-    
+	// 내가 차단한 사용자 목록
+	public List<User> getBlockedUsers(Long currentUserId) {
+		return blockRepository.findBlockedUsersByBlockerId(currentUserId);
+	}
+
+	public int getFollowerCount(String username) {
+		User user = userRepository.findByUsername(username);
+		if (user == null)
+			return 0;
+		return (int) followRepository.countByFollowing(user); // 팔로워 수
+	}
+
+	public int getFollowingCount(String username) {
+		User user = userRepository.findByUsername(username);
+		if (user == null)
+			return 0;
+		return (int) followRepository.countByFollower(user); // 팔로잉 수
+	}
+
 }

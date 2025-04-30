@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.follow.Block;
 import com.yoonlee3.diary.follow.Follow;
-import com.yoonlee3.diary.goal.Goal;
 import com.yoonlee3.diary.group.YL3Group;
 import com.yoonlee3.diary.like.Likes;
 
@@ -49,7 +48,7 @@ public class User {
 	private String nickname;
 	private String profileImageUrl;
 	private String resetToken;
-
+	
 	@Column(unique = true, nullable = false)
 	private String email;
 
@@ -67,9 +66,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Likes> likes;
     
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Goal> goals;
-    
 	@OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Follow> followers = new ArrayList<>();
 
@@ -78,7 +74,7 @@ public class User {
     
     // blockedUsers는 차단된 사용자의 리스트
     @OneToMany(mappedBy = "blocker", cascade = CascadeType.REMOVE, orphanRemoval = true) 
-    private Set<Block> blockedUsers;
+    private Set<Block> blockedUsers = new HashSet<>();
 
 
 }

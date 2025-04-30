@@ -134,8 +134,10 @@ public class GoalController {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 		Goal goal = goalService.findByGoalId(goal_id);
-
-		userAchivService.deleteUserAchive(goal);
+		
+		if(userAchivService.selectById(goal).isPresent()) {
+			userAchivService.deleteUserAchive(goal);
+		}
 		goalService.deleteGoal(goal, user.getId());
 		return "redirect:/mypage";
 	}
@@ -147,8 +149,8 @@ public class GoalController {
 		// 유저 찾기
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-		// 목표 꺼내오기
 		
+		// 목표 꺼내오기
 		List<UserAchiv> achivs = userAchivService.findByUserId(user);
 		model.addAttribute("achivs", achivs);
 	    return "user/goalComplate";
@@ -157,7 +159,6 @@ public class GoalController {
 	// 날짜 바꾸기
 	@PostMapping("/goal/byDate")
 	public String goalByDate(@RequestParam("selectedDate") String selectedDate, Model model) {
-		System.out.println("바뀐 날짜................." + selectedDate);
 		LocalDate date = LocalDate.parse(selectedDate);
 
 		return "redirect:/mypage?selectedDate=" + date;
