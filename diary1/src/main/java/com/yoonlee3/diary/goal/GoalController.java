@@ -3,8 +3,11 @@ package com.yoonlee3.diary.goal;
 import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.goalStatus.GoalSatusService;
@@ -174,6 +178,27 @@ public class GoalController {
 		return "user/goalComplate";
 	}
 
+	// 완료된 목표 보러가기
+	@GetMapping(value="/user/goalComplate/chart", produces="application/json; charset=UTF-8")
+	@ResponseBody
+	public List<Map<String,Object>> goalComplateChart(  Principal principal) {
+		
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		//+++차트용+++///
+		List<UserAchiv> achivs = userAchivService.findByUserId(user);	
+		List<Map<String,Object>> goalData=new ArrayList<>();
+	    for (UserAchiv achiv : achivs) {
+	        Map<String, Object> data = new HashMap<>();
+	        String goalContent = achiv.getGoal().getGoal_content(); // 왜 목표명이 string으로 안오냐고
+	        data.put("getGoal_content", goalContent); 
+	        data.put("completionRate", achiv.getCompletionRate()); // 달성률
+	        goalData.add(data);
+	    } 
+		//+++차트용+++/// 
+		return goalData;
+	}
+	
 	// 날짜 바꾸기
 	@PostMapping("/goal/byDate")
 	public String goalByDate(@RequestParam("selectedDate") String selectedDate, Model model) {
