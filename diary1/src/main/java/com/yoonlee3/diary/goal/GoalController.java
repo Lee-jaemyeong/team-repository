@@ -51,23 +51,25 @@ public class GoalController {
 	JoinToGroupService joinToGroupService;
 
 	@ModelAttribute
-	public void NicknameToModel(Model model, Principal principal) {
-		if (principal != null) {
-			String email = principal.getName();
-			User user = userService.findByEmail(email);
-			if (user != null) {
-				model.addAttribute("nickname", user.getUsername());
-				model.addAttribute("user", user);
-				List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
-				model.addAttribute("groups", groups);
-			} else {
-				model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
-				model.addAttribute("groups", Collections.emptySet());
-			}
-		} else {
-			model.addAttribute("nickname", "Guest"); // 로그인되지 않으면 Guest로 처리
-		}
-	}
+	   public void NicknameToModel(Model model, Principal principal) {
+	      if (principal != null) {
+	         String email = principal.getName();
+	         User user = userService.findByEmail(email);
+	         if (user != null) {
+	            model.addAttribute("nickname", user.getUsername());
+	            model.addAttribute("user", user);
+	            List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
+	            model.addAttribute("groups", groups);
+	            model.addAttribute("profileImage", user.getProfileImageUrl());
+	         } else {
+	            model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
+	            model.addAttribute("groups", Collections.emptySet());
+	         }
+	      } else {
+	         model.addAttribute("nickname", "Guest"); // 로그인되지 않으면 Guest로 처리
+	      }
+	   }
+
 
 	// 목표 생성하기
 	@PostMapping("goal/insert")

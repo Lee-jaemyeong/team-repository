@@ -32,9 +32,11 @@
 					<td scope="row" style="padding-right: 2em;"
 						th:text="${goal.goal_content}">목표명</td>
 					<td>
+					<div class="justify-content-end" style="display: flex; flex-wrap: wrap;">
 						<div th:each="date : ${dateList}" class="m-1 p-2 border rounded"
 							th:classappend="${goalStatusDateMap[goal.id.toString()][date.toString()]} == true ? 'bg-success text-white' : 'bg-light'"
 							th:text="${#temporals.format(date, 'MM/dd')}"></div>
+					</div>
 					</td>
 				</tr>
 			</tbody>

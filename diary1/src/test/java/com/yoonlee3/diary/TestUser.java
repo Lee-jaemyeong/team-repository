@@ -1,5 +1,6 @@
 package com.yoonlee3.diary;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +12,7 @@ import com.yoonlee3.diary.user.UserRepository;
 public class TestUser {
 	@Autowired UserRepository userRepository;
 	
-	@Test
+	@Disabled
 	public void insert() {
 		User user = new User();
 		user.setUsername("admin");

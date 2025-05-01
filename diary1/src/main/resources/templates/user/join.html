@@ -18,7 +18,7 @@
 	<div class=" container row col-md-12 m-2 m-auto p-5" style="height: 100vh;">
 		<form class="form-inline align-self-center" method="post" th:action="@{/user/join}" th:object="${userForm}">
 			<!-- 로고이미지 필요없으면 빼도 돼요 -->
-			<img class="mb-4" src="#" alt="" width="72" height="57">
+			<img class="mb-4" src="/images/YL3-logo.png" alt="로고" width="120px" height="150px">
 			<!-- 텍스트로 대체해도 괜찮을 것 같아요 -->
 			<div class="my-3 alert alert-danger" role="alert"
 				th:if="${#fields.hasAnyErrors()}">
@@ -47,8 +47,8 @@
 			<!-- INPUT USERNAME -->
 			
 			
-			<button class="mb-3 w-100 btn btn-lg btn-primary" type="submit">회원가입하기</button>
-			<button class="w-100 btn btn-lg btn-primary" type="button" onclick="location.href='/user/login'" >취소</button>
+			<button class="mb-3 w-100 btn btn-lg btn-primary" type="submit" style="background-color: #f8b839; border: none; color: #4c2b1f;">회원가입하기</button>
+			<button class="w-100 btn btn-lg btn-primary" type="button" onclick="location.href='/user/login'" style="background-color: #4c2b1f; border: none;">취소</button>
 		</form>
 	</div>
 

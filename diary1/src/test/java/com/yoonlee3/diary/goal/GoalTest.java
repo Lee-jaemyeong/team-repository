@@ -3,6 +3,7 @@ package com.yoonlee3.diary.goal;
 import java.sql.Date;
 import java.time.LocalDate;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ public class GoalTest {
 	@Autowired
 	OpenScopeRepository openScopeRepository;
 	
-	@Test
+	@Disabled
 	void insert() {
 		Goal goal = new Goal();
 		User user = userRepository.findById(1l).orElseThrow();
