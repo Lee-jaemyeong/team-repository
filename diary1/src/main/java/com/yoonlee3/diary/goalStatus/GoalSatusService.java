@@ -41,6 +41,12 @@ public class GoalSatusService {
 		System.out.println("여기는 GoalStatusService.....현재 날짜는.......................?" + today);
 		return goalStatusRepository.findTodaySuccess(goal.getId(), today);
 	}
+	
+	// 오늘 성공한 목표구하기
+	public GoalStatus findTodaySuccessGoal(Goal goal, LocalDate today) {
+		System.out.println("여기는 GoalStatusService.....현재 날짜는.......................?" + today);
+		return goalStatusRepository.findTodaySuccessGoal(goal.getId(), today);
+	}
 
 	// 현재 달의 목표 상태들 가져오기
 	public int countStatusMonth(Goal goal) {

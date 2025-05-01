@@ -16,7 +16,6 @@ import com.yoonlee3.diary.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/diary/like")
 @RequiredArgsConstructor
 public class LikeController {
 	
@@ -24,7 +23,7 @@ public class LikeController {
     private final UserRepository userRepository;
 
     // 좋아요 토글 (POST 요청)
-    @PostMapping
+    @PostMapping("/diary/like")
     public String toggleLike(@RequestParam Long diaryId, Principal principal) {
         if (principal != null) {
             String email = principal.getName();
@@ -39,6 +38,22 @@ public class LikeController {
         }
         return "redirect:user/login"; // 비로그인 시 리다이렉트
     }
+    
+    @PostMapping("group/diary/like")
+    public String GtoggleLike(@RequestParam Long diaryId, Principal principal) {
+        if (principal != null) {
+            String email = principal.getName();
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자 정보가 없습니다."));
+
+            // 좋아요 상태 토글
+            boolean isLiked = likeService.toggleLike(diaryId, user.getId());
+
+            // 상태에 따라 리다이렉트
+            return "redirect:/group/groupDiaryDetail/" + diaryId;
+        }
+        return "redirect:user/login"; // 비로그인 시 리다이렉트
+    }   
     
     // 좋아요 상태 확인 (GET 요청)
     @GetMapping("/status")
