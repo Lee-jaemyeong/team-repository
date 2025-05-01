@@ -15,7 +15,7 @@
     <form class="form-inline align-self-center" method="post" th:action="@{/user/find}" onsubmit="return findform()">
       
       <!-- 로고 (선택 사항) -->
-      <img class="mb-4" src="#" alt="" width="72" height="57">
+      <img class="mb-4" src="/images/YL3-logo.png" alt="로고" width="120px" height="150px">
 
       <!-- 메시지 -->
       <div th:if="${msg}" class="alert alert-warning" th:text="${msg}"></div>
@@ -27,8 +27,8 @@
         <label for="email">이메일 주소</label>
       </div>
 
-      <button class="mb-3 w-100 btn btn-lg btn-primary" type="submit">비밀번호 찾기</button>
-      <button class="w-100 btn btn-lg btn-secondary" type="button" onclick="location.href='/user/login'">취소</button>
+      <button class="mb-3 w-100 btn btn-lg btn-primary" type="submit" style="background-color: #f8b839; border: none; color: #4c2b1f;">비밀번호 찾기</button>
+      <button class="w-100 btn btn-lg btn-secondary" type="button" onclick="location.href='/user/login'"style="background-color: #4c2b1f; border: none;">취소</button>
     </form>
   </div>
 

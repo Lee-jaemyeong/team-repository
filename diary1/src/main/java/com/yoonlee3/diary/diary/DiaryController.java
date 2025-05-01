@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -39,6 +41,7 @@ import com.yoonlee3.diary.group.YL3Group;
 import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.groupDiary.GroupDiaryService;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
+import com.yoonlee3.diary.like.LikeRepository;
 import com.yoonlee3.diary.like.LikeService;
 import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.openScope.OpenScopeService;
@@ -79,6 +82,8 @@ public class DiaryController {
 	FollowRepository followRepository;
 	@Autowired
 	DiaryRepository diaryRepository;
+	@Autowired
+	LikeRepository likeRepository;
 
 	@ModelAttribute
 	public void NicknameToModel(Model model, Principal principal) {
@@ -91,6 +96,8 @@ public class DiaryController {
 			List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 			model.addAttribute("groups", groups);
 
+			model.addAttribute("profileImage", user.getProfileImageUrl());
+			
 			// 작성한 일기 수 가져오기
 			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
 			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
@@ -353,12 +360,15 @@ public class DiaryController {
 		}
 
 		try {
-			groupDiaryService.deleteByDiary(diary); // 그룹 다이어리 연관 제거
-			diaryService.delete(diary); // 다이어리 + 연관 좋아요 삭제
-			rttr.addFlashAttribute("msg", "글삭제 성공!");
+			likeRepository.deleteByDiaryId(diary.getId());
+		    groupDiaryService.deleteByDiary(diary);
+		    diaryService.delete(diary);
+		    rttr.addFlashAttribute("msg", "글삭제 성공!");
 		} catch (Exception e) {
-			rttr.addFlashAttribute("msg", "글삭제 실패: " + e.getMessage());
+		    rttr.addFlashAttribute("msg", "그룹에서 먼저 삭제해주세요. ");
+		    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
+
 
 		return "redirect:/main";
 	}
@@ -565,11 +575,35 @@ public class DiaryController {
 	}
 
 	@PostMapping("/group/diary/update")
-	public String updateGroupDiary_post(Diary diary, RedirectAttributes rttr) {
+	public String updateGroupDiary_post(Diary diary, RedirectAttributes rttr,
+			@RequestParam(required = false) Long open_scope_id, @RequestParam(required = false) Long template_id) {
 		String msg = "fail";
-		if (diaryService.update(diary) > 0) {
+
+		Diary existingDiary = diaryService.findById(diary.getId());
+
+		// 수정 내용 반영
+		existingDiary.setDiary_title(diary.getDiary_title());
+		existingDiary.setDiary_content(diary.getDiary_content());
+		existingDiary.setDiary_emoji(diary.getDiary_emoji());
+
+		if (open_scope_id != null) {
+			OpenScope openScope = openScopeService.findOpenScopeById(open_scope_id);
+			if (openScope != null) {
+				existingDiary.setOpenScope(openScope);
+			}
+		}
+
+		if (template_id != null) {
+			Template template = templateService.findTempalteById(template_id);
+			if (template != null) {
+				existingDiary.setTemplate(template);
+			}
+		}
+
+		if (diaryService.update(existingDiary) > 0) {
 			msg = "글수정완료!";
 		}
+
 		rttr.addFlashAttribute("msg", msg);
 		return "redirect:/group/groupDiaryDetail/" + diary.getId(); // ## 글수정기능
 	}

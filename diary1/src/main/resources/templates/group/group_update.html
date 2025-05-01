@@ -4,7 +4,7 @@
 	layout:decorate="~{fragments/layout}">
 
 <th:block layout:fragment="content">
-
+<div id="writeTheme" class="theme1">
 	<!-- 글쓰기폼 -->
 	<div class="container-fluid">
 		<form th:action="@{/group/diary/update}" method="post"
@@ -24,13 +24,30 @@
 						name="diary_title" id="diary_title" th:value="${dto.diary_title}"
 						aria-label="default input example">
 				</div>
-				<select class="form-select p-2 bd-highlight" aria-label="Template"
-					name="template_id" style="width: 19%; margin-right: 0.6em;">
-					<option value="" disabled selected>템플릿</option>
-					<option value="1">기본</option>
-					<option value="2">주황</option>
-					<option value="3">하늘</option>
-				</select> <select class="form-select p-2 bd-highlight" aria-label="openScope"
+	          <select id="themeSelect" onchange="changeTheme()" class="form-select p-2 bd-highlight" aria-label="Template" name="template_id" style="width: 19%; margin-right: 0.6em;">
+	            <option value="" disabled selected>템플릿</option>
+	            <option value="1" th:selected="${theme == 'theme1'}">기본</option>
+	            <option value="2" th:selected="${theme == 'theme2'}">주황</option>
+	            <option value="3"  th:selected="${theme == 'theme3'}">초록</option>
+	          </select>
+	          <!-- 글쓰기 테마 즉시적용 -->
+	          <!-- 글쓰기 테마 즉시적용 -->
+	          <script>
+	          function changeTheme() {
+	              var selectedTheme = document.getElementById('themeSelect').value;
+	              var writeThemeElement = document.getElementById('writeTheme');  // div 요소를 가져옵니다.
+	              console.log("selectedTheme"+selectedTheme);
+	              console.log("writeThemeElemente"+writeThemeElement);
+	
+	              writeThemeElement.classList.remove('theme1', 'theme2', 'theme3'); // 기존 테마 클래스를 모두 제거
+	              writeThemeElement.classList.add('theme'+selectedTheme); // 새 테마 클래스를 추가
+	              console.log("theme"+selectedTheme)
+	              
+	          }
+	          </script>
+	          <!-- 글쓰기 테마 즉시적용 -->
+	          <!-- 글쓰기 테마 즉시적용 -->     
+				<select class="form-select p-2 bd-highlight" aria-label="openScope"
 					name="open_scope_id" style="width: 19%;">
 					<option value="" disabled selected>공개범위</option>
 					<option value="3">그룹공개</option>
@@ -52,23 +69,21 @@
 						style="background-color: #eee;">이모티콘으로 일기 요약받기</button>
 				</div>
 				<div class="flex-grow-1 bd-highlight">
-					<label for="diary_emoji">요약</label> <input type="text"
-						id="diary_emoji" name="diary_emoji"
-						style="border: 1px solid #eee; padding: 0.5em; width: 100%;">
+				<input type="text" id="diary_emoji" name="diary_emoji" style="border: 1px solid #eee; padding: 0.5em; width: 100%;">
 				</div>
 			</div>
 			<!-- 이모티콘 -->
 			<div class="d-flex bd-highlight mb-4">
 				<div class="p-2 bd-highlight">
 					<!-- 취소 버튼 수정 (submit 제거) -->
-					<button type="button" class="btn p-3"
-						style="width: 100%; font-size: 18px; font-weight: bold; border: 2px solid #f8b739;"
+					<button type="button" class="btn p-3 btn-b"
+						style="width: 100%; font-size: 18px; font-weight: bold;"
 						onclick="window.location.href='/main';">취소</button>
 				</div>
 				<div class="p-2 flex-grow-1 bd-highlight">
 					<!-- 게시하기 버튼 수정 (폼 제출로 변경) -->
-					<button type="submit" class="btn p-3"
-						style="width: 100%; font-size: 18px; font-weight: bold; background-color: #f8b739; border: 2px solid #f8b739;">게시하기</button>
+					<button type="submit" class="btn p-3 btn-f"
+						style="width: 100%; font-size: 18px; font-weight: bold;">게시하기</button>
 				</div>
 			</div>
 		</form>
@@ -142,6 +157,7 @@
 			}
 		</script>
 	</th:block>
+</div>	
 </th:block>
 
 </html>

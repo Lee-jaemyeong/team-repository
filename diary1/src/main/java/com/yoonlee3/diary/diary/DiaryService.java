@@ -8,9 +8,12 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yoonlee3.diary.like.LikeRepository;
+
 @Service
 public class DiaryService {
 	@Autowired DiaryRepository diaryRepository;
+	@Autowired LikeRepository likeRepository;
 	
 	public List<Diary> findAll() { 
 	    return diaryRepository.findAllByOrderByDesc(); 
@@ -47,6 +50,7 @@ public class DiaryService {
 	}
 	
 	public int delete(Diary diary) { 
+		likeRepository.deleteByDiaryId(diary.getId());
 		return diaryRepository.deleteByDId(diary.getId());
 	}
 	

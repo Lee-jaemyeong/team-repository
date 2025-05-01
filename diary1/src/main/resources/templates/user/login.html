@@ -18,7 +18,7 @@
 	<div class=" container row col-md-12 m-2 m-auto p-5" style="height: 100vh;">
 		<form class="form-inline align-self-center" method="post" th:action="@{/user/login}">
 			<!-- 로고이미지 필요없으면 빼도 돼요 -->
-			<img class="mb-4" src="#" alt="" width="72" height="57">
+			<img class="mb-4" src="/images/YL3-logo.png" alt="로고" width="120px" height="150px">
 			<!-- 텍스트로 대체해도 괜찮을 것 같아요 -->
 			<div th:if="${param.error}">
 				<div class="alert alert-danger">사용자를 확인해주세요</div>
@@ -35,13 +35,13 @@
 				<label for="password">비밀번호</label>
 			</div>
 			<!-- INPUT PASSWORD -->
-			<button class="w-100 btn btn-lg btn-primary" type="submit">로그인</button>
+			<button class="w-100 btn btn-lg btn-primary" type="submit" style="background-color: #f8b839; border: none; color: #4c2b1f;">로그인</button>
 
 			<!-- 회원가입/비번찾기 -->
 			<div class="m-3">
 				<ul class="nav justify-content-center">
-					<li class="nav-item"><a class="nav-link" th:href="@{/user/find}">비밀번호 찾기</a></li>
-					<li class="nav-item"><a class="nav-link" th:href="@{/user/join}">회원가입</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/user/find}" style="color: #4c2b1f;">비밀번호 찾기</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/user/join}" style="color: #4c2b1f;">회원가입</a></li>
 				</ul>
 			</div>
 			<!-- 회원가입/비번찾기 -->
@@ -52,7 +52,7 @@
 				<ul class="nav justify-content-center">
 					<li class="nav-item"> 
 						<a th:href="${url}">
-							<img th:src="@{/images/kakao_login.png}" alt="kakao login button" style="height: 48px;" />
+							<img th:src="@{/images/kakao_login.png}" alt="kakao login button" style="height: 60px;" />
 						</a>
 					</li>
 				</ul>		

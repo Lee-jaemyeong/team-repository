@@ -23,6 +23,10 @@ public interface GoalStatusRepository extends JpaRepository<GoalStatus, Long> {
 	// 오늘 성공한 목표의 수 구하기
 	@Query("select count(true) from GoalStatus gs where gs.goal.id= :goal_id and gs.createDate = :currentDate and gs.is_success = true")
 	int findTodaySuccess(Long goal_id, LocalDate currentDate);
+	
+	// 오늘 성공한 목표 구하기
+	@Query("select gs from GoalStatus gs where gs.goal.id= :goal_id and gs.createDate = :currentDate and gs.is_success = true")
+	GoalStatus findTodaySuccessGoal(Long goal_id, LocalDate currentDate);
 
 	// 현재 날짜의 모든 상태 찾아오기
 	@Query("select gs from GoalStatus gs where gs.createDate = :today")

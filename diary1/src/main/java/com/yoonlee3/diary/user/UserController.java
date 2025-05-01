@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -110,12 +111,14 @@ public class UserController {
 			if (user != null) {
 				model.addAttribute("nickname", user.getUsername());
 				model.addAttribute("user", user);
+				model.addAttribute("profileImage", user.getProfileImageUrl());
 				List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 				model.addAttribute("groups", groups);
 
 				// 작성한 일기 수 가져오기
 				long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
-				model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+				model.addAttribute("diaryCount", diaryCount); // 다이어리 수// 유저 프로필 랜덤으로
+
 
 			} else {
 				model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
@@ -228,12 +231,20 @@ public class UserController {
 			bindingResult.rejectValue("password2", "pawordInCorrect", "패스워드를 확인해주세요");
 			return "user/join";
 		}
+		
+		// 유저 프로필 랜덤으로
+		List<String> profileImages = List.of("/images/user1.png", "/images/user2.png", "/images/user3.png",
+				"/images/user4.png", "/images/user5.png");
+		Random rand = new Random();
+		String randomImage = profileImages.get(rand.nextInt(profileImages.size()));
+
 
 		try {
 			User user = new User();
 			user.setUsername(userForm.getUsername());
 			user.setEmail(userForm.getEmail());
 			user.setPassword(userForm.getPassword());
+			user.setProfileImageUrl(randomImage);
 			userService.insertUser(user);
 		} catch (DataIntegrityViolationException e) { // 무결성 - 중복키, 외래키제약, 데이터형식불일치
 			e.printStackTrace();
@@ -347,7 +358,7 @@ public class UserController {
 			}
 
 			user.setUsername(username);
-			userService.insertUser(user);
+			userRepository.save(user);
 
 			redirectAttributes.addFlashAttribute("msg", "닉네임이 변경되었습니다.");
 			return "redirect:/mypage";
