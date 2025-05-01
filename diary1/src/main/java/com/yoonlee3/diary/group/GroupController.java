@@ -3,10 +3,13 @@ package com.yoonlee3.diary.group;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,9 +30,14 @@ import com.yoonlee3.diary.diary.DiaryRepository;
 import com.yoonlee3.diary.follow.Follow;
 import com.yoonlee3.diary.follow.FollowRepository;
 import com.yoonlee3.diary.follow.FollowService;
+import com.yoonlee3.diary.goal.Goal;
+import com.yoonlee3.diary.goal.GoalService;
+import com.yoonlee3.diary.goalStatus.GoalSatusService;
+import com.yoonlee3.diary.goalStatus.GoalStatus;
 import com.yoonlee3.diary.groupDiary.GroupDiary;
 import com.yoonlee3.diary.groupDiary.GroupDiaryService;
 import com.yoonlee3.diary.groupHasUser.JoinToGroupService;
+import com.yoonlee3.diary.openScope.OpenScope;
 import com.yoonlee3.diary.user.User;
 import com.yoonlee3.diary.user.UserService;
 
@@ -52,6 +60,10 @@ public class GroupController {
 	FollowService followService;
 	@Autowired
 	DiaryRepository diaryRepository;
+	@Autowired
+	GoalService goalService;
+	@Autowired
+	GoalSatusService goalSatusService;
 
 	// 로그인 된 유저 닉네임 설정
 	@ModelAttribute
@@ -64,22 +76,19 @@ public class GroupController {
 
 			List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 			model.addAttribute("groups", groups);
+
+			model.addAttribute("profileImage", user.getProfileImageUrl());
 			
 			// 나를 차단한 유저들
 			List<User> usersWhoBlockedMe = userService.getUsersWhoBlocked(user.getId());
-			Set<Long> usersWhoBlockedMeIds = usersWhoBlockedMe.stream()
-			        .map(User::getId)
-			        .collect(Collectors.toSet());
+			Set<Long> usersWhoBlockedMeIds = usersWhoBlockedMe.stream().map(User::getId).collect(Collectors.toSet());
 			model.addAttribute("usersWhoBlockedMeIds", usersWhoBlockedMeIds);
-			
+
 			// 내가 차단한 유저들
-			Set<Long> blockedUserIds = userService.getBlockedUsers(user.getId())
-				    .stream()
-				    .map(User::getId)
-				    .collect(Collectors.toSet());
+			Set<Long> blockedUserIds = userService.getBlockedUsers(user.getId()).stream().map(User::getId)
+					.collect(Collectors.toSet());
 			model.addAttribute("blockedUserIds", blockedUserIds);
-			
-			
+
 			// 작성한 일기 수 가져오기
 			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
 			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
@@ -88,6 +97,28 @@ public class GroupController {
 			model.addAttribute("nickname", "Guest");
 			model.addAttribute("groups", Collections.emptySet());
 		}
+	}
+	
+	private boolean canViewGoal(Goal goal, User user) {
+		if (goal == null || goal.getOpenScope() == null || goal.getUser() == null) {
+			return false;
+		}
+
+		OpenScope openScope = goal.getOpenScope();
+
+		// '나만보기'
+		if (openScope.getOpenScope_value().equals("PRIVATE") && !goal.getUser().equals(user)) {
+			return false;
+		}
+
+		// '친구공개'
+		if (openScope.getOpenScope_value().equals("FRIENDS") &&
+				!(user.getFollowers().stream().anyMatch(f -> f.getFollowing().equals(goal.getUser()))
+				  || goal.getUser().equals(user))) {
+			return false;
+		}
+
+		return true; // 전체공개
 	}
 
 	// 그룹 홈 화면
@@ -141,10 +172,10 @@ public class GroupController {
 		User user = userService.findByEmail(email);
 		boolean isLeader = group.getGroup_leader().getId().equals(user.getId());
 		model.addAttribute("isLeader", isLeader);
-		
+
 		// 내가 그룹에 속해있는지 확인하기
 		List<User> groupUsers = group.getUsers();
-		if(groupUsers.contains(user)) {
+		if (groupUsers.contains(user)) {
 			model.addAttribute("isMyGroup", true);
 		}
 
@@ -153,24 +184,59 @@ public class GroupController {
 
 		// 그룹에 속한 유저들
 		List<User> users = group.getUsers();
+		LocalDate today = LocalDate.now();
+
+		// 그 유저들의 오늘 목표 성공 여부
+		// Map<User, List<Goal>> 으로만 넘기기
+		List<Goal> allGoals = new ArrayList<>();
+		List<GoalStatus> statusList = new ArrayList<>();
+		Map<User, List<Goal>> userGoalsMap = new LinkedHashMap<>();
+		
+		
+		for (User groupuser : users) {
+		    List<Goal> userGoals = goalService.findTodayGoalByUserId(groupuser, today);
+		    
+		    List<Goal> visibleUserGoals = userGoals.stream()
+		        .filter(g -> canViewGoal(g, user))  // 현재 로그인한 사용자가 볼 수 있는 목표만
+		        .collect(Collectors.toList());
+
+		    userGoalsMap.put(groupuser, visibleUserGoals); // 필터링된 목표만 저장
+		    allGoals.addAll(visibleUserGoals);
+
+		    for (Goal g : visibleUserGoals) {
+		        GoalStatus status = goalSatusService.findTodaySuccessGoal(g, today);
+		        if (status != null) {
+		            statusList.add(status);
+		        }
+		    }
+		}
+
+		Set<Long> successGoalIds = statusList.stream()
+			    .filter(gs -> Boolean.TRUE.equals(gs.getIs_success()))
+			    .map(gs -> gs.getGoal().getId())
+			    .collect(Collectors.toSet());
+		
+		model.addAttribute("successGoalIds", successGoalIds);
+		model.addAttribute("userGoalsMap", userGoalsMap);
+		model.addAttribute("statusList", statusList);
+
+		// 그 유저들의 다이어리 리스트
+		model.addAttribute("groupUser", users);
 		List<GroupDiary> groupDiaryList1 = groupDiaryService.findByGroupId(group);
 
-		List<GroupDiary> visibleDiaries = groupDiaryList1.stream()
-		    .filter(d -> {
-		        if (d.getDiary() == null || d.getDiary().getOpenScope() == null) return false;
+		List<GroupDiary> visibleDiaries = groupDiaryList1.stream().filter(d -> {
+			if (d.getDiary() == null || d.getDiary().getOpenScope() == null)
+				return false;
 
-		        String scope = d.getDiary().getOpenScope().getOpenScope_value();
-		        if ("GROUP".equals(scope)) {
-		            return user.getGroups().contains(d.getGroup()) || d.getDiary().getUser().equals(user);
-		        }
-		        return true;
-		    })
-		    .collect(Collectors.toList());
-
+			String scope = d.getDiary().getOpenScope().getOpenScope_value();
+			if ("GROUP".equals(scope)) {
+				return user.getGroups().contains(d.getGroup()) || d.getDiary().getUser().equals(user);
+			}
+			return true;
+		}).collect(Collectors.toList());
 		model.addAttribute("groupDiaryList", visibleDiaries);
 
 		// turn 자동 넘기기
-		LocalDate today = LocalDate.now();
 		if (group.getLastTurnDate() == null || group.getLastTurnDate().isBefore(today)) {
 			// 오늘로 업데이트
 			group.setLastTurnDate(today);
