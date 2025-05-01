@@ -4,6 +4,7 @@
 	layout:decorate="~{fragments/layout}">
 
 <th:block layout:fragment="content">
+	<!-- 그룹 멤버들 -->
 	<div class="container-fluid p-3"
 		style="border-bottom: 1px solid #9d9d9d;">
 		<div style="display: flex; flex-wrap: wrap;">
@@ -14,6 +15,29 @@
 			</div>
 		</div>
 	</div>
+	<!-- E 그룹 멤버들 -->
+	<!-- 그룹 멤버의 오늘 목표 성공여부 -->
+	<!-- 그룹 멤버별 오늘 목표 -->
+	<div class="container-fluid p-3"
+		style="border-bottom: 1px solid #9d9d9d;">
+		<div th:each="entry : ${userGoalsMap}">
+			<div style="display: flex; flex-wrap: wrap;">
+				<!-- 유저 이름 -->
+				<div th:text="${entry.key.username}"
+					style="cursor: pointer; width: 60px; height: 60px; border-radius: 50%; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin: 5px;"></div>
+
+				<!-- 유저의 오늘 목표 리스트 -->
+				<ul style="list-style: none; padding-left: 0;">
+					<li th:each="goal : ${entry.value}" style="margin-bottom: 5px;">
+						<span th:if="${successGoalIds.contains(goal.id)}">&nbsp;&nbsp;✅</span> 
+						<span th:unless="${successGoalIds.contains(goal.id)}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+						<span th:text="${goal.goal_content}">등록된 목표가 없습니다.</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!--  E  그룹 멤버의 오늘 목표 성공여부 -->
 	<div class="container-fluid p-3">
 		<!-- 프로필영역 -->
 		<div class="d-flex bd-highlight mb-3">

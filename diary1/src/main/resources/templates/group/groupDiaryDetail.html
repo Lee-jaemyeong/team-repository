@@ -49,7 +49,7 @@
 		</div>
 		<!-- 본문영역 -->
 		<div>
-			<form th:action="@{/diary/like}" method="post">
+			<form th:action="@{/group/diary/like}" method="post">
 				<input type="hidden" name="diaryId" th:value="${dto.id}" /> <span
 					class="p-2 bd-highlight" th:text="${likeCount}"></span>
 				<button type="submit" th:text="${isLiked ? '♥' : '♡'}"
@@ -61,14 +61,14 @@
 
 		<div class="d-flex bd-highlight mb-4">
 			<div class="p-2 bd-highlight">
-				<button type="button" class="btn p-3" data-bs-toggle="modal"
+				<button type="button" class="btn p-3 btn-b" data-bs-toggle="modal"
 					data-bs-target="#pageDeleteModal"
-					style="width: 100%; font-size: 18px; font-weight: bold; border: 2px solid #f8b739;">삭제하기</button>
+					style="width: 100%; font-size: 18px; font-weight: bold; ">삭제하기</button>
 			</div>
 			<div class="p-2 flex-grow-1 bd-highlight">
 				<a th:href="@{/group/diary/update/{id}(id=${dto.id})}"
-					class="btn p-3"
-					style="width: 100%; font-size: 18px; font-weight: bold; background-color: #f8b739; border: 2px solid #f8b739;">수정하기</a>
+					class="btn p-3 btn-f"
+					style="width: 100%; font-size: 18px; font-weight: bold;">수정하기</a>
 			</div>
 		</div>
 

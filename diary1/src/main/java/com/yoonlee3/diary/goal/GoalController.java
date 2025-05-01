@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.yoonlee3.diary.diary.Diary;
 import com.yoonlee3.diary.goalStatus.GoalSatusService;
@@ -70,35 +71,47 @@ public class GoalController {
 
 	// 목표 생성하기
 	@PostMapping("goal/insert")
-	public String goalInsert_post(Principal principal, Goal goal) {
-		String email = principal.getName();
-		User user = userService.findByEmail(email);
-		goalService.insertGoal(goal, user);
-		return "redirect:/mypage";
-	}
+	public String goalInsert_post(
+	    Principal principal,
+	    @RequestParam String goal_content,
+	    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+	    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueDate,
+	    @RequestParam("openScope.id") Long openScopeId) {
 
-	// 목표 수정하기
-	@GetMapping("goal/update/{id}")
-	public String goalUpdate_get(@PathVariable("id") Long goal_id, Model model) {
-		Goal findGoal = goalService.findByGoalId(goal_id);
-		model.addAttribute("findGoal", findGoal);
-		return "/mypage";
+	    String email = principal.getName();
+	    User user = userService.findByEmail(email);
+
+	    OpenScope openScope = openScopeService.findOpenScopeById(openScopeId);
+
+	    Goal goal = new Goal();
+	    goal.setGoal_content(goal_content);
+	    goal.setStartDate(startDate);
+	    goal.setDueDate(dueDate);
+	    goal.setOpenScope(openScope);
+
+	    goalService.insertGoal(goal, user);
+	    return "redirect:/mypage";
 	}
 
 	// 목표 수정하기
 	@PostMapping("goal/update/{id}")
-	public String goalUpdate_post(@PathVariable("id") Long goal_id, @RequestParam String goal_content,
-			@RequestParam(value = "dueDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueDate,
-			@RequestParam Long open_scope_id) {
-		Goal goal = goalService.findByGoalId(goal_id);
-		OpenScope openScope = openScopeService.findOpenScopeById(open_scope_id);
+	public String goalUpdate_post(
+	    @PathVariable("id") Long goal_id,
+	    @RequestParam String goal_content,
+	    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+	    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueDate,
+	    @RequestParam Long open_scope_id) {
 
-		goal.setDueDate(dueDate);
-		goal.setGoal_content(goal_content);
+	    Goal goal = goalService.findByGoalId(goal_id);
+	    OpenScope openScope = openScopeService.findOpenScopeById(open_scope_id);
 
-		goal.setOpenScope(openScope);
-		goalService.updateGoal(goal);
-		return "redirect:/mypage";
+	    goal.setGoal_content(goal_content);
+	    goal.setStartDate(startDate);
+	    goal.setDueDate(dueDate);
+	    goal.setOpenScope(openScope);
+
+	    goalService.updateGoal(goal);
+	    return "redirect:/mypage";
 	}
 
 	// 목표 성공
@@ -106,7 +119,7 @@ public class GoalController {
 	public String goalIsSuccess_post(@PathVariable("id") Long goal_id,
 			@RequestParam(value = "is_success", required = false) Boolean is_success,
 			@RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-
+		System.out.println("날짜............" + date);
 		// 날짜가 없으면 오늘 날짜로
 		if (date == null) {
 			date = LocalDate.now();
@@ -130,8 +143,8 @@ public class GoalController {
 			goalStatus.setIs_success(is_success != null ? is_success : false);
 			goalSatusService.insertGoalStatus(goalStatus, date); // 상태 저장
 		}
-		if (goal.getDueDate().isEqual(date)) {
-			userAchivService.insertOrUpdateUserAchiv(goal);
+		if (!LocalDate.now().isBefore(goal.getDueDate())) {
+		    userAchivService.insertOrUpdateUserAchiv(goal);
 		}
 		return "redirect:/mypage?selectedDate=" + date;
 	}
@@ -161,7 +174,19 @@ public class GoalController {
 
 		// 목표 꺼내오기
 		List<UserAchiv> achivs = userAchivService.findByUserId(user);
+		model.addAttribute("achivs", achivs);
+		return "user/goalComplate";
+	}
+
+	// 완료된 목표 보러가기
+	@GetMapping(value="/user/goalComplate/chart", produces="application/json; charset=UTF-8")
+	@ResponseBody
+	public List<Map<String,Object>> goalComplateChart(  Principal principal) {
+		
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
 		//+++차트용+++///
+		List<UserAchiv> achivs = userAchivService.findByUserId(user);	
 		List<Map<String,Object>> goalData=new ArrayList<>();
 	    for (UserAchiv achiv : achivs) {
 	        Map<String, Object> data = new HashMap<>();
@@ -169,14 +194,11 @@ public class GoalController {
 	        data.put("getGoal_content", goalContent); 
 	        data.put("completionRate", achiv.getCompletionRate()); // 달성률
 	        goalData.add(data);
-	    }
-	    model.addAttribute("goalData",goalData);
-		//+++차트용+++///
-		
-		model.addAttribute("achivs", achivs);
-		return "user/goalComplate";
+	    } 
+		//+++차트용+++/// 
+		return goalData;
 	}
-
+	
 	// 날짜 바꾸기
 	@PostMapping("/goal/byDate")
 	public String goalByDate(@RequestParam("selectedDate") String selectedDate, Model model) {

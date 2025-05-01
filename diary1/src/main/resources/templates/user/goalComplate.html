@@ -6,50 +6,59 @@
 <th:block layout:fragment="content">
 	<div class="container-fluid p-3">
 	
-    <canvas id="goalChart" width="400" height="200"></canvas>
-    
-    <script>
-        const ctx = document.getElementById('goalChart').getContext('2d');
-        
-        const goalData = [[${goalData}]];
-        /* const goalData = [{completionRate=1.0, getGoal_content=목표2}, {completionRate=1.0, getGoal_content=목표3}]; 
-        ㅠㅠ 왜 목표명이 자꾸 문자열로 변환이 안되냐고오오오*/
-
-        console.log("데이터 확인용:"+goalData);
-        
-        const labels = goalData.map(data => data.goal.goal_content); // 목표명 배열
-        const data = goalData.map(data => data.completionRate*100); // 달성률 배열
-
-        // Chart.js 설정
-        new Chart(ctx, {
-            type: 'bar', // 차트 타입 
-            data: {
-                labels: labels, // x축 (목표명)
-                datasets: [{
-                    label: '달성률',
-                    data: data, // y축 (달성률)
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                    	beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value*100 + '%'; // y축 값에 % 표시
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    </script>
+	    <canvas id="goalChart" width="400" height="200"></canvas>   
+	    <script>
+	    window.addEventListener("load" , function(){
+			const ctx = document.getElementById('goalChart').getContext('2d');
+	        
+	        $.ajax({
+					url:"/user/goalComplate/chart" , 
+					type:"GET" , 
+					dataType:"json" , 
+					contentType:"application/json;charset=UTF-8",
+					error:function(xhr, status, msg){ alert(status + "/" + msg); } , 
+					success:function(json){ 
+						 console.log(json);  
+						
+						let labels = json.map(data => data.getGoal_content); // 목표명 배열
+				        let data =json.map(data => data.completionRate*100); // 달성률 배열
 	
 	
-	
+						console.log("labels 확인용:"+labels);
+						console.log("data 확인용:"+data);
+				        
+				        // Chart.js 설정
+				        new Chart(ctx, {
+				            type: 'bar', // 차트 타입 
+				            data: {
+				                labels: labels, // x축 (목표명)
+				                datasets: [{
+				                    label: '달성률',
+				                    data: data, // y축 (달성률)
+				                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+				                    borderColor: 'rgba(54, 162, 235, 1)',
+				                    borderWidth: 1
+				                }]
+				            },
+				            options: {
+				                scales: {
+				                    y: {
+				                    	beginAtZero: true,
+				                        ticks: {
+				                            callback: function(value) {
+				                                return value*100 + '%'; /* y축 값에 % 표시 */ }
+				                        }
+				                    }
+				                }
+				            }
+				        });
+					}
+					
+				}); //E.ajax
+	    
+	    }); //E.addEventListener
+	    
+	    </script>	
 	
 		<h1 class="p-2 flex-grow-1 bd-highlight" style="font-size: 1.8em;">달성
 			완료!</h1>

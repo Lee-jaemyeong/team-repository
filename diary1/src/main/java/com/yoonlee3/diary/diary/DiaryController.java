@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -91,6 +92,8 @@ public class DiaryController {
 			List<YL3Group> groups = joinToGroupService.findGroupById(user.getId());
 			model.addAttribute("groups", groups);
 
+			model.addAttribute("profileImage", user.getProfileImageUrl());
+			
 			// 작성한 일기 수 가져오기
 			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
 			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
@@ -565,11 +568,35 @@ public class DiaryController {
 	}
 
 	@PostMapping("/group/diary/update")
-	public String updateGroupDiary_post(Diary diary, RedirectAttributes rttr) {
+	public String updateGroupDiary_post(Diary diary, RedirectAttributes rttr,
+			@RequestParam(required = false) Long open_scope_id, @RequestParam(required = false) Long template_id) {
 		String msg = "fail";
-		if (diaryService.update(diary) > 0) {
+
+		Diary existingDiary = diaryService.findById(diary.getId());
+
+		// 수정 내용 반영
+		existingDiary.setDiary_title(diary.getDiary_title());
+		existingDiary.setDiary_content(diary.getDiary_content());
+		existingDiary.setDiary_emoji(diary.getDiary_emoji());
+
+		if (open_scope_id != null) {
+			OpenScope openScope = openScopeService.findOpenScopeById(open_scope_id);
+			if (openScope != null) {
+				existingDiary.setOpenScope(openScope);
+			}
+		}
+
+		if (template_id != null) {
+			Template template = templateService.findTempalteById(template_id);
+			if (template != null) {
+				existingDiary.setTemplate(template);
+			}
+		}
+
+		if (diaryService.update(existingDiary) > 0) {
 			msg = "글수정완료!";
 		}
+
 		rttr.addFlashAttribute("msg", msg);
 		return "redirect:/group/groupDiaryDetail/" + diary.getId(); // ## 글수정기능
 	}
