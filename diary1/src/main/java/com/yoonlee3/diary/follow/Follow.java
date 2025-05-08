@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 
 import com.yoonlee3.diary.follow.FollowId;
 import com.yoonlee3.diary.user.User;
@@ -31,13 +32,13 @@ public class Follow {
 	@ManyToOne
 	@JoinColumn(name="following_id", nullable=false)
 	private User following;
-	
-	@Column(nullable = false, updatable = false)
-	private final LocalDateTime createdAt = LocalDateTime.now();
 
-	public Follow(FollowId id, User follower, User following) {
-        this.follower  = follower;
-        this.following = following;
-    }
+	private LocalDateTime createdAt;
+	
+	@PrePersist
+	protected void onCreate() {
+	    this.createdAt = LocalDateTime.now();
+	}
+
 
 }
