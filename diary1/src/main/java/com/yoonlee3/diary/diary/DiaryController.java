@@ -3,6 +3,7 @@ package com.yoonlee3.diary.diary;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -376,6 +377,7 @@ public class DiaryController {
 
 	/// Group
 	// 그룹 다이어리 쓸 때 목표 그룹 수 만큼 가져오기
+	// +++++++++++++++++++++++++수정 05.09
 	@GetMapping("group/{id}/diary/insert")
 	public String insertGroupDiary_get(@PathVariable("id") Long group_id, Model model, Principal principal,
 			RedirectAttributes redirectAttributes) {
@@ -396,7 +398,16 @@ public class DiaryController {
 		User user = userService.findByEmail(email);
 
 		// 오늘 쓰는 날인지 계산
+		LocalDate lastTurnDate = group.getLastTurnDate();
 		int currentTurn = group.getCurrentTurn();
+		
+		if (lastTurnDate == null || ChronoUnit.DAYS.between(lastTurnDate, today) >= 2) {
+		    // 하루 이상 지나면 턴 넘기기
+		    currentTurn = (currentTurn + 1) % groupSize; // 다음 사람으로
+		    group.setCurrentTurn(currentTurn);
+		    group.setLastTurnDate(today); // 마지막 턴 날짜를 오늘로 갱신
+		    groupService.insertGroup(group); // 업데이트된 그룹 저장
+		}
 
 		if (currentTurn >= groupSize) {
 			// 턴 리셋
@@ -440,7 +451,7 @@ public class DiaryController {
 
 		return "group/group_write";
 	}
-
+	// +++++++++++++++++++++++++++++++ E 05.09
 	/// 그룹 다이어리 쓰기(post)
 	@PostMapping("group/{id}/diary/insert")
 	public String insertGroupDiary_post(Diary diary, Principal principal,
