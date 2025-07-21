@@ -21,7 +21,7 @@
 ## 주요 사용 언어
 
 <table>
-  <tr> <th>백엔드</th> </tr>
+  <tr> <th>백엔드</th> <th>ver</th> </tr>
   <tr> <td>SpringBoot</td> <td>2.7.14</td> </tr>
   <tr> <td>java</td> <td>11</td> </tr>
   <tr> <td>SpringSecurity</td> <td>5.7.10</td> </tr>
@@ -30,18 +30,18 @@
   <tr> <td>DevTools</td> <td>2.7.14</td> </tr>
 </table>
 <table>
-  <tr> <th>프론트엔드</th> </tr>
+  <tr> <th>프론트엔드</th> <th>ver</th> </tr>
   <tr> <td>html</td> </tr>
   <tr> <td>css</td> </tr>
   <tr> <td>js</td> </tr>
   <tr> <td>jquery</td> <td>3.7.1</td> </tr>
 </table>
 <table>
-  <tr> <th>Database</th> </tr>
+  <tr> <th>Database</th> <th>ver</th> </tr>
   <tr> <td>Mysql</td> <td>8.0.33</td> </tr>
 </table>
 <table>
-  <tr> <th>Server</th> </tr>
+  <tr> <th>Server</th> <th>ver</th> </tr>
   <tr> <td>tomcat</td> <td>9.0.78</td> </tr>
 </table>
 <table>
