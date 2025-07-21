@@ -12,7 +12,7 @@
 
 <table> 
   <tr> <th>이름</th> <th>역할</th> <th>GitHub</th> </tr> 
-  <tr> <td>이재명</td> <td>DB 설계<br/>유저 파트<br/>다이어리 파트<br/>kakao login,logout api 연동<br/>naver mail api 연동해 비밀번호 찾기,변경</td> <td><a href="https://github.com/your-github-id1">GitHub</a></td> </tr>
+  <tr> <td>이재명</td> <td>DB 설계<br/>유저 파트<br/>다이어리 파트<br/>kakao login,logout api 연동<br/>naver mail api 연동해 비밀번호 찾기,변경</td> <td><a href="https://github.com/Lee-jaemyeong/java_2025">GitHub</a></td> </tr>
   <tr> <td>윤소현</td> <td>그룹 파트<br/>뱃지 파트<br/>open AI 연동해 일기요약<br/></td> <td><a href="https://github.com/your-github-id2">GitHub</a></td> </tr> 
   <tr> <td>이정우</td> <td>팔로우 파트<br/>차단 파트</td> <td><a href="https://github.com/your-github-id3">GitHub</a></td> </tr>
   <tr> <td>이예림</td> <td>디자인 & UI/UX<br/>추천순 정렬<br/>목표 차트 구현<br/>테마에 따른 css변화</td> <td><a href="https://github.com/your-github-id4">GitHub</a></td> </tr>
