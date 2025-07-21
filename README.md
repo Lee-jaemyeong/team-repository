@@ -10,7 +10,11 @@
 
 <img width="1300" height="731" alt="yoonlee3 member" src="https://github.com/user-attachments/assets/95b4789f-93b9-4b9d-9199-960b5742cc8e" />
 
-<tr>
-<td>이재명</td>
-</tr>
+<table> 
+  <tr> <th>이름</th> <th>역할</th> <th>GitHub</th> </tr> 
+  <tr> <td>이재명</td> <td>예약 & 결제 기능<br/>백엔드, 프론트엔드</td> <td><a href="https://github.com/your-github-id1">GitHub</a></td> </tr>
+  <tr> <td>윤소현</td> <td>그룹<br/>뱃지<br/>open AI 연동<br/>프론트엔드</td> <td><a href="https://github.com/your-github-id2">GitHub</a></td> </tr> 
+  <tr> <td>이정우</td> <td>팔로우<br/>차단<br/>백엔드</td> <td><a href="https://github.com/your-github-id3">GitHub</a></td> </tr>
+  <tr> <td>이예림</td> <td>디자인 & UI/UX<br/>프론트엔드</td> <td><a href="https://github.com/your-github-id4">GitHub</a></td> </tr>
+</table>
 ##기능 설명
