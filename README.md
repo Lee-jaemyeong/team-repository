@@ -7,8 +7,10 @@
 2. OpenAI 기반 감정 이모지 요약 기능을 통해 사용자는 글을 쓰는 것만으로도 감정과 성과를 직관적으로 시각화할 수 있습니다.
 
 ##팀원 소개
+
 <img width="1300" height="731" alt="yoonlee3 member" src="https://github.com/user-attachments/assets/95b4789f-93b9-4b9d-9199-960b5742cc8e" />
 
-- 이재명 : 
-
+<tr>
+<td>이재명</td>
+</tr>
 ##기능 설명
