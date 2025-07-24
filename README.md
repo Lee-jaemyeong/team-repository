@@ -56,22 +56,22 @@
   <tr>
     <td>이재명 [팀장]</td>
     <td>DB 설계<br/>유저 파트<br/>다이어리 파트<br/>kakao login/logout API<br/>naver mail API로 비밀번호 찾기·변경</td>
-    <td><a href="https://github.com/Lee-jaemyeong">GitHub</a></td>
+    <td><a href="https://github.com/Lee-jaemyeong">이재명 GitHub</a></td>
   </tr>
   <tr>
     <td>윤소현</td>
     <td>그룹 파트<br/>뱃지 파트<br/>OpenAI 연동 일기 요약</td>
-    <td><a href="https://github.com/syeon279">GitHub</a></td>
+    <td><a href="https://github.com/syeon279">윤소현 GitHub</a></td>
   </tr>
   <tr>
     <td>이정우</td>
     <td>팔로우 파트<br/>차단 파트</td>
-    <td><a href="https://github.com/jeongwoo76">GitHub</a></td>
+    <td><a href="https://github.com/jeongwoo76">이정우 GitHub</a></td>
   </tr>
   <tr>
     <td>이예림</td>
     <td>디자인 & UI/UX<br/>추천순 정렬<br/>목표 차트<br/>테마 기반 CSS</td>
-    <td><a href="https://github.com/dpflaalee">GitHub</a></td>
+    <td><a href="https://github.com/dpflaalee">이예림 GitHub</a></td>
   </tr>
 </table>
 
