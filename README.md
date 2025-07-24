@@ -1,4 +1,4 @@
-# Yoonlee3
+# Yoonlee3 - Dairy Project
 <img width="1302" height="734" alt="yoonlee3 intro" src="https://github.com/user-attachments/assets/e439e101-5a5e-4fcc-bc4e-a3723b369222" />
 
 ## Intro
@@ -6,7 +6,7 @@
 1. 사용자는 스스로 목표를 정하고 매일 성공 여부를 기록하며, 그룹을 통해 서로의 목표 진행 상황을 응원하고 공유할 수 있습니다.
 2. OpenAI 기반 감정 이모지 요약 기능을 통해 사용자는 글을 쓰는 것만으로도 감정과 성과를 직관적으로 시각화할 수 있습니다.
 
-<div align="center">
+<div>
 
 ## 👨‍💻 팀원 소개
 
@@ -43,44 +43,28 @@
 ## 🛠 주요 사용 기술
 
 ### 📌 Backend
-<table style="width: 400px; text-align: center;">
-  <tr><th>기술</th><th>ver</th></tr>
-  <tr><td>SpringBoot</td><td>2.7.14</td></tr>
-  <tr><td>Java</td><td>11</td></tr>
-  <tr><td>SpringSecurity</td><td>5.7.10</td></tr>
-  <tr><td>Thymeleaf</td><td>3.0.0</td></tr>
-  <tr><td>Lombok</td><td>1.18.28</td></tr>
-  <tr><td>DevTools</td><td>2.7.14</td></tr>
-</table>
+ ● SpringBoot 2.7.14
+ ● Java 11
+ ● SpringSecurity 5.7.10
+ ● Thymeleaf 3.0.0
+ ● Lombok 1.18.28
+ ● DevTools 2.7.14
 
 ### 💻 Frontend
-<table style="width: 400px; text-align: center;">
-  <tr><th>기술</th><th>ver</th></tr>
-  <tr><td>HTML</td><td>5</td></tr>
-  <tr><td>CSS</td><td>3</td></tr>
-  <tr><td>JavaScript</td><td>ES6</td></tr>
-  <tr><td>jQuery</td><td>3.7.1</td></tr>
-</table>
+ ● HTML5
+ ● CSS3
+ ● JavaScript ES6
+ ● jQuery 3.7.1
 
 ### 🗄 Database
-<table style="width: 300px; text-align: center;">
-  <tr><th>기술</th><th>ver</th></tr>
-  <tr><td>MySQL</td><td>8.0.33</td></tr>
-</table>
+ ● MySQL 8.0.33
 
 ### 🌐 Server
-<table style="width: 300px; text-align: center;">
-  <tr><th>기술</th><th>ver</th></tr>
-  <tr><td>Tomcat</td><td>9.0.78</td></tr>
-</table>
+ ● Tomcat 9.0.78
 
 ### ⚙ 기타 API
-<table style="width: 400px; text-align: center;">
-  <tr><th>기타</th></tr>
-  <tr><td>OpenAI</td></tr>
-  <tr><td>Kakao API</td></tr>
-  <tr><td>Naver Mail API</td></tr>
-  <tr><td>GitHub</td></tr>
-</table>
-
+ ● OpenAI</td></tr>
+ ● Kakao API
+ ● Naver Mail API
+ ● GitHub
 </div>
