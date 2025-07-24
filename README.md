@@ -119,7 +119,7 @@
  
 <hr />
  ● 이정우
- [![시연 영상]](https://youtu.be/fyXjxewcSSE)
+ [![시연 영상](https://github.com/user-attachments/assets/85801dbb-84d6-4ce7-86da-150671eb665e)](https://youtu.be/fyXjxewcSSE)
 
 <hr />
  ● 이예림
