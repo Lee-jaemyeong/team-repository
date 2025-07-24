@@ -43,28 +43,28 @@
 ## 🛠 주요 사용 기술
 
 ### 📌 Backend
- ● SpringBoot 2.7.14
- ● Java 11
- ● SpringSecurity 5.7.10
- ● Thymeleaf 3.0.0
- ● Lombok 1.18.28
- ● DevTools 2.7.14
+ ● SpringBoot 2.7.14 </br>
+ ● Java 11 </br>
+ ● SpringSecurity 5.7.10 </br>
+ ● Thymeleaf 3.0.0 </br>
+ ● Lombok 1.18.28 </br>
+ ● DevTools 2.7.14 </br>
 
 ### 💻 Frontend
- ● HTML5
- ● CSS3
- ● JavaScript ES6
- ● jQuery 3.7.1
+ ● HTML5 </br>
+ ● CSS3 </br>
+ ● JavaScript ES6 </br>
+ ● jQuery 3.7.1 </br>
 
 ### 🗄 Database
- ● MySQL 8.0.33
+ ● MySQL 8.0.33 </br>
 
 ### 🌐 Server
- ● Tomcat 9.0.78
+ ● Tomcat 9.0.78 </br>
 
 ### ⚙ 기타 API
- ● OpenAI</td></tr>
- ● Kakao API
- ● Naver Mail API
- ● GitHub
+ ● OpenAI </br>
+ ● Kakao API </br>
+ ● Naver Mail API </br>
+ ● GitHub </br>
 </div>
