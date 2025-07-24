@@ -113,7 +113,7 @@
 ## 팀원 파트 시연 영상
 
  ● 이재명
-[![시연 영상](https://github.com/user-attachments/assets/F6DzPczeOM4&t=5s)](https://www.youtube.com/watch?v=F6DzPczeOM4&t=5s)
+[![시연 영상](https://github.com/user-attachments/assets/183108f3-4b6c-4e37-a088-18d62a4a76ef)](https://www.youtube.com/watch?v=F6DzPczeOM4&t=5s)
 <hr />
  ● 윤소현
  
