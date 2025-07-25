@@ -12,10 +12,11 @@
 	    document.getElementById("close-alert")?.addEventListener("click", function() {
 	        var alert = document.getElementById("alert");
 	        if (alert) {
-	            alert.style.display = "none"; // 알림창 숨기기
+	            alert.style.display = "none";
 	        }
 	    });
 	</script>
+	
 	<!-- 목표(Goal) 항목 -->
 	<div class="container-fluid p-3">
 		<div class="d-flex justify-content-between">
@@ -39,7 +40,6 @@
 				$(function() {
 					const $dateInput = $('#datePicker');
 					if (!$dateInput.val()) {
-						// 값이 없을 때만 오늘 날짜로 설정
 						$dateInput.val(new Date().toISOString()
 								.substring(0, 10));
 					}
@@ -96,8 +96,8 @@
 				</tr>
 			</tbody>
 		</table>
-
 	</div>
+	
 	<!-- 목표 생성모달 -->
 	<div class="modal fade" id="createGoalModal" tabindex="-1"
 		aria-labelledby="createGoalModalLabel" aria-hidden="true">
@@ -150,7 +150,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 생성모달 -->
+	
 	<!-- 수정모달 -->
 	<div class="modal fade" id="updategoalModal" tabindex="-1"
 		aria-labelledby="updategoalModalLabel" aria-hidden="true">
@@ -201,7 +201,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 수정모달 -->
+	
 	<!-- 삭제모달 -->
 	<div class="modal fade" id="deletegoalModal" tabindex="-1"
 		aria-labelledby="deletegoalModalLabel" aria-hidden="true">
@@ -225,9 +225,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 삭제모달 -->
 
-	<!-- 목표(Goal) 항목 -->
 	<!-- 내 일기 리스트 -->
 	<div class="container-fluid p-3">
 		<div class="d-flex justify-content-between">
@@ -256,7 +254,7 @@
 			</th:block>
 		</div>
 	</div>
-	<!-- 내 일기 리스트 -->
+	
 	<script>
 	function validateGoalInsertForm() {
 	    const content = document.getElementById('goal_content_insert').value.trim();
