@@ -11,9 +11,6 @@ import com.yoonlee3.diary.diary.Diary;
 
 public interface GroupDiaryRepository extends JpaRepository<GroupDiary, Long> {
 
-	// C
-
-	// R
 	GroupDiary findByDiary(Diary diary);
 	
 	@Query("select gd from GroupDiary gd where gd.group.id = :group_id ORDER BY gd.diary.create_date DESC")
@@ -22,9 +19,6 @@ public interface GroupDiaryRepository extends JpaRepository<GroupDiary, Long> {
 	@Query("select gd from GroupDiary gd where gd.diary.id = :diary_id")
 	GroupDiary findByDiaryId(Long diary_id);
 	
-	// U
-
-	// D
 	@Modifying
 	@Transactional
 	@Query("delete from GroupDiary gd where gd.id = :groupDiry_id")
