@@ -20,8 +20,8 @@ public class NaverMail {
 
     public void sendMail(String subject , String content, String toEmail) {
         String host = "smtp.naver.com";
-        String user = "kinglee98@naver.com"; // 네이버 ID
-        String password = "woaud1025@";      // 비밀번호 (환경변수로 관리 권장)
+        String user = "yourId@naver.com"; // 네이버 ID
+        String password = "yourPass";      // 비밀번호
 
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
