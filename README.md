@@ -112,14 +112,16 @@
 ## 팀원 파트 시연 영상
 
  ● 이재명
+ 
 [![시연 영상](https://github.com/user-attachments/assets/183108f3-4b6c-4e37-a088-18d62a4a76ef)](https://www.youtube.com/watch?v=F6DzPczeOM4&t=5s)
 <hr />
  ● 윤소현
  
 <hr />
  ● 이정우
- [![시연 영상](https://github.com/user-attachments/assets/4230162a-273b-4fd0-9b43-8c85db57b1bd)](https://www.youtube.com/watch?v=fyXjxewcSSE)
- [![시연 영상](https://user-images.githubusercontent.com/183108f3/234567890-2ec08876.png)](https://www.youtube.com/watch?v=fyXjxewcSSE)
+ 
+[![시연 영상](https://github.com/user-attachments/assets/4230162a-273b-4fd0-9b43-8c85db57b1bd)](https://www.youtube.com/watch?v=fyXjxewcSSE)
+[![시연 영상](https://user-images.githubusercontent.com/183108f3/234567890-2ec08876.png)](https://www.youtube.com/watch?v=fyXjxewcSSE)
 <hr />
 
  ● 이예림
