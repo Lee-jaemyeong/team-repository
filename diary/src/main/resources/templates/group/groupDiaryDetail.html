@@ -8,7 +8,7 @@
 	<div class="container-fluid" id="themeadd"
 		style="padding: 3.5em 3em; border-radius: 10% 10% 0 0;"
 		th:classappend="${theme}">
-		<!-- 제목영역 -->
+		
 		<div>
 			<div class="d-flex justify-content-end bd-highlight"
 				th:text="${dto.openScope.openScope_title}"></div>
@@ -23,7 +23,7 @@
 					class="bd-highlight"></p>
 			</div>
 		</div>
-		<!-- 제목영역 -->
+		
 		<!-- 목표 -->
 		<table class="table">
 			<caption>Goal Success</caption>
@@ -41,14 +41,14 @@
 				</tr>
 			</tbody>
 		</table>
-		<!-- 목표 -->
-		<!-- 본문영역 -->
+		
 		<div class="mb-3">
 			<textarea th:text="${dto.diary_content}" maxlength="500"
 				class="form-control p-4"
 				style="width: 100%; height: 60vh; resize: none; background-color: #fff; border: none;"
 				readonly></textarea>
 		</div>
+		
 		<!-- 본문영역 -->
 		<div>
 			<form th:action="@{/group/diary/like}" method="post">
@@ -59,8 +59,8 @@
 				</button>
 			</form>
 		</div>
+		
 		<!-- 수정삭제 -->
-
 		<div class="d-flex bd-highlight mb-4">
 			<div class="p-2 bd-highlight">
 				<button type="button" class="btn p-3 btn-b" data-bs-toggle="modal"
@@ -73,8 +73,6 @@
 					style="width: 100%; font-size: 18px; font-weight: bold;">수정하기</a>
 			</div>
 		</div>
-
-		<!-- 수정삭제 -->
 
 		<!-- 삭제모달 -->
 		<div class="modal fade" id="pageDeleteModal" tabindex="-1"
@@ -98,7 +96,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- 삭제모달 -->
+		
 	</div>
 
 </th:block>
