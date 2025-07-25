@@ -53,12 +53,9 @@
           function changeTheme() {
               var selectedTheme = document.getElementById('themeSelect').value;
               var writeThemeElement = document.getElementById('writeTheme');
-              console.log("selectedTheme"+selectedTheme);
-              console.log("writeThemeElemente"+writeThemeElement);
 
               writeThemeElement.classList.remove('theme1', 'theme2', 'theme3');
               writeThemeElement.classList.add('theme'+selectedTheme);
-              console.log("theme"+selectedTheme)
               
           }
           </script>
@@ -142,7 +139,6 @@
 			$("#emojiBtn").on("click", function() {
 				$(".emoji").fadeIn();
 				let diary_content = $("#diary_content").val();
-				console.log(diary_content);
 				if (diary_content.length > 0) {
 					getEmoji(diary_content);
 					$(".emoji").fadeIn();
@@ -162,7 +158,6 @@
 					console.error(status + "/" + msg);
 				},
 				success : function(json) {
-					console.log(json);
 					if (json && json.emoji && json.emoji.length > 0) {
 						$("#diary_emoji").val(json.emoji);
 					}
