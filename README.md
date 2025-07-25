@@ -116,7 +116,7 @@
 [![시연 영상](https://github.com/user-attachments/assets/183108f3-4b6c-4e37-a088-18d62a4a76ef)](https://www.youtube.com/watch?v=F6DzPczeOM4&t=5s)
 <hr />
  ● 윤소현
- [![시연 영상]([https://github.com/user-attachments/assets/7aa2db26-2641-482f-87d7-0b557c9a3b2a)](https://youtu.be/Hr1llLmd_zo?feature=shared))
+ [![시연 영상]([https://github.com/user-attachments/assets/7aa2db26-2641-482f-87d7-0b557c9a3b2a)](https://www.youtube.com/watch?v=Hr1llLmd_zo)
 <hr />
  ● 이정우
  
