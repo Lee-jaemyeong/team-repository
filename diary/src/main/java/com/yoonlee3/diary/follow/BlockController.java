@@ -69,8 +69,8 @@ public class BlockController {
 			
 			
 			// 작성한 일기 수 가져오기
-			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
-			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+			long diaryCount = diaryRepository.countByUser(user);
+			model.addAttribute("diaryCount", diaryCount);
 
 		} else {
 			model.addAttribute("nickname", "Guest");
@@ -78,7 +78,7 @@ public class BlockController {
 		}
 	}
 	
-	// 차단
+    // 차단
     @PostMapping
     public ResponseEntity<String> block(@RequestParam Long blockerId, @RequestParam Long blockedId) {
         User blocker = userRepository.findById(blockerId)
@@ -89,7 +89,7 @@ public class BlockController {
         blockService.blockUser(blocker, blocked);
         
         // 차단과 동시에 팔로우 언팔로우 처리
-        followService.unfollow(blocker, blocked);  // 팔로우 해제
+        followService.unfollow(blocker, blocked);
         
         return ResponseEntity.ok("차단 및 언팔로우 성공");
     }
@@ -126,7 +126,7 @@ public class BlockController {
     	model.addAttribute("isMyPage", true);
     	
     	if (principal == null) {
-            return "redirect:/user/login"; // 로그인 안 한 경우
+            return "redirect:/user/login";
         }
 
         // 로그인한 사용자의 이메일로 사용자 정보 조회
@@ -135,14 +135,14 @@ public class BlockController {
         Long currentUserId = currentUser.getId();
 
         // 로그인한 사용자의 닉네임을 모델에 추가
-        String nickname = currentUser.getUsername();  // 닉네임 또는 사용자 이름을 가져옴
+        String nickname = currentUser.getUsername(); 
         if (nickname == null || nickname.isEmpty()) {
-            nickname = "익명 사용자";  // 닉네임이 없을 경우 기본값 설정
+            nickname = "익명 사용자";
         }
 
         // 팔로우 관련 데이터
-        List<Follow> followers = followRepository.findByFollowing(currentUser);  // 나를 팔로우한 사람들
-        List<Follow> followings = followRepository.findByFollower(currentUser);   // 내가 팔로우한 사람들
+        List<Follow> followers = followRepository.findByFollowing(currentUser); 
+        List<Follow> followings = followRepository.findByFollower(currentUser); 
 
         // 팔로워 수와 팔로잉 수 계산
         long followerCount = followRepository.countByFollowing(currentUser);
@@ -155,20 +155,20 @@ public class BlockController {
                 .collect(Collectors.toSet());
 
         // 작성한 일기 수 가져오기
-        long diaryCount = diaryRepository.countByUser(currentUser); // 일기 작성 수        
+        long diaryCount = diaryRepository.countByUser(currentUser);       
         
         // 모델에 필요한 데이터 추가
-        model.addAttribute("nickname", nickname);  // 닉네임
-        model.addAttribute("followers", followers);  // 팔로워
-        model.addAttribute("followings", followings);  // 팔로잉
-        model.addAttribute("followerCount", followerCount);  // 팔로워 수
-        model.addAttribute("followingCount", followingCount);  // 팔로잉 수
-        model.addAttribute("diaryCount", diaryCount);  // 작성한 일기 수
-        model.addAttribute("currentUserId", currentUserId);  // 현재 사용자 ID
-        model.addAttribute("blockedUsers", blockedUsers);  // 차단된 사용자 목록
-        model.addAttribute("blockedUserIds", blockedUserIds);  // 차단된 사용자 ID 목록
+        model.addAttribute("nickname", nickname); 
+        model.addAttribute("followers", followers);  
+        model.addAttribute("followings", followings);  
+        model.addAttribute("followerCount", followerCount);  
+        model.addAttribute("followingCount", followingCount);  
+        model.addAttribute("diaryCount", diaryCount);  
+        model.addAttribute("currentUserId", currentUserId);  
+        model.addAttribute("blockedUsers", blockedUsers); 
+        model.addAttribute("blockedUserIds", blockedUserIds); 
 
-        return "block/list"; // block/list.html 페이지로 리턴
+        return "block/list";
     }
     
   
