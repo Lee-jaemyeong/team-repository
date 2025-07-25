@@ -38,7 +38,6 @@
 					style="width: 100%; font-weight: bold; color: #fff; font-size: 0.8em;">차단</a>
 			</div>
 			<!-- 프로필 -->
-			<!-- 	<div th:text="${groups}"></div> -->
 			<ul class="list-unstyled components mb-5" style="height: 45%;">
 				<li><a th:href="@{/main}" class="nav-link">HOME</a></li>
 				<li><a href="#pageSubmenu" data-bs-toggle="collapse"
@@ -77,14 +76,12 @@
 					</ul></li>
 			</ul>
 			<!-- 메인 페이지 버튼 -->
-			<!-- 메인 페이지 버튼 -->
 			<th:block th:if="${isMainPage}">
 				<div class="container-fluide">
 					<a th:href="@{diary/insert}" class="btn p-3 mb-5"
 						style="width: 100%; background-color: #f8b739; font-weight: bold; color: #fff;">일기쓰기</a>
 				</div>
 			</th:block>
-			<!-- 마이페이지 버튼 -->
 			<!-- 마이페이지 버튼 -->
 			<th:block th:if="${isMyPage}">
 				<div class="container-fluide">
@@ -112,7 +109,6 @@
 						data-bs-whatever="@fat">탈퇴하기</a>
 				</div>
 			</th:block>
-			<!-- 그룹 페이지 버튼 -->
 			<!-- 그룹 페이지 버튼 -->
 			<th:block th:if="${isGroupPage}">
 				<th:block th:if="${group != null}">
@@ -168,7 +164,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- E 생성모달 -->
 			<!-- 삭제모달 -->
 			<div class="modal fade" id="deleteModal" tabindex="-1"
 				aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -221,7 +216,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- E 삭제모달 -->
 			<!-- 수정모달 -->
 			<div class="modal fade" id="updateModal" tabindex="-1"
 				aria-labelledby="updateModalLabel" aria-hidden="true">
@@ -259,9 +253,7 @@
 					</div>
 				</div>
 			</div>
-			<!--  E 수정모달 -->
 			<!--  프로필 수정모달 -->
-
 			<div class="modal fade" id="profileModal" tabindex="-1"
 				aria-labelledby="profileModalLabel" aria-hidden="true">
 				<div class="modal-dialog" style="color: #000;">
@@ -292,8 +284,6 @@
 					</div>
 				</div>
 			</div>
-			<!--  E 프로필 수정모달 -->
-			<!-- 삭제모달 -->
 			<!-- 삭제모달 -->
 			<div class="modal fade" id="leaveModal" tabindex="-1"
 				aria-labelledby="leaveModalLabel" aria-hidden="true">
@@ -325,11 +315,9 @@
 
 			<div class="footer">
 				<p>
-					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 					Copyright &copy; All rights reserved | This template is made with <i
 						class="icon-heart" aria-hidden="true"></i> by <a
 						href="https://colorlib.com" target="_blank" class="nav-link">Colorlib.com</a>
-					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 				</p>
 			</div>
 		</div>
@@ -351,18 +339,9 @@
 		}
 
 		/// group
-		/* 	function openGroupInsertModal(title, content){
-				document.getElementById("group_title_insert").value = title;
-				document.getElementById("group_content_insert").value = content;
-				// 동적으로 action 설정
-				document.getElementById("insertGroupForm").action = `/goal/insert`;
-			}
-		 */
 		function openGroupUpdateModal(id, content, title) {
-			console.log("함수 호출 성공");
 			document.getElementById("group_title_update").value = title;
 			document.getElementById("group_content_update").value = content;
-			// 동적으로 action 설정
 			document.getElementById("updateGroupForm").action = `/group/update/${id}`;
 		}
 
@@ -380,7 +359,7 @@
 
 		function updateFollowCounts() {
 			$.ajax({
-				url : '/user/follow/counts?ts=' + new Date().getTime(), // 캐시 방지
+				url : '/user/follow/counts?ts=' + new Date().getTime(),
 				method : 'GET',
 				success : function(data) {
 					const $followerCount = $('#sidebar-follower-count');
@@ -392,8 +371,6 @@
 					if ($followingCount.length > 0) {
 						$followingCount.text(data.followings);
 					}
-
-					console.log("팔로우 수 갱신:", data);
 				},
 				error : function(err) {
 					console.error("팔로우 수 가져오기 실패", err);
@@ -402,7 +379,7 @@
 		}
 
 		$(function() {
-			updateFollowCounts(); // 항상 시도하게 수정
+			updateFollowCounts();
 		});
 
 		function toggleFollow(userId) {
@@ -419,9 +396,6 @@
 
 					//  팔로우/팔로잉 수 갱신
 					updateFollowCounts();
-
-					// 또는 추가로 강제로 DOM 갱신 확인
-					console.log("팔로우 상태 변경됨. 사이드바 숫자 갱신 시도 중...");
 				},
 				error : function(err) {
 					console.error("팔로우 토글 실패", err);
