@@ -15,8 +15,6 @@ import com.yoonlee3.diary.goal.Goal;
 
 public interface GoalStatusRepository extends JpaRepository<GoalStatus, Long> {
 
-	// C
-	// R
 	@Query("select gs from GoalStatus gs where gs.goal.id=:goal_id")
 	List<GoalStatus> findByGoalId(Long goal_id);
 
@@ -53,13 +51,9 @@ public interface GoalStatusRepository extends JpaRepository<GoalStatus, Long> {
 	@Query("select gs from GoalStatus gs where gs.goal.id = :goal_id and gs.createDate = :date order by createDate")
 	GoalStatus findByGoalIdAndDate(@Param("goal_id") Long goal_id, @Param("date") LocalDate date);
 
-	// U
-
 	@Modifying
 	@Transactional
 	@Query("update GoalStatus gs set gs.is_success= :is_success where gs.createDate= :date and gs.goal.id =:goal_id")
 	int updateGoalStatus(Boolean is_success, LocalDate date, Long goal_id);
-
-	// D
 
 }
