@@ -71,8 +71,7 @@ public class User {
 
     @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Follow> followings  = new ArrayList<>();
-    
-    // blockedUsers는 차단된 사용자의 리스트
+
     @OneToMany(mappedBy = "blocker", cascade = CascadeType.REMOVE, orphanRemoval = true) 
     private Set<Block> blockedUsers = new HashSet<>();
 
