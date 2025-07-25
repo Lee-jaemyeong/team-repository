@@ -20,13 +20,12 @@ public class GoalSatusService {
 
 	@Autowired GoalStatusRepository goalStatusRepository;
 	@Autowired GoalRepository goalRepository;
-	
-	// C
+
 	public GoalStatus insertGoalStatus(GoalStatus goalStatus, LocalDate today) {
 		return goalStatusRepository.save(goalStatus);
 	}
 	
-	// R : 유저의 목표 리스트 가져오기
+	// 유저의 목표 리스트 가져오기
 	public List<GoalStatus> selectGoal(Goal goal) {
 		return goalStatusRepository.findByGoalId(goal.getId());
 	}
@@ -52,8 +51,8 @@ public class GoalSatusService {
 	public int countStatusMonth(Goal goal) {
 
 		LocalDate today = LocalDate.now();
-		LocalDate startOfMonth = today.withDayOfMonth(1); // 4월 1일
-		LocalDate startOfNextMonth = startOfMonth.plusMonths(1); // 5월 1일
+		LocalDate startOfMonth = today.withDayOfMonth(1);
+		LocalDate startOfNextMonth = startOfMonth.plusMonths(1);
 
 		return goalStatusRepository.findMonthStatus(goal.getId(), startOfMonth, startOfNextMonth);
 	}
@@ -75,12 +74,10 @@ public class GoalSatusService {
 		return goalStatusRepository.findTodayStatus(today);
 	}
 
-	// U
 	public int updateGoalStatus(GoalStatus goalStatus, LocalDate date, Goal goal) {
 		return goalStatusRepository.updateGoalStatus(goalStatus.getIs_success(), date, goal.getId());
 	}
 
-	// D
 	public void deleteStatusByGoal(Goal goal) {
 		List<GoalStatus> goalStatuses = goalStatusRepository.findByGoalId(goal.getId());
 		goalStatusRepository.deleteAll(goalStatuses);
