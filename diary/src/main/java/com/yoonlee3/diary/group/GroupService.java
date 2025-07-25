@@ -24,14 +24,12 @@ public class GroupService {
 	@Autowired
 	GroupDiaryService groupDiaryService;
 
-	// insert
 	public void insertGroup(YL3Group group) {
 		YL3Group save = groupRepository.save(group);
 		User user = save.getGroup_leader();
 		joinToGroupService.joinToGroup(save.getId(), user.getId());
 	}
 
-	// read
 	public List<YL3Group> findAll() {
 		return groupRepository.findAll();
 	}
@@ -44,7 +42,6 @@ public class GroupService {
 		return groupRepository.findById(group_id).orElseThrow(() -> new RuntimeException("존재하지 않는 그룹입니다."));
 	}
 
-	// update
 	public int updateGroupBadge(Long group_id) {
 		return groupRepository.updateGroupBadge(group_id);
 	}
@@ -53,10 +50,9 @@ public class GroupService {
 		return groupRepository.updateGroup(group.getGroup_title(), group.getGroup_content(), group.getId());
 	}
 
-	// delete
 	public int deleteGroup(YL3Group group) {
 		YL3Group findgroup = groupRepository.findById(group.getId())
-				.orElseThrow(() -> new RuntimeException("여기는 GroupService............ 그룹이 존재하지 않아요 흑흑"));
+				.orElseThrow(() -> new RuntimeException("존재하지 않는 그룹입니다."));
 		// 그룹안에 있는 유저들 가져오기
 		List<User> users = group.getUsers();
 		// 리더가 아닌 유저들 그룹 떠나게 하기
