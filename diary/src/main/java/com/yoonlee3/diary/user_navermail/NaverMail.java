@@ -40,7 +40,7 @@ public class NaverMail {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(user));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail)); // 매개변수로 받은 이메일
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
             message.setSubject(subject);
             message.setContent(
                 "<div style='background-color:aliceblue; padding:15px; border-radius:10px;'>"
