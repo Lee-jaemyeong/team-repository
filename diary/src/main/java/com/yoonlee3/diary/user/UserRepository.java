@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	// R
 	Optional<User> findByEmail(String email);
 	Optional<User> findByResetToken(String resetToken);
 
@@ -21,10 +20,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("select u from User u where u.username= :username")
 	List<User> findUsersByUsername(String username);
 	
-    @Query("select case when count(u) > 0 then true else false end from User u where u.username = :username")
-    boolean existsByUsername(String username);
+    	@Query("select case when count(u) > 0 then true else false end from User u where u.username = :username")
+    	boolean existsByUsername(String username);
 
-	// U
 	@Modifying
 	@Transactional
 	@Query("update User u set u.username= :username where u.id= :user_id ")
