@@ -411,7 +411,6 @@ public class UserController {
 				for (Diary d : diares) {
 					GroupDiary groupDiary = groupDiaryRepository.findByDiaryId(d.getId());
 					if (groupDiary != null) {
-						System.out.println("그룹 다이어리 아이디........" + groupDiary.getId());
 						groupDiaryRepository.deleteGroupDiary(groupDiary.getId());
 						groupDiaryRepository.flush();
 					}
