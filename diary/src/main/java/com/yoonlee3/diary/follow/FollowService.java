@@ -18,18 +18,11 @@ public class FollowService {
 	private final UserRepository userRepository;
 
 	// 팔로우 기능
-	/*
-	 * @Transactional public void follow(User follower, User following) { if
-	 * (!followRepository.existsByFollowerAndFollowing(follower, following)) {
-	 * followRepository.save( Follow.builder() .follower(follower)
-	 * .following(following) .build() ); } }
-	 */
-
 	@Transactional
 	public void follow(User follower, User following) {
 		if (!followRepository.existsByFollowerAndFollowing(follower, following)) {
 			Follow follow = Follow.builder().follower(follower).following(following).build();
-			followRepository.saveAndFlush(follow); // save 후 flush 강제
+			followRepository.saveAndFlush(follow);
 		}
 	}
 
@@ -50,8 +43,8 @@ public class FollowService {
 	}
 
 	public UserProfileDto getUserProfile(User viewer, User target) {
-		long followers = followRepository.countByFollowing(target); // 팔로워 수
-		long followings = followRepository.countByFollower(target); // 팔로잉 수
+		long followers = followRepository.countByFollowing(target);
+		long followings = followRepository.countByFollower(target);
 
 		// 프로필 이미지 URL 설정 (기본값 설정)
 		String image = target.getProfileImageUrl() != null ? target.getProfileImageUrl()
@@ -60,14 +53,14 @@ public class FollowService {
 		// 로그인한 사용자가 해당 사용자를 팔로우 중인지 여부
 		boolean isFollowing = followRepository.existsByFollowerAndFollowing(viewer, target);
 
-		// 팔로워 리스트 초기화 (followersList 필드를 채우기 위해)
+		// 팔로워 리스트 초기화
 		List<String> followersList = followRepository.findByFollowing(target).stream()
-				.map(follow -> follow.getFollower().getUsername()) // 팔로워의 username을 리스트로 변환
+				.map(follow -> follow.getFollower().getUsername())
 				.collect(Collectors.toList());
 
-		// 팔로잉 리스트 초기화 (followingsList 필드를 채우기 위해)
+		// 팔로잉 리스트 초기화
 		List<String> followingsList = followRepository.findByFollower(target).stream()
-				.map(follow -> follow.getFollowing().getUsername()) // 팔로잉의 username을 리스트로 변환
+				.map(follow -> follow.getFollowing().getUsername())
 				.collect(Collectors.toList());
 
 		// UserProfileDto 반환
