@@ -7,11 +7,9 @@
 
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    var currentUserId = /*[[${currentUserId}]]*/ 0;
-    var followingIds = /*[[${followingIds}]]*/ [];
-    var blockedUsers = /*[[${blockedUsers}]]*/ [];
-    /*]]>*/
+    var currentUserId = 0;
+    var followingIds = [];
+    var blockedUsers = [];
 </script>
 
 
@@ -29,7 +27,6 @@
 			aria-selected="true">팔로잉<span th:text="${followings != null ? followings.size():0}">0</span></button>
 	</li>	
 </ul>
-<!-- 탭 버튼 -->
 
 <!-- 유저 검색 입력창 -->
 <div class="container mt-3">
@@ -40,11 +37,10 @@
     <div id="searchResults"></div>
 </div>
 
-
-
 <!-- 팔로워/팔로잉 탭 -->
 <div class="container-fluid p-3">
 	<div class="tab-content" id="followTabContent">
+		
 <!-- 팔로워 탭 -->
 <div class="tab-pane fade" id="follower" role="tabpanel" aria-labelledby="follower-tab">
 	<table class="table">
@@ -102,7 +98,6 @@
         </tr>
 	</table>
 </div>
-<!-- 팔로잉 탭 -->
 	</div>
 </div>
 </th:block>
