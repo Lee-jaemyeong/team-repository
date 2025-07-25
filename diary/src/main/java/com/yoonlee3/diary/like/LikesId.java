@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class LikesId implements Serializable {
 	
-	private Long diary;
+    private Long diary;
     private Long user;
 
     public LikesId() {}

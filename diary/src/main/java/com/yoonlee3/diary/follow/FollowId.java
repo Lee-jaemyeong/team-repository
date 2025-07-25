@@ -14,9 +14,9 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class FollowId implements Serializable {
 	
-	private static final long serialVersionUID = 1L; // serialVersionUID 추가
+	private static final long serialVersionUID = 1L;
 	
-	private Long follower; //User의 ID와 매핑
-	private Long following; //User의 ID와 매핑
+	private Long follower; 
+	private Long following;
 	
 }

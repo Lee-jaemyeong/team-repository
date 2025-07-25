@@ -22,32 +22,27 @@
     <script>
 	    document.getElementById("searchBtn").addEventListener("click", function () {
 	        const keyword = document.getElementById("searchInput").value.trim();
-	        const searchType = "group";  // 그룹만 검색하도록 고정
+	        const searchType = "group";
 	        
 	        if (!keyword) {
 	            alert("검색어를 입력해주세요.");
 	            return;
 	        }
 
-	        console.log("검색어:", keyword);  // 검색어 확인
-
-	        fetch(`/search/${searchType}/${encodeURIComponent(keyword)}`)  // URL에 검색 유형 추가
+	        fetch(`/search/${searchType}/${encodeURIComponent(keyword)}`)
 	            .then(response => {
-	                console.log("응답 상태:", response);
 	                if (!response.ok) {
 	                    throw new Error("서버 응답 오류");
 	                }
-	                return response.json();  // 응답을 JSON으로 변환
+	                return response.json(); 
 	            })
 	            .then(data => {
-	                console.log("서버 응답 데이터:", data);  // 서버 응답 데이터 확인
 	                const resultDiv = document.getElementById("searchResult");
 
 	                if (data.status === "success") {
 	                    let html = "<h5>🔍 검색 결과</h5><ul>";
 
 	                    if (data.groups) {
-	                        // groups가 있을 때
 	                        html += `
 	                            <li>
 	                                <strong>그룹 이름:</strong> ${data.groups.group_title} <br>

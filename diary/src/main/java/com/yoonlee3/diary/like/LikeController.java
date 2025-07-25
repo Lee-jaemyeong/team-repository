@@ -22,7 +22,7 @@ public class LikeController {
     private final LikeService likeService;
     private final UserRepository userRepository;
 
-    // 좋아요 토글 (POST 요청)
+    // 좋아요
     @PostMapping("/diary/like")
     public String toggleLike(@RequestParam Long diaryId, Principal principal) {
         if (principal != null) {
@@ -30,13 +30,11 @@ public class LikeController {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("사용자 정보가 없습니다."));
 
-            // 좋아요 상태 토글
             boolean isLiked = likeService.toggleLike(diaryId, user.getId());
 
-            // 상태에 따라 리다이렉트
             return "redirect:/mainTemplate/detail/" + diaryId;
         }
-        return "redirect:user/login"; // 비로그인 시 리다이렉트
+        return "redirect:user/login";
     }
     
     @PostMapping("group/diary/like")
@@ -46,16 +44,14 @@ public class LikeController {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("사용자 정보가 없습니다."));
 
-            // 좋아요 상태 토글
             boolean isLiked = likeService.toggleLike(diaryId, user.getId());
 
-            // 상태에 따라 리다이렉트
             return "redirect:/group/groupDiaryDetail/" + diaryId;
         }
-        return "redirect:user/login"; // 비로그인 시 리다이렉트
+        return "redirect:user/login";
     }   
     
-    // 좋아요 상태 확인 (GET 요청)
+    // 좋아요 상태 확인
     @GetMapping("/status")
     @ResponseBody
     public boolean isLiked(@RequestParam Long diaryId, Principal principal) {
@@ -65,6 +61,6 @@ public class LikeController {
                     .orElseThrow(() -> new UsernameNotFoundException("사용자 정보가 없습니다."));
             return likeService.isLiked(diaryId, user.getId());
         }
-        return false; // 비로그인 상태는 좋아요가 아님
+        return false;
     }
 }

@@ -15,15 +15,12 @@
 			</div>
 		</div>
 	</div>
-	<!-- E 그룹 멤버들 -->
-	<!-- 그룹 멤버의 오늘 목표 성공여부 -->
+
 	<!-- 그룹 멤버별 오늘 목표 -->
-	<!-- 토글 버튼 -->
-	<!-- 토글 버튼 -->
 	<div style="cursor: pointer; font-weight: bold; margin: 10px 0;"
 		id="toggle-goals-btn">▶ 그룹 멤버들의 오늘 목표 보기</div>
 
-	<!-- 토글 대상: 전체 멤버 목표 영역 -->
+	<!-- 전체 멤버 목표 영역 -->
 	<div id="all-user-goals" style="display: none;">
 
 		<div th:each="entry : ${userGoalsMap}" class="user-goal-block"
@@ -44,7 +41,6 @@
 
 	</div>
 
-	<!--  E  그룹 멤버의 오늘 목표 성공여부 -->
 	<div class="container-fluid p-3">
 		<!-- 프로필영역 -->
 		<div class="d-flex bd-highlight mb-3">
@@ -96,7 +92,6 @@
 						</div>
 					</div>
 				</div>
-				<!--  E modal -->
 			</div>
 		</div>
 	</div>
@@ -107,7 +102,7 @@
 	</th:block>
 	<script th:inline="javascript">
 		const blockedUserIds = [[${blockedUserIds}]];
-  		const usersWhoBlockedMe = [[${usersWhoBlockedMeIds}]]; // List<Long> 또는 Set<Long>
+  		const usersWhoBlockedMe = [[${usersWhoBlockedMeIds}]];
 	</script>
 	<script th:inline="javascript">
 	document.addEventListener("DOMContentLoaded", function() {
@@ -121,16 +116,12 @@
 	            const username = this.getAttribute('data-username');
 			    const myId = [[${myId}]];
 	
-	            // 모달에 사용자 이름 표시
 	            document.getElementById('selectedUsername').innerText = username;
 	
-	            // 팔로우 버튼에 user_id 저장
 	            document.getElementById('followBtn').setAttribute('data-user-id', user_id);
 	
-	            // 강퇴 버튼에도 user_id 저장
 	            document.getElementById('kickBtn').setAttribute('data-user-id', user_id);
 				
-	            // 유저가 나면 버튼 안보이게 하기
 	           if (user_id === String(myId)) {
     				kickBtn.style.display = 'none';
    				 	followBtn.style.display = 'none';
@@ -144,13 +135,11 @@
 	                document.getElementById('kickBtn').style.display = 'none';
 	            }
 	            
-	            // 나를 차단한 유저면 팔로우 버튼 안보이게 하기
 	            if (Array.isArray(usersWhoBlockedMe) && usersWhoBlockedMe.includes(Number(user_id))) {
 	            	document.getElementById("blockNotice").style.display = "block";
 					followBtn.style.display = 'none';
 				}
 	            
-	            // 내가 차단한 유저면 팔로우 버튼 안보이게 하기
 	            if ( Array.isArray(blockedUserIds) && blockedUserIds.includes(Number(user_id))) {
 	        		document.getElementById("blockNotice").style.display = "block";
 					followBtn.style.display = 'none';
@@ -161,13 +150,11 @@
 	        });
 	    });
 	
-	    // 팔로우 버튼 클릭
 	    document.getElementById('followBtn').addEventListener('click', function() {
 	        const user_id = this.getAttribute('data-user-id');
 	        location.href = '/group/'+ group_id +'/follow/' + user_id;
 	    });
-	
-	    // 강퇴 버튼 클릭
+
 	    document.getElementById('kickBtn').addEventListener('click', function() {
 	        const user_id = this.getAttribute('data-user-id');
 	        if (confirm('정말 이 사용자를 그룹에서 탈퇴시키겠습니까?')) {

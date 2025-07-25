@@ -18,14 +18,13 @@ public class GoalService {
 	GoalRepository goalRepository;
 	@Autowired
 	GoalSatusService goalSatusService;
-
-	// C
+	
 	public Goal insertGoal(Goal goal, User user) {
 		goal.setUser(user);
 		return goalRepository.save(goal);
 	}
 
-	// R goal id로 목표 가져오기
+	// goal id로 목표 가져오기
 	public Goal findByGoalId(Long goal_id) {
 		return goalRepository.findByGoalId(goal_id);
 	}
@@ -45,13 +44,11 @@ public class GoalService {
 		return goalRepository.findOverGoalByUserId(user.getId(), today);
 	}
 
-	// U
 	public int updateGoal(Goal goal) {
 		return goalRepository.updateByGoalId(goal.getStartDate(), goal.getDueDate(), goal.getGoal_content(),
 				goal.getOpenScope().getId(), goal.getId());
 	}
 
-	// D
 	public int deleteGoal(Goal goal, Long user_id) {
 		goalSatusService.deleteStatusByGoal(goal);
 		return goalRepository.deleteGoal(goal.getId(), user_id);

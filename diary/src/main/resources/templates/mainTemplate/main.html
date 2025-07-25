@@ -12,7 +12,7 @@
 		    document.getElementById("close-alert")?.addEventListener("click", function() {
 		        var alert = document.getElementById("alert");
 		        if (alert) {
-		            alert.style.display = "none"; // 알림창 숨기기
+		            alert.style.display = "none";
 		        }
 		    });
 		</script>
@@ -21,7 +21,6 @@
             <li class="nav-item w-50"><a th:href="@{/main}" class="btn w-100">기본 정렬</a></li>
             <li class="nav-item w-50"><a th:href="@{/main/likes}" class="btn w-100">추천 순</a></li>
          	</ul>
-			<!-- <div> <img src="https://placehold.co/80x80" alt="" class="rounded-circle p-2 bd-highlight" style="margin-right: 5px;"> </div>-->
 			<p th:if="${#lists.isEmpty(list)}" >등록된 일기가 없습니다.</p>
 			<th:block  th:each="dto, state : ${list}">
 				<ul class="list-unstyled d-flex justify-content-between" 

@@ -23,7 +23,6 @@ public class KakaoLogin {
 	@Value("${kakao_api}")
 	private String kakao_api;
 	
-	// 1.login
 	public String step1() {
 		return "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="
 				    + kakao_api

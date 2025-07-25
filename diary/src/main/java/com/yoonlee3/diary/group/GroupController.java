@@ -90,8 +90,8 @@ public class GroupController {
 			model.addAttribute("blockedUserIds", blockedUserIds);
 
 			// 작성한 일기 수 가져오기
-			long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
-			model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+			long diaryCount = diaryRepository.countByUser(user);
+			model.addAttribute("diaryCount", diaryCount);
 
 		} else {
 			model.addAttribute("nickname", "Guest");
@@ -132,9 +132,9 @@ public class GroupController {
 		User user = userService.findByEmail(email);
 
 		// 작성한 일기 수 가져오기
-		long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
-		model.addAttribute("diaryCount", diaryCount); // 다이어리 수
-
+		long diaryCount = diaryRepository.countByUser(user);
+		model.addAttribute("diaryCount", diaryCount);
+		
 		// 그룹 뱃지 계산하기
 		for (YL3Group group : groups) {
 			int badgeLevel = badgeService.calculateBadgeLevel(group.getCreate_date().toLocalDate());
@@ -143,18 +143,16 @@ public class GroupController {
 			group.setBadge(badge);
 		}
 
-		// 팔로워와 팔로잉 리스트를 가져옵니다.
-		// 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
-		List<Follow> followers = followRepository.findByFollowing(user); // 나를 팔로우한 사람들
-		List<Follow> followings = followRepository.findByFollower(user); // 내가 팔로우한 사람들
-		model.addAttribute("followers", followers); // 팔로워 리스트
-		model.addAttribute("followings", followings); // 팔로잉 리스트
+		List<Follow> followers = followRepository.findByFollowing(user);
+		List<Follow> followings = followRepository.findByFollower(user);
+		model.addAttribute("followers", followers);
+		model.addAttribute("followings", followings);
 
 		// 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
 		long followerCount = followRepository.countByFollowing(user);
 		long followingCount = followRepository.countByFollower(user);
-		model.addAttribute("followerCount", followerCount); // 팔로워 수
-		model.addAttribute("followingCount", followingCount); // 팔로잉 수
+		model.addAttribute("followerCount", followerCount);
+		model.addAttribute("followingCount", followingCount);
 		return "group/main";
 	}
 
@@ -167,19 +165,18 @@ public class GroupController {
 
 		YL3Group group = groupService.findById(group_id);
 
-		// 그룹 리더인지 확인하기
+		// 그룹 리더인지 확인
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 		boolean isLeader = group.getGroup_leader().getId().equals(user.getId());
 		model.addAttribute("isLeader", isLeader);
 
-		// 내가 그룹에 속해있는지 확인하기
+		// 내가 그룹에 속해있는지 확인
 		List<User> groupUsers = group.getUsers();
 		if (groupUsers.contains(user)) {
 			model.addAttribute("isMyGroup", true);
 		}
 
-		// 내 아이디 보내기
 		model.addAttribute("myId", user.getId());
 
 		// 그룹에 속한 유저들
@@ -187,7 +184,6 @@ public class GroupController {
 		LocalDate today = LocalDate.now();
 
 		// 그 유저들의 오늘 목표 성공 여부
-		// Map<User, List<Goal>> 으로만 넘기기
 		List<Goal> allGoals = new ArrayList<>();
 		List<GoalStatus> statusList = new ArrayList<>();
 		Map<User, List<Goal>> userGoalsMap = new LinkedHashMap<>();
@@ -197,10 +193,10 @@ public class GroupController {
 		    List<Goal> userGoals = goalService.findTodayGoalByUserId(groupuser, today);
 		    
 		    List<Goal> visibleUserGoals = userGoals.stream()
-		        .filter(g -> canViewGoal(g, user))  // 현재 로그인한 사용자가 볼 수 있는 목표만
+		        .filter(g -> canViewGoal(g, user))
 		        .collect(Collectors.toList());
 
-		    userGoalsMap.put(groupuser, visibleUserGoals); // 필터링된 목표만 저장
+		    userGoalsMap.put(groupuser, visibleUserGoals);
 		    allGoals.addAll(visibleUserGoals);
 
 		    for (Goal g : visibleUserGoals) {
@@ -241,43 +237,38 @@ public class GroupController {
 			// 오늘로 업데이트
 			group.setLastTurnDate(today);
 
-			// currentTurn + 1
 			int nextTurn = (group.getCurrentTurn() + 1) % users.size();
 			group.setCurrentTurn(nextTurn);
 		}
 
-		// 그룹 정보 보내기
 		model.addAttribute("group", group);
-		// 그룹 소속 유저들 보내기
 		model.addAttribute("users", users);
 
 		if (turnMessage != null && !turnMessage.isEmpty()) {
 			model.addAttribute("turnMessage", turnMessage);
 		}
 
-		// 팔로워와 팔로잉 리스트를 가져옵니다.
-		// 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
-		List<Follow> followers = followRepository.findByFollowing(user); // 나를 팔로우한 사람들
-		List<Follow> followings = followRepository.findByFollower(user); // 내가 팔로우한 사람들
-		model.addAttribute("followers", followers); // 팔로워 리스트
-		model.addAttribute("followings", followings); // 팔로잉 리스트
+		List<Follow> followers = followRepository.findByFollowing(user);
+		List<Follow> followings = followRepository.findByFollower(user);
+		model.addAttribute("followers", followers);
+		model.addAttribute("followings", followings);
 
 		// 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
 		long followerCount = followRepository.countByFollowing(user);
 		long followingCount = followRepository.countByFollower(user);
-		model.addAttribute("followerCount", followerCount); // 팔로워 수
-		model.addAttribute("followingCount", followingCount); // 팔로잉 수
+		model.addAttribute("followerCount", followerCount);
+		model.addAttribute("followingCount", followingCount);
 
 		return "group/group";
 	}
 
-	// 그룹 가입하기 화면(post)
+	// 그룹 가입하기 화면
 	@PostMapping("group/join/{id}")
 	public String groupJoin_post(Principal principal, @PathVariable("id") Long group_id,
 			RedirectAttributes redirectAttributes) throws IOException {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-		int result = joinToGroupService.joinToGroup(group_id, user.getId()); // 한 번만 호출
+		int result = joinToGroupService.joinToGroup(group_id, user.getId());
 
 		if (result == 0) {
 			redirectAttributes.addFlashAttribute("message", "가입 성공!");
@@ -290,7 +281,7 @@ public class GroupController {
 		return "redirect:/group/main";
 	}
 
-	// 그룹 수정하기(post)
+	// 그룹 수정하기
 	@PostMapping("group/update/{id}")
 	public String groupUpdate_post(@PathVariable("id") Long group_id, Principal principal,
 			@RequestParam String group_title, @RequestParam String group_content) {
@@ -303,7 +294,7 @@ public class GroupController {
 		return "redirect:/mypage";
 	}
 
-	// 그룹 생성하기 화면(post)
+	// 그룹 생성하기 화면
 	@PostMapping("group/insert")
 	public String groupInsert_post(Principal principal, @RequestParam String group_title,
 			@RequestParam String group_content) {
@@ -322,7 +313,7 @@ public class GroupController {
 		return "redirect:/mypage";
 	}
 
-	// 그룹 탈퇴하기 화면(post)
+	// 그룹 탈퇴하기 화면
 	@PostMapping("group/leave/{id}")
 	public String groupLeave_Post(Principal principal, @PathVariable("id") Long group_id,
 			RedirectAttributes redirectAttributes) {
@@ -343,7 +334,7 @@ public class GroupController {
 		return "redirect:/group/main";
 	}
 
-	// 그룹 삭제하기 화면(post)
+	// 그룹 삭제하기 화면
 	@PostMapping("group/delete/{id}")
 	public String groupDelete_post(Principal principal, @PathVariable("id") Long group_id, Model model) {
 
@@ -360,13 +351,13 @@ public class GroupController {
 		return "redirect:/main";
 	}
 
-	// 그룹 검색+++++++++++++++++++++++++++++
+	// 그룹 검색
 	@GetMapping(value = "/search/group/{search}", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public Map<String, Object> searchGroup(@PathVariable String search) {
 		Map<String, Object> result = new HashMap<>();
 		try {
-			YL3Group group = groupService.findByGroupTitle(search); // 하나의 그룹을 반환
+			YL3Group group = groupService.findByGroupTitle(search);
 
 			if (group != null) {
 				Map<String, Object> groupDetails = new HashMap<>();
@@ -386,20 +377,15 @@ public class GroupController {
 		}
 		return result;
 	}
-	// +++++++++++++++++++++++++++++++++++++++++++++ 수정0430
 
-	// +++++++++++++++++++++++++++++++++++++++++
 	@GetMapping("group/{g_id}/follow/{u_id}")
 	public String follow(@PathVariable("g_id") Long group_id, @PathVariable("u_id") Long user_id, Principal principal) {
-		System.out.println("step 1......................................................");
 		User findfollower = userService.findByEmail(principal.getName());
 		User follower = userService.findById(findfollower.getId());
 		User following = userService.findById(user_id);
-		System.out.println("step 2..................................");
 		followService.follow(follower, following);
 		return "redirect:/group/group/" + group_id;
 	}
-	// +++++++++++++++++++++++++++++++++++++++++++
 
 	// 그룹 강퇴시키기
 	@GetMapping("/group/{g_id}/kick/{u_id}")

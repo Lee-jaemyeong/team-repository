@@ -13,7 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OpenScope {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "open_scope_id")
@@ -22,7 +21,7 @@ public class OpenScope {
 	@Column(nullable = false)
 	private String openScope_title;
 	
-    @Column(nullable = false)
-    private String openScope_value;
+	@Column(nullable = false)
+    	private String openScope_value;
 
 }

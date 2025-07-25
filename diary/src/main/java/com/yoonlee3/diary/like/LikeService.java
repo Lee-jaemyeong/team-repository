@@ -18,7 +18,7 @@ public class LikeService {
 	LikeRepository likeRepository;
 	@Autowired
 	@Lazy
-	DiaryService diaryService; // 수정
+	DiaryService diaryService;
 	@Autowired
 	UserService userService;
 
@@ -51,5 +51,5 @@ public class LikeService {
 	
 	public void deleteAllByDiaryId(Long diaryId) {
 	    likeRepository.deleteByDiaryId(diaryId);
-	} // 수정
+	}
 }

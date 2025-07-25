@@ -57,9 +57,9 @@ public class YL3Group {
 	private Badge badge;
 
 	@ManyToMany
-	@JoinTable(name = "Group_has_User", // 조인 테이블 이름
-			joinColumns = @JoinColumn(name = "group_id"), // 현재 엔티티(PK)
-			inverseJoinColumns = @JoinColumn(name = "user_id") // 상대 엔티티(PK)
+	@JoinTable(name = "Group_has_User",
+			joinColumns = @JoinColumn(name = "group_id"),
+			inverseJoinColumns = @JoinColumn(name = "user_id")
 	)
 	@JsonManagedReference
 	private List<User> users = new ArrayList<>();

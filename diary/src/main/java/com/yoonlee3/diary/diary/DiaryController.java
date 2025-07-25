@@ -113,21 +113,17 @@ public class DiaryController {
 	public String mainList(Principal principal, Model model) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-		// 모든 게시글을 가져옵니다.
 		List<Diary> allDiaries = diaryService.findAll();
 
 		// 공개범위에 따라 필터링_수정
 		List<Diary> visibleDiaries = allDiaries.stream()
 				.filter(diary -> !diary.getOpenScope().getOpenScope_value().equals("GROUP"))
 				.filter(diary -> canViewDiary(diary, user)).collect(Collectors.toList());
-		///////////////////////////////////// 0430수정
 
 		// 작성한 일기 수 가져오기
 		long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
 		model.addAttribute("diaryCount", diaryCount); // 다이어리 수
 
-		// 팔로워와 팔로잉 리스트를 가져옵니다.
-		// 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
 		List<Follow> followers = followRepository.findByFollowing(user); // 나를 팔로우한 사람들
 		List<Follow> followings = followRepository.findByFollower(user); // 내가 팔로우한 사람들
 		model.addAttribute("followers", followers); // 팔로워 리스트
@@ -149,24 +145,22 @@ public class DiaryController {
 
 		// 공개범위에 맞는 필터링을 추가
 		if (openScope.getOpenScope_value().equals("PRIVATE") && !diary.getUser().equals(user)) {
-			return false; // '나만보기'는 본인만 볼 수 있음
+			return false;
 		}
 
-		// '친구공개'는 친구와 본인만 볼 수 있음
 		if (openScope.getOpenScope_value().equals("FRIENDS")
 				&& !(user.getFollowers().stream().anyMatch(follow -> follow.getFollowing().equals(diary.getUser()))
 						|| diary.getUser().equals(user))) {
-			return false; // 친구공개는 친구와 본인만 볼 수 있음
+			return false;
 		}
 
-		// '그룹공개'는 해당 그룹의 회원과 본인만 볼 수 있음
 		if (openScope.getOpenScope_value().equals("GROUP") && (!diary.getGroupDiaries().stream()
 				.anyMatch(groupDiary -> user.getGroups().contains(groupDiary.getGroup()))
 				&& !diary.getUser().equals(user))) {
-			return false; // 그룹공개는 해당 그룹의 회원과 본인만 볼 수 있음
+			return false;
 		}
 
-		return true; // '전체공개'는 누구나 볼 수 있음
+		return true;
 	}
 	
 	private boolean canViewGoal(Goal goal, User user) {
@@ -205,7 +199,7 @@ public class DiaryController {
 			boolean isLiked = likeService.isLiked(id, user.getId());
 			model.addAttribute("isLiked", isLiked); // 좋아요 여부 추가
 		} else {
-			model.addAttribute("isLiked", false); // 비로그인 시 좋아요 상태는 false
+			model.addAttribute("isLiked", false); // 비로그인 시 좋아요 상태 false
 		}
 
 		Diary diary = diaryService.findById(id);
@@ -267,7 +261,7 @@ public class DiaryController {
 	// 글 수정하기
 	@GetMapping("/diary/update/{id}")
 	public String update_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
-		Diary diary = diaryService.update_view(id); // ## 수정할 글 가져오기
+		Diary diary = diaryService.update_view(id); // 수정할 글 가져오기
 		if (diary.getUser().getEmail().equals(principal.getName())) {
 			model.addAttribute("dto", diary); // 수정할 일기 가져오기
 			return "mainTemplate/update";
@@ -277,7 +271,6 @@ public class DiaryController {
 		}
 	}
 
-	// ++++++++++++++++++++++ 수정 0430
 	@PostMapping("/diary/update")
 	public String update_post(Diary diary, RedirectAttributes rttr,
 	                          @RequestParam(required = false) Long open_scope_id,
@@ -320,8 +313,6 @@ public class DiaryController {
 	    return "redirect:/mainTemplate/detail/" + existingDiary.getId();
 	}
 
-	// ++++++++++++++++++++++ 수정
-
 	// 글 삭제하기
 	@GetMapping("/diary/delete/{id}")
 	public String delete_get(@PathVariable Long id, Principal principal, Model model, RedirectAttributes rttr) {
@@ -334,16 +325,14 @@ public class DiaryController {
 		}
 
 		if (diary.getUser().getEmail().equals(principal.getName())) {
-			// 삭제 요청 전에 확인 메시지 표시
-			model.addAttribute("diary", diary); // 삭제할 다이어리 정보를 모델에 추가
-			return "/diary/delete/{id}"; // 삭제 확인 페이지로 이동
+			model.addAttribute("diary", diary);
+			return "/diary/delete/{id}";
 		} else {
 			rttr.addFlashAttribute("msg", "본인이 작성한 글만 삭제할 수 있습니다.");
 			return "redirect:/main";
 		}
 	}
 
-	// ++++++++++++++++++++ 수정
 	@Transactional
 	@PostMapping("/diary/delete/{id}")
 	public String delete_post(@PathVariable Long id, Principal principal, RedirectAttributes rttr) {
@@ -372,7 +361,6 @@ public class DiaryController {
 
 		return "redirect:/main";
 	}
-	// ++++++++++++++++++++ 수정
 
 	/// Group
 	// 그룹 다이어리 쓸 때 목표 그룹 수 만큼 가져오기
@@ -411,7 +399,7 @@ public class DiaryController {
 			return "redirect:/group/group/" + group_id;
 		}
 
-		// 유저의 목표 가져오기(지난 일기 쓴 이후의 목표들 가져오기)
+		// 유저의 목표 가져오기
 		List<Goal> goals = goalService.findOverGoalByUserId(user, startDate);
 		model.addAttribute("goals", goals);
 
@@ -483,12 +471,6 @@ public class DiaryController {
 		
 		// 일기 찾기
 		Diary diary = diaryService.findById(diary_id);
-		
-		if (diary == null) {
-			System.out.println(">>>>> Diary not found: " + diary_id);
-		} else {
-			System.out.println(">>>>> Diary title: " + diary.getDiary_title());
-		}
 		model.addAttribute("dto", diaryService.findById(diary_id));
 
 		// 다이어리로 그룹 찾기
@@ -498,12 +480,11 @@ public class DiaryController {
 		// 그룹 사이즈 계산
 		int groupSize = group.getUsers().size();
 		
-		//0430
 		//로그인 한 나
 		String email = principal.getName();
 		final User user = userService.findByEmail(email);
 		
-		// 글쓴 유저의 목표 가져오기(지난 일기 쓴 이후의 목표들 가져오기)
+		// 글쓴 유저의 목표 가져오기
 		List<LocalDate> dateList = new ArrayList<>();
 		LocalDate today = diary.getCreate_date().toLocalDate();
 
@@ -559,12 +540,11 @@ public class DiaryController {
 		return "group/groupDiaryDetail";
 	}
 
-	/////////////////////// 0430
 	// 그룹 다이어리 수정
 	@GetMapping("/group/diary/update/{id}")
 	public String updateGroupDiary_get(@PathVariable Long id, Principal principal, Model model,
 			RedirectAttributes rttr) {
-		Diary diary = diaryService.update_view(id); // ## 수정할 글 가져오기
+		Diary diary = diaryService.update_view(id); // 수정할 글 가져오기
 		if (diary.getUser().getEmail().equals(principal.getName())) {
 			model.addAttribute("dto", diary); // 수정할 일기 가져오기
 			return "group/group_update";
@@ -605,10 +585,9 @@ public class DiaryController {
 		}
 
 		rttr.addFlashAttribute("msg", msg);
-		return "redirect:/group/groupDiaryDetail/" + diary.getId(); // ## 글수정기능
+		return "redirect:/group/groupDiaryDetail/" + diary.getId(); // 글수정기능
 	}
 
-	////////////////////////////
 	// 그룹 다이어리 삭제
 	@PostMapping("/group/diary/delete/{id}")
 	public String deleteGroupDiary_post(@PathVariable("id") Long diary_id, Principal principal,

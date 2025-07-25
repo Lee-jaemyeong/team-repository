@@ -23,23 +23,22 @@ public class UserSecurity {
 @Bean SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http.authorizeHttpRequests(
 			(authorizeHttpRequests) -> authorizeHttpRequests
-									    .requestMatchers(
-									            new AntPathRequestMatcher("/css/**"),
-									            new AntPathRequestMatcher("/js/**"),
-									            new AntPathRequestMatcher("/images/**")
-									        ).permitAll()
-			                               .requestMatchers(
-			                            		   new AntPathRequestMatcher("/diary/emoji"),
-			                            		   new AntPathRequestMatcher("/**") )
-			                               .permitAll() // 모든사용자 접근가능
-		).formLogin(  // login
-			(formLogin) -> 	formLogin.loginPage("/user/login").defaultSuccessUrl("/mypage")
-		).logout(  // logout
-			(logout) ->	logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessHandler((request, response, authentication) -> {
+							.requestMatchers(
+								new AntPathRequestMatcher("/css/**"),
+								new AntPathRequestMatcher("/js/**"),
+								new AntPathRequestMatcher("/images/**")
+							).permitAll()
+			                               	.requestMatchers(
+			                            		new AntPathRequestMatcher("/diary/emoji"),
+			                            		new AntPathRequestMatcher("/**") )
+			                               	.permitAll() // 모든사용자 접근가능
+		).formLogin(
+			(formLogin) -> formLogin.loginPage("/user/login").defaultSuccessUrl("/mypage")
+		).logout(
+			(logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessHandler((request, response, authentication) -> {
 			    String kakaoLogoutUrl = "https://kauth.kakao.com/oauth/logout"
 			            + "?client_id=" + kakao_api
 			            + "&logout_redirect_uri=" + kakao_redirect_url;
-
 			    response.sendRedirect(kakaoLogoutUrl);
 			}).invalidateHttpSession(true)
 		)

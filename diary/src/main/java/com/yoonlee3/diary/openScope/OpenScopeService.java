@@ -8,10 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class OpenScopeService {
 
-	@Autowired
-	OpenScopeRepository openScopeRepository;
+    @Autowired
+    OpenScopeRepository openScopeRepository;
 
-	//c
     @PostConstruct
     public void initializeOpenScopes() {
         // 이미 공개범위가 존재하는지 확인 (중복 방지)
@@ -36,7 +35,6 @@ public class OpenScopeService {
             publicScope.setOpenScope_title("전체공개");
             publicScope.setOpenScope_value("PUBLIC");
 
-            // 공개 범위 값을 데이터베이스에 저장
             openScopeRepository.save(privateScope);
             openScopeRepository.save(friendsScope);
             openScopeRepository.save(groupScope);
@@ -46,14 +44,12 @@ public class OpenScopeService {
         }
     }
 	
-	//r
+    public OpenScope findOpenScope(OpenScope openScope) {
+	return openScopeRepository.findByOpenScopeId(openScope.getId());
+    }
     
-	public OpenScope findOpenScope(OpenScope openScope) {
-		return openScopeRepository.findByOpenScopeId(openScope.getId());
-	}
-    
-	public OpenScope findOpenScopeById(Long open_scope_id) {
-		return openScopeRepository.findByOpenScopeId(open_scope_id);
-	} 
+    public OpenScope findOpenScopeById(Long open_scope_id) {
+	return openScopeRepository.findByOpenScopeId(open_scope_id);
+    } 
 
 }

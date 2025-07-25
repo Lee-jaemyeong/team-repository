@@ -117,6 +117,7 @@
 <hr />
  ● 윤소현
  
+ [![시연 영상](https://github.com/user-attachments/assets/7aa2db26-2641-482f-87d7-0b557c9a3b2a)](https://www.youtube.com/watch?v=Hr1llLmd_zo)
 <hr />
  ● 이정우
  

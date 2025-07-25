@@ -33,7 +33,7 @@
           </select>
         </div>
         <div class="mb-3">
-          <!-- <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label> -->
+		
           <textarea maxlength="500" th:text="${dto.diary_content}" class="form-control" name="diary_content" id="diary_content" rows="3" style="width: 100%; height: 60vh; resize: none;"></textarea>
         </div>
         <!-- 이모티콘 -->
@@ -44,19 +44,17 @@
         	<input type="text" id="diary_emoji" name="diary_emoji"
         		style="border: 1px solid #eee; padding: 0.5em; width: 100%;"></div>
         </div>
-        <!-- 이모티콘 -->
         <div class="d-flex bd-highlight mb-4">
         <div class="p-2 bd-highlight">
-          <!-- 취소 버튼 수정 (submit 제거) -->
           <button type="button" class="btn p-3" style="width: 100%;font-size: 18px; font-weight: bold; border: 2px solid #f8b739;" onclick="window.location.href='/main';">취소</button>
         </div>
         <div class="p-2 flex-grow-1 bd-highlight">
-          <!-- 게시하기 버튼 수정 (폼 제출로 변경) -->
           <button type="submit" class="btn p-3" style="width: 100%; font-size: 18px; font-weight: bold; background-color: #f8b739; border: 2px solid #f8b739;">게시하기</button>
         </div>
       </div>
       </form>
     </div>
+	
    <!-- 글쓰기폼 -->	
   		<script>
 			function form() {
@@ -79,9 +77,8 @@
 					$(".emoji").hide();
 					$("#emojiBtn").on("click", function() {
 						$(".emoji").fadeIn();
-						let diary_content = $("#diary_content").val(); // 입력값 공백없이
-						console.log(diary_content);
-						if (diary_content.length > 0) { // 검색어가 공백이 아닐 때 호출
+						let diary_content = $("#diary_content").val();
+						if (diary_content.length > 0) {
 							getEmoji(diary_content);
 							$(".emoji").fadeIn();
 						}
@@ -100,10 +97,9 @@
 							console.error(status + "/" + msg);
 						},
 						success : function(json) {
-							console.log(json);
 							if (json && json.emoji && json.emoji.length > 0) {
 								$("#diary_emoji").val(json.emoji);
-							} // E if
+							}
 						}
 					});
 				}

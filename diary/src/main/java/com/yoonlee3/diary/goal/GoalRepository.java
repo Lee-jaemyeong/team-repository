@@ -11,9 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface GoalRepository extends JpaRepository<Goal, Long> {
 	
-	//C
-	
-	//R
 	// 목표 아이디로 찾기
 	@Query("select g from Goal g where g.id = :goal_id")
 	Goal findByGoalId(Long goal_id);
@@ -29,15 +26,13 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 	// dueDate 지난 목표들 가져오기 = 기준일 이후의 목표들 가져오기
 	@Query("select g from Goal g where g.user.id= :user_id and g.dueDate >= :date")
 	List<Goal> findOverGoalByUserId(Long user_id, LocalDate date);
-	
-	//U
+
 	@Modifying
 	@Transactional
 	@Query("update Goal g set g.startDate = :start_date, g.dueDate= :due_date, g.goal_content= :goal_content, "
 		+ "g.openScope.id = :open_scope_id where g.id = :goal_id")
 	int updateByGoalId(LocalDate start_date, LocalDate due_date, String goal_content, Long open_scope_id, Long goal_id);
-	
-	//D
+
 	@Modifying
 	@Transactional
 	@Query("delete from Goal g where g.id=:goal_id and g.user.id=:user_id")

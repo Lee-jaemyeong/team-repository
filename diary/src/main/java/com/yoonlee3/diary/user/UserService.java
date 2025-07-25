@@ -35,18 +35,15 @@ public class UserService {
 	@Autowired
 	DiaryRepository diaryRepository;
 
-	// insert
 	public User insertUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
 
-	// selectAll
 	public List<User> selectUserAll() {
 		return userRepository.findAll();
 	}
 
-	// select
 	public User findById(Long user_id) {
 		return userRepository.findById(user_id).get();
 	}
@@ -64,10 +61,9 @@ public class UserService {
 	}
 
 	public boolean SameUsername(String username) {
-		return userRepository.existsByUsername(username); // 닉네임 중복 확인
+		return userRepository.existsByUsername(username);
 	}
 
-	// update
 	public int updateByPass(User user) {
 		return userRepository.updateByIdAndPassword(user.getPassword(), user.getEmail());
 	}
@@ -77,14 +73,13 @@ public class UserService {
 	}
 
 	public List<User> searchUsers(String keyword) {
-		return userRepository.findByUsernameContaining(keyword); // username을 포함한 사용자 찾기
+		return userRepository.findByUsernameContaining(keyword);
 	}
 
 	public User getCurrentUser() {
 		return null;
 	}
 
-	// 내가 차단한 사용자 목록
 	public List<User> getBlockedUsers(Long currentUserId) {
 		return blockRepository.findBlockedUsersByBlockerId(currentUserId);
 	}
@@ -93,17 +88,16 @@ public class UserService {
 		User user = userRepository.findByUsername(username);
 		if (user == null)
 			return 0;
-		return (int) followRepository.countByFollowing(user); // 팔로워 수
+		return (int) followRepository.countByFollowing(user);
 	}
 
 	public int getFollowingCount(String username) {
 		User user = userRepository.findByUsername(username);
 		if (user == null)
 			return 0;
-		return (int) followRepository.countByFollower(user); // 팔로잉 수
+		return (int) followRepository.countByFollower(user);
 	}
 	
-	///////////////////////// 0430
 	public List<User> getUsersWhoBlocked(Long userId) {
 	       User currentUser = userRepository.findById(userId)
 	                                        .orElseThrow(() -> new RuntimeException("사용자 없음"));
@@ -111,6 +105,6 @@ public class UserService {
 	                             .stream()
 	                             .map(Block::getBlocker)
 	                             .collect(Collectors.toList());
-	   }
+	}
 
 }

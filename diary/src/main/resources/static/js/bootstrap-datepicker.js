@@ -1,8 +1,3 @@
-/*!
- * Datepicker for Bootstrap v1.10.0 (https://github.com/uxsolutions/bootstrap-datepicker)
- *
- * Licensed under the Apache License v2.0 (https://www.apache.org/licenses/LICENSE-2.0)
- */
 
 (function(factory){
     if (typeof define === 'function' && define.amd) {
@@ -46,11 +41,8 @@
 				return this.slice(i)[0];
 			},
 			contains: function(d){
-				// Array.indexOf is not cross-browser;
-				// $.inArray doesn't work with Dates
 				var val = d && d.valueOf();
 				for (var i=0, l=this.length; i < l; i++)
-          // Use date arithmetic to allow dates with different times to match
           if (0 <= this[i].valueOf() - val && this[i].valueOf() - val < 1000*60*60*24)
 						return i;
 				return -1;
@@ -84,9 +76,7 @@
 		};
 	})();
 
-
 	// Picker object
-
 	var Datepicker = function(element, options){
 		$.data(element, 'datepicker', this);
 
@@ -115,7 +105,6 @@
 
 		this.picker = $(DPGlobal.template);
 
-		// Checking templates and inserting
 		if (this._check_template(this.o.templates.leftArrow)) {
 			this.picker.find('.prev').html(this.o.templates.leftArrow);
 		}

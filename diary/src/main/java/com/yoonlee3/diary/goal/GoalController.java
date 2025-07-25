@@ -62,11 +62,11 @@ public class GoalController {
 	            model.addAttribute("groups", groups);
 	            model.addAttribute("profileImage", user.getProfileImageUrl());
 	         } else {
-	            model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
+	            model.addAttribute("nickname", "Guest");
 	            model.addAttribute("groups", Collections.emptySet());
 	         }
 	      } else {
-	         model.addAttribute("nickname", "Guest"); // 로그인되지 않으면 Guest로 처리
+	         model.addAttribute("nickname", "Guest");
 	      }
 	   }
 
@@ -122,28 +122,25 @@ public class GoalController {
 			@RequestParam(value = "is_success", required = false) Boolean is_success,
 			@RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 		System.out.println("날짜............" + date);
-		// 날짜가 없으면 오늘 날짜로
 		if (date == null) {
 			date = LocalDate.now();
 		}
 		Goal goal = goalService.findByGoalId(goal_id);
 
-		// 기존 상태가 존재하는지 확인
 		Optional<GoalStatus> findGoalStatus = goalSatusService.findTodayGoalStatus(goal, date);
 		GoalStatus goalStatus;
 
 		if (findGoalStatus.isPresent()) {
 			goalStatus = findGoalStatus.get();
-			// 체크박스가 비어있으면 false 처리
 			goalStatus.setIs_success(is_success != null ? is_success : false);
-			goalSatusService.updateGoalStatus(goalStatus, date, goal); // 상태 저장
+			goalSatusService.updateGoalStatus(goalStatus, date, goal);
 		} else {
 			goalStatus = new GoalStatus();
 			goalStatus.setGoal(goal);
 			goalStatus.setCreateDate(date);
 			// 체크박스가 비어있으면 false 처리
 			goalStatus.setIs_success(is_success != null ? is_success : false);
-			goalSatusService.insertGoalStatus(goalStatus, date); // 상태 저장
+			goalSatusService.insertGoalStatus(goalStatus, date);
 		}
 		if (!LocalDate.now().isBefore(goal.getDueDate())) {
 		    userAchivService.insertOrUpdateUserAchiv(goal);
@@ -170,11 +167,9 @@ public class GoalController {
 	@GetMapping("/user/goalComplate")
 	public String goalComplate(Model model, Principal principal) {
 		model.addAttribute("isMyPage", true);
-		// 유저 찾기
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 
-		// 목표 꺼내오기
 		List<UserAchiv> achivs = userAchivService.findByUserId(user);
 		model.addAttribute("achivs", achivs);
 		return "user/goalComplate";
@@ -187,17 +182,15 @@ public class GoalController {
 		
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
-		//+++차트용+++///
 		List<UserAchiv> achivs = userAchivService.findByUserId(user);	
 		List<Map<String,Object>> goalData=new ArrayList<>();
 	    for (UserAchiv achiv : achivs) {
 	        Map<String, Object> data = new HashMap<>();
-	        String goalContent = achiv.getGoal().getGoal_content(); // 왜 목표명이 string으로 안오냐고
+	        String goalContent = achiv.getGoal().getGoal_content();
 	        data.put("getGoal_content", goalContent); 
 	        data.put("completionRate", achiv.getCompletionRate()); // 달성률
 	        goalData.add(data);
 	    } 
-		//+++차트용+++/// 
 		return goalData;
 	}
 	

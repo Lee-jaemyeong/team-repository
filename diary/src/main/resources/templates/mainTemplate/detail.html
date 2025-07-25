@@ -16,15 +16,15 @@
 					style="font-size: 1.8em; font-weight: bold;"></h1>
 				<div th:text="${dto.diary_emoji}"></div>
 			</div>
+			
 			<!-- 수정 -->
 			<div class="d-flex justify-content-between bd-highlight mb-3">
 				<p th:text="${dto.user.username}" class="bd-highlight"></p>
 				<p th:text="${#temporals.format(dto.create_date, 'yyyy-MM-dd')}"
 					class="bd-highlight"></p>
 			</div>
-			<!-- 수정 -->
 		</div>
-		<!-- 제목영역 -->
+		
 		<!-- 본문영역 -->
 		<div class="mb-3">
 			<textarea th:text="${dto.diary_content}" maxlength="500"
@@ -32,8 +32,7 @@
 				style="width: 100%; height: 60vh; resize: none; border: none;"
 				readonly></textarea>
 		</div>
-		<!-- 본문영역 -->
-		<!-- 수정++++++++++ -->
+
 		<div>
 			<form th:action="@{/diary/like}" method="post">
 				<input type="hidden" name="diaryId" th:value="${dto.id}" /> <span
@@ -43,8 +42,8 @@
 				</button>
 			</form>
 		</div>
+		
 		<!-- 수정삭제 -->
-		<!-- 수정++++++++++ -->
 		<div class="d-flex bd-highlight mb-4">
 			<div class="p-2 bd-highlight">
 				<button type="button" class="btn p-3 btn-b" data-bs-toggle="modal"
@@ -56,7 +55,6 @@
 					style="width: 100%; font-size: 18px; font-weight: bold;">수정하기</a>
 			</div>
 		</div>
-		<!-- 수정삭제 -->
 
 		<!-- 삭제모달 -->
 		<div class="modal fade" id="pageDeleteModal" tabindex="-1"
@@ -80,7 +78,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- 삭제모달 -->
 	</div>
 
 </th:block>

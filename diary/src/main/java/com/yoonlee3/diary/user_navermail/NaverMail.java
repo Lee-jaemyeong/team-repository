@@ -20,8 +20,8 @@ public class NaverMail {
 
     public void sendMail(String subject , String content, String toEmail) {
         String host = "smtp.naver.com";
-        String user = "kinglee98@naver.com"; // 네이버 ID
-        String password = "woaud1025@";      // 비밀번호 (환경변수로 관리 권장)
+        String user = "yourId@naver.com"; // 네이버 ID
+        String password = "yourPass";      // 비밀번호
 
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
@@ -40,7 +40,7 @@ public class NaverMail {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(user));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail)); // 매개변수로 받은 이메일
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
             message.setSubject(subject);
             message.setContent(
                 "<div style='background-color:aliceblue; padding:15px; border-radius:10px;'>"

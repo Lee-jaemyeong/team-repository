@@ -116,16 +116,15 @@ public class UserController {
 				model.addAttribute("groups", groups);
 
 				// 작성한 일기 수 가져오기
-				long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
-				model.addAttribute("diaryCount", diaryCount); // 다이어리 수// 유저 프로필 랜덤으로
-
+				long diaryCount = diaryRepository.countByUser(user);
+				model.addAttribute("diaryCount", diaryCount);
 
 			} else {
-				model.addAttribute("nickname", "Guest"); // 사용자 없음 -> Guest로 처리
+				model.addAttribute("nickname", "Guest");
 				model.addAttribute("groups", Collections.emptySet());
 			}
 		} else {
-			model.addAttribute("nickname", "Guest"); // 로그인되지 않으면 Guest로 처리
+			model.addAttribute("nickname", "Guest");
 		}
 	}
 
@@ -146,7 +145,6 @@ public class UserController {
 
 		User user = userService.findByEmail(email);
 
-		// 날짜 계산해서 오늘 할 목표 넘기기
 		LocalDate selectedDate = (date != null) ? date : LocalDate.now();
 		List<Goal> goals = goalService.findTodayGoalByUserId(user, selectedDate);
 
@@ -165,21 +163,19 @@ public class UserController {
 		model.addAttribute("list", list);
 
 		// 작성한 일기 수 가져오기
-		long diaryCount = diaryRepository.countByUser(user); // 일기 작성 수
-		model.addAttribute("diaryCount", diaryCount); // 다이어리 수
+		long diaryCount = diaryRepository.countByUser(user);
+		model.addAttribute("diaryCount", diaryCount);
 
-		// 팔로워와 팔로잉 리스트를 가져옵니다.
-		// 'user' 객체를 사용하여 팔로워와 팔로잉을 조회합니다.
-		List<Follow> followers = followRepository.findByFollowing(user); // 나를 팔로우한 사람들
-		List<Follow> followings = followRepository.findByFollower(user); // 내가 팔로우한 사람들
-		model.addAttribute("followers", followers); // 팔로워 리스트
-		model.addAttribute("followings", followings); // 팔로잉 리스트
+		List<Follow> followers = followRepository.findByFollowing(user);
+		List<Follow> followings = followRepository.findByFollower(user);
+		model.addAttribute("followers", followers);
+		model.addAttribute("followings", followings);
 
-		// 팔로워 수와 팔로잉 수를 계산해서 모델에 추가
+		// 팔로워 수와 팔로잉 수 모델에 추가
 		long followerCount = followRepository.countByFollowing(user);
 		long followingCount = followRepository.countByFollower(user);
-		model.addAttribute("followerCount", followerCount); // 팔로워 수
-		model.addAttribute("followingCount", followingCount); // 팔로잉 수
+		model.addAttribute("followerCount", followerCount);
+		model.addAttribute("followingCount", followingCount);
 
 		return "user/mypage";
 	}
@@ -202,15 +198,14 @@ public class UserController {
 
 			// 입력된 비밀번호와 저장된 암호화된 비밀번호 비교
 			if (passwordEncoder.matches(password, user.getPassword())) {
-				// 비밀번호가 맞다면 로그인 성공
-				return "redirect:/mypage"; // 또는 메인 페이지로 리디렉션
+				return "redirect:/mypage";
 			} else {
 				model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
-				return "user/login"; // 비밀번호 불일치시 로그인 페이지로
+				return "user/login";
 			}
 		} else {
 			model.addAttribute("msg", "이메일을 찾을 수 없습니다.");
-			return "user/login"; // 이메일을 찾을 수 없을 경우 로그인 페이지로
+			return "user/login";
 		}
 	}
 
@@ -232,7 +227,6 @@ public class UserController {
 			return "user/join";
 		}
 		
-		// 유저 프로필 랜덤으로
 		List<String> profileImages = List.of("/images/user1.png", "/images/user2.png", "/images/user3.png",
 				"/images/user4.png", "/images/user5.png");
 		Random rand = new Random();
@@ -246,7 +240,7 @@ public class UserController {
 			user.setPassword(userForm.getPassword());
 			user.setProfileImageUrl(randomImage);
 			userService.insertUser(user);
-		} catch (DataIntegrityViolationException e) { // 무결성 - 중복키, 외래키제약, 데이터형식불일치
+		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
 			bindingResult.reject("failed", "등록된 유저입니다.");
 			return "user/join";
@@ -293,7 +287,7 @@ public class UserController {
 				+ "color:white;text-decoration:none;border-radius:5px;'>비밀번호 재설정하기</a><br><br>"
 				+ "이 링크는 1회용이며, 일정 시간 후 만료됩니다.";
 
-		naverMail.sendMail(subject, content, email); // content는 HTML 형식
+		naverMail.sendMail(subject, content, email);
 	}
 
 	@GetMapping("/user/reset")
@@ -301,11 +295,11 @@ public class UserController {
 		Optional<User> userOpt = userRepository.findByResetToken(token);
 
 		if (userOpt.isPresent()) {
-			model.addAttribute("token", token); // 토큰을 hidden field로 전달
-			return "user/passchange"; // 비밀번호 변경 페이지로 이동
+			model.addAttribute("token", token);
+			return "user/passchange";
 		} else {
 			model.addAttribute("msg", "유효하지 않은 링크입니다.");
-			return "user/find"; // 유효하지 않은 토큰일 경우 다시 이메일 입력 페이지로 돌아감
+			return "user/find";
 		}
 	}
 
@@ -315,10 +309,10 @@ public class UserController {
 	}
 
 	@PostMapping("/user/passchange")
-	public String passchange_form(@RequestParam("token") String token, // 토큰을 hidden field로 받음
+	public String passchange_form(@RequestParam("token") String token,
 			@RequestParam("password") String password, Model model) {
 
-		Optional<User> opuser = userRepository.findByResetToken(token); // 토큰을 통해 사용자 찾기
+		Optional<User> opuser = userRepository.findByResetToken(token);
 
 		if (opuser.isPresent()) {
 			User user = opuser.get();
@@ -326,14 +320,14 @@ public class UserController {
 			// 비밀번호 암호화
 			String encodedPassword = passwordEncoder.encode(password);
 			user.setPassword(encodedPassword);
-			user.setResetToken(null); // 토큰 삭제
+			user.setResetToken(null);
 			userRepository.save(user);
 
 			model.addAttribute("msg", "비밀번호가 성공적으로 변경되었습니다.");
-			return "redirect:/user/login"; // 로그인 페이지로 리다이렉트
+			return "redirect:/user/login";
 		} else {
 			model.addAttribute("msg", "유효하지 않은 링크입니다.");
-			return "user/find"; // 유효하지 않은 링크일 경우 다시 이메일 입력 페이지로 돌아감
+			return "user/find";
 		}
 	}
 
@@ -388,11 +382,9 @@ public class UserController {
 			// 비밀번호 확인
 			if (passwordEncoder.matches(password, user.getPassword())) {
 
-				// 1. 사용자가 blocker 또는 blocked로 존재하는 Block 레코드 삭제
-				blockRepository.deleteByBlockerId(user.getId()); // blocker로 있는 레코드 삭제
-				blockRepository.deleteByBlockedId(user.getId()); // blocked로 있는 레코드 삭제
+				blockRepository.deleteByBlockerId(user.getId());
+				blockRepository.deleteByBlockedId(user.getId());
 
-				// 2. 유저가 속한 그룹에서 유저를 그룹장으로 설정되어 있는 경우 처리
 				for (YL3Group group : user.getGroups()) {
 
 					if (group.getGroup_leader().equals(user)) {
@@ -404,50 +396,40 @@ public class UserController {
 								group.setGroup_leader(newLeader);
 								groupRepository.save(group);
 							} else {
-								groupService.deleteGroup(group); // 그룹에서 유저가 유일한 멤버일 경우 그룹 삭제
+								groupService.deleteGroup(group);
 							}
 						} else {
-							groupService.deleteGroup(group); // 유저가 유일한 멤버일 경우 그룹 삭제
+							groupService.deleteGroup(group);
 						}
 					}
 
 					group.getUsers().remove(user);
-					groupRepository.save(group); // 그룹 정보 업데이트
+					groupRepository.save(group);
 				}
 
-				// 유저가 쓴 다이어리 삭제하기
-				// 유저가 쓴 일기를 가져오고, 그 일기를 그룹 - 다이어리 연결 끊고, 다이어리 삭제 후 탈퇴
-				// 1. 유저가 쓴 일기 가져오기
 				List<Diary> diares = diaryService.findByUserId(user.getId());
-				// 2. 그 일기들 그룹 - 다이어리 연결 끊기
 				for (Diary d : diares) {
 					GroupDiary groupDiary = groupDiaryRepository.findByDiaryId(d.getId());
 					if (groupDiary != null) {
-						System.out.println("그룹 다이어리 아이디........" + groupDiary.getId());
 						groupDiaryRepository.deleteGroupDiary(groupDiary.getId());
 						groupDiaryRepository.flush();
 					}
 				}
-				// 3. 다이어리 삭제하기
 				for (Diary d : diares) {
 					diaryService.delete(d);
 				}
 
-				// 3. 유저의 목표 삭제
 				List<Goal> goals = goalService.findByUserId(user);
 				for (Goal goal : goals) {
-					// achiv 삭제
 					if (userAchivService.selectById(goal).isPresent()) {
 						userAchivService.deleteUserAchive(goal);
 					}
 					goalService.deleteGoal(goal, user.getId());
 				}
 
-				// 4. 유저 삭제
 				userRepository.delete(user);
 				SecurityContextHolder.clearContext();
 
-				// 메시지 추가 후 리다이렉트
 				redirectAttributes.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
 				return "redirect:/user/login";
 			} else {
@@ -468,7 +450,7 @@ public class UserController {
 		model.addAttribute("isMyPage", true);
 
 		if (principal == null) {
-			return "redirect:/user/login"; // 로그인 안 한 경우
+			return "redirect:/user/login";
 		}
 
 		User currentUser = userService.findByEmail(principal.getName());
@@ -523,7 +505,6 @@ public class UserController {
 		return "user/follow";
 	}
 
-	// 유저 검색하기 ////////////0430
 	@GetMapping("/search/users")
 	@ResponseBody
 	public List<UserProfileDto> searchUsers(@RequestParam("keyword") String keyword,
@@ -541,7 +522,7 @@ public class UserController {
 		Set<Long> excludedIds = new HashSet<>();
 		excludedIds.addAll(blockedUserIds);
 		excludedIds.addAll(usersWhoBlockedMeIds);
-		excludedIds.add(currentUserId); // 자기 자신도 제외
+		excludedIds.add(currentUserId);
 
 		// 검색 결과 가져오기
 		List<User> allUsers = userRepository.findByUsernameContainingIgnoreCase(keyword);
