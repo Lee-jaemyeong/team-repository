@@ -12,8 +12,7 @@ import com.yoonlee3.diary.openScope.OpenScope;
 @Service
 public class TemplateService {
 	
-	@Autowired
-	TemplateRepositroy templateRepositroy;
+    @Autowired TemplateRepositroy templateRepositroy;
 	
     @PostConstruct
     public void initializeOpenScopes() {
@@ -31,7 +30,7 @@ public class TemplateService {
         templateRepositroy.save(privateTemplate3);
     }
 	
-	public Template findTempalteById(Long template_id ) {
-		return templateRepositroy.findTempalteById(template_id);
-	}
+    public Template findTempalteById(Long template_id ) {
+	return templateRepositroy.findTempalteById(template_id);
+    }
 }
