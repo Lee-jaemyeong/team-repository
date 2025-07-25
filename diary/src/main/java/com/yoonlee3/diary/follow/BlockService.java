@@ -11,7 +11,7 @@ import com.yoonlee3.diary.user.User;
 public class BlockService {
 
 	 private final BlockRepository blockRepository;
-	    private final FollowRepository followRepository; // FollowRepository 추가
+	    private final FollowRepository followRepository;
 
 	    public BlockService(BlockRepository blockRepository, FollowRepository followRepository) {
 	        this.blockRepository = blockRepository;
@@ -21,7 +21,6 @@ public class BlockService {
 	    // 차단 기능 (차단 + 양방향 언팔로우)
 	    @Transactional
 	    public void blockUser(User blocker, User blocked) {
-	        // 이미 차단했는지 확인
 	        if (!blockRepository.existsByBlockerAndBlocked(blocker, blocked)) {
 	            blockRepository.save(new Block(blocker, blocked));
 	        }
