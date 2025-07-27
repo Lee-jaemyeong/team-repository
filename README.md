@@ -57,7 +57,7 @@
   <tr>
     <td>이재명 [팀장]</td>
     <td>DB 설계<br/>유저 파트<br/>다이어리 파트<br/>kakao login/logout API<br/>naver mail API로 비밀번호 찾기·변경</td>
-    <td><a href="https://github.com/Lee-jaemyeong">이재명 GitHub</a></td>
+    <td><a href="https://github.com/Lee-jaemyeong/Portfolio">이재명 GitHub</a></td>
   </tr>
   <tr>
     <td>윤소현</td>
