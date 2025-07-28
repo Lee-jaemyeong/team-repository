@@ -127,6 +127,7 @@
 <hr />
 
  ● 이예림
+[![시연 영상](https://github.com/user-attachments/assets/b2b539a9-0018-4990-9c97-10ffb03d1819)](https://youtu.be/xk_3Eb1kqxA)
 
 <hr />
 
