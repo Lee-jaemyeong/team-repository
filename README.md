@@ -62,7 +62,7 @@
   <tr>
     <td>윤소현</td>
     <td>그룹 파트<br/>뱃지 파트<br/>OpenAI 연동 일기 요약</td>
-    <td><a href="https://ysh-blue.notion.site/ysh?source=copy_link">윤소현 Notion</a></td>
+    <td><a href="https://github.com/syeon279/portfolio">윤소현 GitHub</a></td>
   </tr>
   <tr>
     <td>이정우</td>
