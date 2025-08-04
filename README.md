@@ -1,5 +1,7 @@
 # Yoonlee3 - Dairy Project
 
+## 배포 사이트
+- [사이트 이동하기](http://3.39.192.82:8080/)
 <br />
 
 ## Intro
@@ -50,17 +52,17 @@
   <tr>
     <th>이름</th>
     <th>역할</th>
-    <th>GitHub</th>
+    <th>Portfolio</th>
   </tr>
   <tr>
     <td>이재명 [팀장]</td>
     <td>DB 설계<br/>유저 파트<br/>다이어리 파트<br/>kakao login/logout API<br/>naver mail API로 비밀번호 찾기·변경</td>
-    <td><a href="https://github.com/Lee-jaemyeong">이재명 GitHub</a></td>
+    <td><a href="https://github.com/Lee-jaemyeong/Portfolio">이재명 GitHub</a></td>
   </tr>
   <tr>
     <td>윤소현</td>
     <td>그룹 파트<br/>뱃지 파트<br/>OpenAI 연동 일기 요약</td>
-    <td><a href="https://github.com/syeon279">윤소현 GitHub</a></td>
+    <td><a href="https://github.com/syeon279/portfolio">윤소현 GitHub</a></td>
   </tr>
   <tr>
     <td>이정우</td>
@@ -125,6 +127,7 @@
 <hr />
 
  ● 이예림
+[![시연 영상](https://github.com/user-attachments/assets/b2b539a9-0018-4990-9c97-10ffb03d1819)](https://youtu.be/xk_3Eb1kqxA)
 
 <hr />
 
